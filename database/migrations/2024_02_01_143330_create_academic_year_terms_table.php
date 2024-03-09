@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('academic_year_id')->constrained();
             $table->foreignId('term_id')->constrained();
             $table->timestamps();
+            $table->unique(['academic_year_id', 'term_id']);
         });
     }
 

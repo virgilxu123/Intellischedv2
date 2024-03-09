@@ -23,7 +23,7 @@
             <!-- Content For Sidebar -->
             <div class="vh-100 ">
                 <div class="sidebar-logo">
-                    <a href="#">Intellisched</a>
+                    <a href="{{route('dashboard')}}">Intellisched</a>
                 </div>
                 <ul class="sidebar-nav">
                     <li class="sidebar-header">
@@ -36,9 +36,9 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link">
+                        <a href="{{route('schedule')}}" class="sidebar-link">
                             <i class="fa fa-table pe-2"></i>
-                            Schedule
+                            Schedules
                         </a>
                     </li>
                     <li class="sidebar-header">
