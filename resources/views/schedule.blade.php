@@ -2,15 +2,14 @@
 @section('content')
     {{-- toast --}}
     <div class="toast-container top-0 start-50 translate-middle-x">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="liveToast" class="toast align-items-centerborder-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                 </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
-
     {{-- toast --}}
     <div class="container-fluid">
         <div class="row animate__animated animate__bounceInRight">
@@ -104,8 +103,8 @@
                     let toastElement = document.getElementById('liveToast');
                     const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
                     let toastBody = toastElement.querySelector('.toast-body');
-                    toastBody.classList.remove('text-bg-danger');
-                    toastBody.classList.add('text-bg-success');
+                    toastElement.classList.remove('text-bg-danger');
+                    toastElement.classList.add('text-bg-success');
                     toastBody.innerHTML = data.success;
                     let route = `{{route('create-schedule', ':id')}}`.replace(':id', data.academicYearTerm.id);
                     if ($('#table tbody tr').hasClass('no-records-found')) {
@@ -118,13 +117,15 @@
                     $('#table tbody').prepend(row); 
                     toastInstance.show();
                 }).catch(error => {
-                    let toastElement = document.getElementById('liveToast');
-                    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                    let toastBody = toastElement.querySelector('.toast-body');
-                    toastBody.classList.remove('text-bg-success');
-                    toastBody.classList.add('text-bg-warning');
-                    toastBody.innerHTML = 'Schedule already exist';
-                    toastInstance.show();
+                    if (!(error.response && error.response.status === 422)) {
+                        let toastElement = document.getElementById('liveToast');
+                        const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
+                        let toastBody = toastElement.querySelector('.toast-body');
+                        toastElement.classList.remove('text-bg-success');
+                        toastElement.classList.add('text-bg-warning');
+                        toastBody.innerHTML = 'Schedule already exist';
+                        toastInstance.show();
+                    }
                 });
             });
         });
