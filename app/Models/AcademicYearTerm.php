@@ -18,10 +18,6 @@ class AcademicYearTerm extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
-    public function designation_faculty() {
-        return $this->hasMany(DesignationFaculty::class);
-    }
-
     public function term() {
         return $this->belongsTo(Term::class);
     }

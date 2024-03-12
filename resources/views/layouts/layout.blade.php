@@ -8,7 +8,7 @@
     <title>@yield('title', 'IntelliSched')</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.22.3/dist/bootstrap-table.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/1b65260656.js" crossorigin="anonymous"></script>
+    {{-- <script src="https://kit.fontawesome.com/1b65260656.js" crossorigin="anonymous"></script> --}}
     <link rel="stylesheet" href="{{asset('admin-assets/fontAwesome/css/fontawesome.css')}}">
     <link rel="stylesheet" href="{{asset('admin-assets/fontAwesome/css/brands.css')}}">
     <link rel="stylesheet" href="{{asset('admin-assets/fontAwesome/css/solid.css')}}">

@@ -12,9 +12,11 @@ class Designation extends Model
     protected $fillable = [
         'designation',
         'units',
+        'unique',
     ];
 
     public function faculties() {
         return $this->belongsToMany(Faculty::class, 'designation_faculties');
     }
+
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ClassScheduleController;
 use App\Http\Controllers\AcademicYearTermController;
+use App\Http\Controllers\DesignationFacultyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::get('show-faculty/{faculty}', [FacultyController::class, 'show'])->name('show-faculty');
     Route::post('update-faculty/{faculty}', [FacultyController::class, 'update'])->name('update-faculty');
     Route::post('delete-faculty/{faculty}', [FacultyController::class, 'destroy'])->name('delete-faculty');
+
+    Route::post('assign-designation/{faculty}/{academic_year_term}', [DesignationFacultyController::class, 'assignDesignation'])->name('assign-designation');
+    Route::get('show-designation/{faculty}/{academic_year_term}', [DesignationFacultyController::class, 'showDesignation'])->name('show-designation');
 
     Route::get('manage-designations', [DesignationController::class, 'index'])->name('manage-designations');
     Route::post('add-designation', [DesignationController::class, 'store'])->name('add-designation');

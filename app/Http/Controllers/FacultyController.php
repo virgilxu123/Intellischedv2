@@ -14,9 +14,9 @@ class FacultyController extends Controller
     public function index()
     {
         $faculties = Faculty::all()
-                    ->sortBy('first_name');
-        if(request()->ajax()){
-            return response()->jason(['faculties'=>$faculties]);
+            ->sortBy('first_name');
+        if (request()->ajax()) {
+            return response()->jason(['faculties' => $faculties]);
         }
 
         return view('manage-faculty', compact('faculties'));
@@ -62,7 +62,7 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        if(request()->ajax()) {
+        if (request()->ajax()) {
             return response()->json($faculty);
         }
         return view('profile.faculty', compact('faculty'));
@@ -111,4 +111,5 @@ class FacultyController extends Controller
         }
         return redirect()->route('manage-faculty')->with('delete', 'A faculty member has been deleted!');
     }
+
 }

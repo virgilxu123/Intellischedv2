@@ -9,7 +9,7 @@ class DesignationFaculty extends Model
 {
     use HasFactory;
 
-    public function academic_year_terms() {
-        return $this->belongsTo(AcademicYearTerm::class);
-    }
+    protected $fillable = [
+        'academic_year_term_id',
+    ];
 }

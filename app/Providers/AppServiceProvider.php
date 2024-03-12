@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Day;
 use App\Models\Term;
 use App\Models\Faculty;
+use App\Models\Designation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('faculties', Faculty::orderBy('first_name')->orderBy('last_name')->get());
             $view->with('terms', Term::all());
             $view->with('days', Day::all());
+            $view->with('designations', Designation::all());
         });
     }
 }

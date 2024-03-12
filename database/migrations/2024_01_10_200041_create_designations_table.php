@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('designation');
             $table->decimal('units');
+            $table->boolean('unique')->default(false);
             $table->timestamps();
         });
     }

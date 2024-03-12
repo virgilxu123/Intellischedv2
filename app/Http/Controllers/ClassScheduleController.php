@@ -6,6 +6,7 @@ use DateTime;
 use App\Models\Faculty;
 use App\Models\Subject;
 use App\Models\Classroom;
+use App\Models\Designation;
 use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use App\Models\ClassSchedule;
@@ -18,6 +19,7 @@ class ClassScheduleController extends Controller
      */
     public function index(AcademicYearTerm $academicYearTerm)
     {
+        $designations = Designation::all();
         $subjects = Subject::where('term_id', $academicYearTerm->term_id)->get();
         $classSchedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
@@ -32,6 +34,7 @@ class ClassScheduleController extends Controller
         $classSchedulesWithRooms->load('subject', 'block', 'classroom', 'faculty', 'days');
         if (request()->ajax()) {
             return response()->json([
+                'designations' => $designations,
                 'classSchedulesWithRooms' => $classSchedulesWithRooms,
                 'classSchedules' => $classSchedules,
                 'subjects' => $subjects,
@@ -39,7 +42,7 @@ class ClassScheduleController extends Controller
                 'rooms' => $rooms,
             ]);
         }
-        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms'));
+        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms', 'designations'));
     }
 
     /**
