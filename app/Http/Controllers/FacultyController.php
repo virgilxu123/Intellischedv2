@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faculty;
+use App\Models\LoadType;
+use App\Models\Classroom;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\AcademicYearTerm;
 
 class FacultyController extends Controller
 {
@@ -62,10 +65,18 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
+        $academicYearTerm = AcademicYearTerm::latest()->first();
+        $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
+            ->with('subject', 'block', 'classroom', 'load_type', 'days')
+            ->get();
+        $loadTypes = LoadType::all();
+        $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
+        $rooms = Classroom::all();
         if (request()->ajax()) {
-            return response()->json($faculty);
+            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms'=>$rooms]);
         }
-        return view('profile.faculty', compact('faculty'));
+        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms'));
     }
 
     /**
@@ -76,7 +87,7 @@ class FacultyController extends Controller
         //
     }
 
-    /**
+    /*
      * Update the specified resource in storage.
      */
     public function update(Request $request, Faculty $faculty)
@@ -111,5 +122,4 @@ class FacultyController extends Controller
         }
         return redirect()->route('manage-faculty')->with('delete', 'A faculty member has been deleted!');
     }
-
 }

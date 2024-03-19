@@ -27,7 +27,33 @@
         </div>
         <div class="row animate__animated animate__bounceInRight">
             <div class="col-6 col-md-3 d-flex">
-                <div class="card flex-fill border-0 bg-primary">
+                <div class="card flex-fill border-0 text-bg-danger">
+                    <div class="card-body py-4">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-2 fs-6">
+                                    Schedule
+                                </h4>
+                                <div class="mb-0">
+                                    <span class="badge text-bg-success me-2">
+                                        Recent:
+                                    </span>
+                                    <span>
+                                        <em>
+                                            <a href="{{route('create-schedule', $academic_year_terms->sortByDesc('created_at')->first()->id)}}"  style="font-size: small">
+                                                {{$academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start}}-{{$academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start+1}}
+                                                {{$academic_year_terms->sortByDesc('created_at')->first()->term->term}}
+                                            </a>
+                                        </em>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 d-flex">
+                <div class="card flex-fill border-0 text-bg-primary">
                     <div class="card-body py-4">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
@@ -50,71 +76,48 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-6 col-md-3 d-flex">
-                <div class="card flex-fill border-0 bg-info">
+                <div class="card flex-fill border-0 text-bg-warning">
                     <div class="card-body py-4">
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
                                 <h4 class="mb-2">
-                                    {{$numberOfFacultyMembers}}
+                                    $ 78.00
                                 </h4>
                                 <p class="mb-2">
-                                    Total Earnings
+                                    Total Number of Classes
+                                </p>
+                                <div class="mb-0">
+                                    <span class="badge text-success me-2">
+                                        +9.0%
+                                    </span>
+                                    <span class="text-muted">
+                                        Since Last Month
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 d-flex">
+                <div class="card flex-fill border-0 text-bg-info">
+                    <div class="card-body py-4">
+                        <div class="d-flex align-items-start">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-2">
+                                    {{$classrooms->count()}}
+                                </h4>
+                                <p class="mb-2">
+                                    Number of Rooms
                                 </p>
                                 <div class="mb-0">
                                     <span class="badge text-bg-success me-2">
-                                        Available:
+                                        Lecture: {{$classrooms->where('type','Lecture')->count()}}
                                     </span>
-                                    <span class="text-muted">
-                                        Since Last Month
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 d-flex">
-                <div class="card flex-fill border-0 bg-warning">
-                    <div class="card-body py-4">
-                        <div class="d-flex align-items-start">
-                            <div class="flex-grow-1">
-                                <h4 class="mb-2">
-                                    $ 78.00
-                                </h4>
-                                <p class="mb-2">
-                                    Total Earnings
-                                </p>
-                                <div class="mb-0">
-                                    <span class="badge text-success me-2">
-                                        +9.0%
-                                    </span>
-                                    <span class="text-muted">
-                                        Since Last Month
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3 d-flex">
-                <div class="card flex-fill border-0 bg-danger">
-                    <div class="card-body py-4">
-                        <div class="d-flex align-items-start">
-                            <div class="flex-grow-1">
-                                <h4 class="mb-2">
-                                    $ 78.00
-                                </h4>
-                                <p class="mb-2">
-                                    Total Earnings
-                                </p>
-                                <div class="mb-0">
-                                    <span class="badge text-success me-2">
-                                        +9.0%
-                                    </span>
-                                    <span class="text-muted">
-                                        Since Last Month
+                                    <span class="badge text-bg-info me-2">
+                                        Laboratory: {{$classrooms->where('type','Laboratory')->count()}}
                                     </span>
                                 </div>
                             </div>

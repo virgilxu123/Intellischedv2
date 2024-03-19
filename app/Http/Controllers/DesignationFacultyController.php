@@ -22,6 +22,7 @@ class DesignationFacultyController extends Controller
     public function showDesignation(Faculty $faculty, AcademicYearTerm $academicYearTerm)
     {
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
+        $totalLoad = $faculty->loadCalculation($academicYearTerm);
         $allFacultiesDesignations = array();
         $faculties = Faculty::all();
         foreach ($faculties as $faculty) {
@@ -29,12 +30,12 @@ class DesignationFacultyController extends Controller
                 array_push($allFacultiesDesignations, $designation);
             }
         }
-        $designationsWithUniqueOne = collect($allFacultiesDesignations)->filter(function ($designation) {
+        $designationsWhereUniqueIsOne = collect($allFacultiesDesignations)->filter(function ($designation) {
             return $designation->unique == 1;
         });
-        $designationIdsWithUniqueOne = $designationsWithUniqueOne->pluck('id')->toArray();
+        $designationIdsWithUniqueOne = $designationsWhereUniqueIsOne->pluck('id')->toArray();
         $designationsToDisplayInOptions = Designation::whereNotIn('id', $designationIdsWithUniqueOne)->get();
-        return response()->json(['designations' => $designations, 'designationsToDisplayInOptions' => $designationsToDisplayInOptions]);
+        return response()->json(['designations' => $designations, 'designationsToDisplayInOptions' => $designationsToDisplayInOptions, 'totalLoad' => $totalLoad]);
     }
     /**
      * Display a listing of the resource.

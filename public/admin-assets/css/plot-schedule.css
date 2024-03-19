@@ -1,0 +1,8 @@
+/* 
+#plotScheduleTable thead th:first-child,
+#plotScheduleTable tbody tr td:first-child {
+    position: sticky;
+    left: 0;
+    background: black;
+    z-index: 1;
+} */

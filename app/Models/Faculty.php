@@ -29,28 +29,21 @@ class Faculty extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
-    public function loadCalculation($academicYearTermId)
+    public function loadCalculation($academicYearTerm)
     {
-        // Initialize load counter
         $load = 0;
 
-        // Get all class schedules assigned to the faculty for the specified academic year term
-        $classSchedules = $this->class_schedules()->where('academic_year_term_id', $academicYearTermId)->get();
+        $classSchedules = $this->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)->get();
+        $classSchedules->load('subject');
+        $designations = $this->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
 
-        // Loop through each class schedule to calculate load
+        foreach($designations as $designation) {
+            $load += $designation->units;
+        }
         foreach ($classSchedules as $classSchedule) {
-            // Assuming each class schedule has a subject relationship
-            $subject = $classSchedule->subject;
-
-            // Assuming each subject has a units attribute
-            $units = $subject->units;
-
-            // Add units to the total load
+            $units = $classSchedule->units;
             $load += $units;
         }
-
-        // Return the calculated load
         return $load;
     }
-
 }

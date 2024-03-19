@@ -318,31 +318,26 @@
                         // let toastHeader = toastElement.querySelector('.toast-header');
 
                         if (actionType === 'update') {
-                            // toastHeader.classList.remove('text-bg-danger');
-                            // toastHeader.classList.add('text-bg-primary');
-                            toastBody.classList.remove('text-bg-danger');
-                            toastBody.classList.add('text-bg-success');
+                            toastElement.classList.remove('text-bg-danger');
+                            toastElement.classList.add('text-bg-success');
                             const modalElement = document.querySelector('#editSubjectModal');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal
                             // toastElement.querySelector('strong').textContent = 'Saved!';
                         } else if (actionType === 'delete') {
-                            // toastHeader.classList.remove('bg-success');
-                            // toastHeader.classList.add('bg-danger');
-                            toastBody.classList.remove('text-bg-success');
-                            toastBody.classList.add('text-bg-danger');
+                            toastElement.classList.remove('text-bg-success');
+                            toastElement.classList.add('text-bg-danger');
                             const modalElement = document.querySelector('#deleteSubject');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal
                             // toastElement.querySelector('strong').textContent = 'Deleted!';
                         } else if (actionType == 'add') {
-                            // toastHeader.classList.remove('bg-danger');
-                            // toastHeader.classList.add('bg-primary');
-                            toastBody.classList.remove('text-bg-danger');
-                            toastBody.classList.add('text-bg-success');
+                            toastElement.classList.remove('text-bg-danger');
+                            toastElement.classList.add('text-bg-success');
                             const modalElement = document.querySelector('#addClassModal');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal
+                            document.querySelector('#addClassModal form').reset();
                             // toastElement.querySelector('strong').textContent = 'Added!';
                         }
                         toastInstance.show();

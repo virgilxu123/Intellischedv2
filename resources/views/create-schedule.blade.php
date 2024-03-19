@@ -1,6 +1,23 @@
 @extends('layouts.layout')
 @section('links')
     <style>
+        .fill {
+            cursor:pointer;
+        }
+        .empty {
+            background-color: white;
+        }
+        .hold {
+            border: solid #bababa 2px;
+        }
+        .hovered {
+            background: #cbcbcb;
+            border-style: dashed;
+        }
+        .invisible {
+            display: none;
+        }
+
         .selected-row {
             background-color: #396246;
             border-left: 5px solid #00a128;
@@ -9,21 +26,28 @@
             
         }
         .added-classes:hover {
-            background-color: rgb(255, 241, 241);
+            color: rgb(0, 0, 0);
+            background-color: rgb(255, 240, 250);
             border-bottom: 2px solid rgb(255, 114, 114);
             cursor: pointer;
         }
-        
+        #plotScheduleTable thead th:first-child,
+        #plotScheduleTable tbody tr td:first-child {
+            position: sticky;
+            left: 0;
+            background: rgb(29, 29, 29);
+            z-index: 1; /* Ensure the leftmost column is behind the header */
+        }
     </style>
 @endsection
 @section('content')
     {{-- toast --}}
-    <div class="toast-container top-0 start-50 translate-middle-x">
-        <div id="liveToast" class="toast align-items-centerborder-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-container top-0 start-50 translate-middle-x position-fixed">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body">
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -44,7 +68,7 @@
                               <button class="nav-link" id="pills-loading-tab" data-bs-toggle="pill" data-bs-target="#pills-loading" type="button" role="tab" aria-controls="pills-loading" aria-selected="false">Faculty Loading</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Plot Schedule</button>
+                              <button class="nav-link" id="pills-plot-schedule-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Plot Schedule</button>
                             </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
@@ -56,7 +80,7 @@
                                     @include('partials.faculty-loading')
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
+                            <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-plot-schedule-tab" tabindex="0">
                                 @include('partials.schedule-plotting')
                             </div>
                         </div>
@@ -98,19 +122,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="col-3">
-                            <h6 class="modal-title" id="largeModalLabel "></h6>
-                        </div>
-                        <div class="col-2">
-                            <p>Regular: </h5>
-                        </div>
-                        <div class="col-2">
-                            <p>Praise: </h5>
-                        </div>
-                        <div class="col-2">
-                            <p>Overload: </h5>
-                        </div>
-                        <div class="col-2">
-                            <p>Emergency: </h5>
+                            <h5 class="modal-title" id="largeModalLabel "></h5>
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         </button>
@@ -139,7 +151,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($classSchedules as $class)
-                                            @if ($class->faculty_id==null)
+                                            @if ($class->faculty_id==null&&$class->class_type=='lecture')
                                                 <tr class="subject-row" data-year="{{$class->subject->year_level}}" data-class-id="{{$class->id}}" data-course-code="{{$class->subject->course_code}}" data-block="{{$class->block->block}}">
                                                     <td>{{$class->subject->course_code}}</td>
                                                     <td>{{$class->subject->description}}</td>
@@ -251,6 +263,8 @@
                     const modalElement  = document.querySelector('#loadSubject');
                     const modalInstance = bootstrap.Modal.getInstance(modalElement);
                     modalInstance.hide(); // Close the modal
+                    message = "Classes successfully loaded!"
+                    showToast("success", message)
                     fetchClassSchedules(facultyId, academicYearTerm);
                 })
             });
@@ -309,8 +323,12 @@
             }
             //dynamically show the delete button when hovering over
             $('#loadedSubjects').on('mouseenter', '.added-classes', function() {
+                $(this).removeClass('text-secondary');
+                $(this).addClass('text-dark');
                 $(this).find('.remove-btn').css('visibility', 'visible');
             }).on('mouseleave', '.added-classes', function() {
+                $(this).removeClass('text-dark');
+                $(this).addClass('text-secondary');
                 $(this).find('.remove-btn').css('visibility', 'hidden');
             });
             // Remove the selected class
@@ -359,32 +377,35 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
+                    console.log(data);
                     // Clear existing class schedules
                     $('#class-schedule-body').empty();
-
                     // Loop through class schedules and append HTML to the tbody
+                    $('#totalUnits').text(data.totalLoad);
                     if (data.classSchedules.length === 0) {
                         let html = `<tr><td colspan="3" class="text-center">No Classes to Show</td></tr>`;
                         $('#class-schedule-body').append(html);
                     } else {
                         data.classSchedules.forEach(classSchedule => {
-                            let yearLevel;
-                            if (classSchedule.subject.year_level === '1st Year') {
-                                yearLevel = '1CS';
-                            } else if (classSchedule.subject.year_level === '2nd Year') {
-                                yearLevel = '2CS';
-                            } else if (classSchedule.subject.year_level === '3rd Year') {
-                                yearLevel = '3CS';
-                            } else if (classSchedule.subject.year_level === '4th Year') {
-                                yearLevel = '4CS';
+                            if(classSchedule.class_type=='lecture') {
+                                let yearLevel;
+                                if (classSchedule.subject.year_level === '1st Year') {
+                                    yearLevel = '1CS';
+                                } else if (classSchedule.subject.year_level === '2nd Year') {
+                                    yearLevel = '2CS';
+                                } else if (classSchedule.subject.year_level === '3rd Year') {
+                                    yearLevel = '3CS';
+                                } else if (classSchedule.subject.year_level === '4th Year') {
+                                    yearLevel = '4CS';
+                                }
+    
+                                let html = `<tr class="class-schedule-row animate fadeIn" data-faculty-id="${classSchedule.faculty_id}">
+                                                <td>${classSchedule.subject.course_code}- <em>${classSchedule.subject.description}</em> ${yearLevel}${classSchedule.block.block}</td>
+                                                <td style="font-size:x-small;"><em>${classSchedule.time_start ? `${classSchedule.days[0].day}/${classSchedule.days[1].day}<br>${classSchedule.time_start}-${classSchedule.time_end}` : 'TBD'}</em></td>
+                                                <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
+                                            </tr>`;
+                                $('#class-schedule-body').append(html);
                             }
-
-                            let html = `<tr class="class-schedule-row animate fadeIn" data-faculty-id="${classSchedule.faculty_id}">
-                                            <td>${classSchedule.subject.course_code}- <em>${classSchedule.subject.description}</em> ${yearLevel}${classSchedule.block.block}</td>
-                                            <td style="font-size:small;"><em>${classSchedule.time ? `${classSchedule.days[0].day}/${classSchedule.days[1].day}<br>${classSchedule.time}` : 'TBD'}</em></td>
-                                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
-                                        </tr>`;
-                            $('#class-schedule-body').append(html);
                         });
                     }
 
@@ -413,6 +434,7 @@
                     // Clear existing designations
                     $('#designation-body').empty();
                     // Loop through designations and append HTML to the tbody
+                    $('#totalUnits').text(data.totalLoad);
                     if (data.designations.length === 0) {
                         let html = `<tr><td colspan="3" class="text-center">No Designations to Show</td></tr>`;
                         $('#designation-body').append(html);
@@ -459,6 +481,8 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
+                    message = 'Designation successfully assigned';
+                    showToast("success", message);
                     fetchDesignations(facultyId, academicYearTerm);
                 })
                 .catch(error => {
@@ -469,10 +493,12 @@
 
         //script for tab 2
 
-            //script for tab 3 drag and drop operation
+        //script for tab 3 drag and drop operation
+            $('#pills-plot-schedule-tab').click(function(){
+                fetchClasses(academicYearTermId, dayId);
+                $('#export_plotted_schedule').attr('action','{{route("export-plotted-schedule", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTermId));
+            });
             let dayId = $('#scheduledDay').data('day1');
-            fetchClasses(academicYearTermId, dayId);
-                
             $('#scheduledDay').on('click', '.fa', function() {
                 let day1Id = $('#scheduledDay').data('day1');
                 let day2Id = $('#scheduledDay').data('day2');
@@ -490,13 +516,16 @@
             
 
             
-            const fills = document.querySelectorAll('.fill');
             const empties = document.querySelectorAll('.empty');
-            // Loop through empties and call drag events
-            fills.forEach(fill => {
-                fill.addEventListener('dragstart', dragStart);
-                fill.addEventListener('dragend', dragEnd);
-            });
+            
+            // Add event delegation for drag-and-drop events
+            $('#classesWithNoRoomAndTime').on('dragstart', '.fill', dragStart);
+            $('#classesWithNoRoomAndTime').on('dragend', '.fill', dragEnd);
+            $('#classesWithNoRoomAndTime').on('dragover', '.empty', dragOver);
+            $('#classesWithNoRoomAndTime').on('dragenter', '.empty', dragEnter);
+            $('#classesWithNoRoomAndTime').on('dragleave', '.empty', dragLeave);
+            $('#classesWithNoRoomAndTime').on('drop', '.empty', dragDrop);
+
             // Add listeners for each fill element
             empties.forEach(empty => {
                 empty.addEventListener('dragover', dragOver);
@@ -561,12 +590,17 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        return response.json().then(data => {
-                            console.log(data.error); // Log the error message
-                        });
+                        throw new Error('Network response was not ok');
                     }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    message = "Successfully assigned time and room!";
+                    showToast('success', message);
                 })
                 .catch(error => {
+                    message = "Time in conflict";
+                    showToast('error', message);
                 });
             }
 
@@ -588,7 +622,16 @@
                     }
                 })
                 .then(data => {
-                    // console.log(data.classSchedulesWithRooms);
+                    $('#classesWithNoRoomAndTime').empty();
+                    data.classSchedules.forEach(classSchedule => {
+                        if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
+                            let badge = `<div class="badge fill mb-3" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
+                                <em>${classSchedule.subject.course_code}-${classSchedule.block.block} ${classSchedule.class_type == 'lecture' ? 'Lec' : classSchedule.class_type == 'laboratory' ? 'Lab' : ''}</em><br>
+                                ${classSchedule.faculty.first_name} ${classSchedule.faculty.last_name}
+                                </div>`;
+                                $('#classesWithNoRoomAndTime').append(badge);
+                        }
+                    });
                     displayPlottedClasses(data.classSchedulesWithRooms, dayId);
                 })
                 .catch(error => {
@@ -646,20 +689,23 @@
                 });
             }
             function showToast(status, message) {
-                const toast = document.getElementById('liveToast');
-                const toastBody = toast.querySelector('.toast-body');
+                let toastElement = document.getElementById('liveToast');
+                const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
+                let toastBody = toastElement.querySelector('.toast-body');
                 toastBody.textContent = message;
                 if(status==='success'){
-                    toast.classList.add('bg-success');
+                    toastElement.classList.remove('text-bg-danger');
+                    toastElement.classList.add('text-bg-success');
                 }
-                if(status==='danger'){
-                    toast.classList.add('bg-danger');
+                if(status==='error'){
+                    toastElement.classList.remove('text-bg-success');
+                    toastElement.classList.add('text-bg-danger');
                 }
-                toast.classList.remove('hide');
-                toast.classList.add('show');
+                toastElement.classList.remove('hide');
+                toastElement.classList.add('show');
                 setTimeout(() => {
-                    toast.classList.remove('show');
-                    toast.classList.add('hide');
+                    toastElement.classList.remove('show');
+                    toastElement.classList.add('hide');
                 }, 4000);
             }
         //script for tab 3

@@ -1,4 +1,4 @@
-<h5>Courses Offering</h5>
+<h5>Course Offerings</h5>
 <div id="toolbar" class="me-1">
 
     <button id="button" class="btn btn-primary rounded" data-academic-year-term="{{$academicYearTerm->id}}"><i class="fa fa-plus-square"></i> Open</button>
@@ -24,12 +24,12 @@
     class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
-        <th data-field="state" data-checkbox="true"></th>
-        <th data-field="course_code" data-sortable="true">Subject Code</th>
-        <th data-field="description" data-sortable="true">Description</th>
-        <th data-field="year_level" data-sortable="true" >Year Level</th>
-        <th data-field="blocks" data-sortable="true">Blocks</th>
-        <th data-click-to-select="false">Action</th>
+            <th data-field="state" data-checkbox="true"></th>
+            <th data-field="course_code" data-sortable="true">Subject Code</th>
+            <th data-field="description" data-sortable="true">Description</th>
+            <th data-field="year_level" data-sortable="true" >Year Level</th>
+            <th data-field="blocks" data-sortable="true">Blocks</th>
+            <th data-click-to-select="false">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -39,20 +39,7 @@
                 <td>{{$subject->course_code}}</td>
                 <td>{{$subject->description}}</td>
                 <td>{{$subject->year_level}}</td>
-                <td class="text-center">
-                    @php
-                        $numberOfBlocks = 0;
-                    @endphp
-                    @foreach ($classSchedules as $classSchedule)
-                        @if ($classSchedule->subject_id == $subject->id)
-                            @php
-                                $numberOfBlocks++;
-                            @endphp
-                        @endif
-                    
-                    @endforeach
-                    {{$numberOfBlocks}}
-                </td>
+                <td class="text-center">{{$classSchedules->where('subject_id', $subject->id)->where('class_type','lecture')->count()}}</td>
                 <td class="text-center">
                     <button class="btn btn-primary rounded px-2 py-0 loadBtn" data-toggle="tooltip" title="Add/Remove Blocks"><i class="fa fa-edit"></i></button>
                 </td>

@@ -40,7 +40,7 @@
         @endphp
         <div class="card-body">
             Name: <strong><span id="facultyName">{{$firstFaculty->first_name}} {{$firstFaculty->last_name}}</span></strong>
-            <p class="m-0">Total No. of Units: </p>
+            <p class="m-0">Total No. of Units: <strong id="totalUnits"></strong> </p>
             <hr>
             <table class="table table-bordered table-sm"
                 data-toggle="table">
@@ -52,24 +52,7 @@
                     </tr>
                 </thead>
                 <tbody id="class-schedule-body">
-                    @foreach ($classSchedulesForFirstFaculty as $classSchedule)
-                        <tr>
-                            @php
-                                if ($classSchedule->subject->year_level === '1st Year') {
-                                    $yearLevel = '1CS';
-                                } else if ($classSchedule->subject->year_level === '2nd Year') {
-                                    $yearLevel = '2CS';
-                                } else if ($classSchedule->subject->year_level === '3rd Year') {
-                                    $yearLevel = '3CS';
-                                } else if ($classSchedule->subject->year_level === '4th Year') {
-                                    $yearLevel = '4CS';
-                                }
-                            @endphp
-                            <td>{{ $classSchedule->subject->course_code }}- <em>{{ $classSchedule->subject->description }}</em> {{$yearLevel}}{{$classSchedule->block->block}}</td>
-                            <td></td>
-                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
-                        </tr>
-                    @endforeach
+                    
                 </tbody>
             </table>
         </div>

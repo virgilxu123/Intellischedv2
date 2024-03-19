@@ -64,12 +64,26 @@ class ClassScheduleController extends Controller
         ]);
         $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
         foreach ($subject_ids as $subject_id) {
-            for ($i = 1; $i <= $validated['blocks']; $i++) {
+            for ($i = 1; $i <= $validated['blocks']; $i++) {// create a class for lecture
                 $classSchedule = new ClassSchedule();
                 $classSchedule->subject_id = $subject_id;
                 $classSchedule->academic_year_term_id = $academicYearTerm->id;
                 $classSchedule->block_id = $i;
+                $classSchedule->units = 3;
+                $classSchedule->class_type = 'lecture';
                 $classSchedule->save();
+            }
+            $subject = Subject::find($subject_id);//if the subject has a laboratory create a class for laboratory
+            if($subject->laboratory==='Yes'){
+                for ($i = 1; $i <= $validated['blocks']; $i++) {
+                    $classSchedule = new ClassSchedule();
+                    $classSchedule->subject_id = $subject_id;
+                    $classSchedule->academic_year_term_id = $academicYearTerm->id;
+                    $classSchedule->block_id = $i;
+                    $classSchedule->units = 1.25;
+                    $classSchedule->class_type = 'laboratory';
+                    $classSchedule->save();
+                }
             }
         }
         return back()->with('success', 'Class Schedule has been created.');
@@ -84,7 +98,8 @@ class ClassScheduleController extends Controller
             ->where('academic_year_term_id', $academicYearTerm->id)
             ->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
-        return response()->json(['classSchedules' => $classSchedules]);
+        $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        return response()->json(['classSchedules' => $classSchedules, 'totalLoad'=>$totalLoad]);
     }
 
     /**
@@ -124,6 +139,14 @@ class ClassScheduleController extends Controller
         // Assign the faculty to each class schedule
         $classSchedules->each(function ($classSchedule) use ($faculty) {
             $classSchedule->faculty_id = $faculty->id;
+            if($classSchedule->subject->laboratory=='Yes'){//assign also the laboratory class to faculty
+                $labSchedule = ClassSchedule::where('subject_id', $classSchedule->subject_id)
+                    ->where('block_id', $classSchedule->block_id)
+                    ->where('class_type', 'laboratory')
+                    ->first();
+                $labSchedule->faculty_id = $faculty->id;
+                $labSchedule->save();
+            }
             $classSchedule->save();
         });
         $classSchedules = ClassSchedule::where('faculty_id', $faculty->id)->get();

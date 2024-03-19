@@ -1,4 +1,15 @@
 @extends('layouts.layout')
+@section('scripts')
+    <style>
+        #plotScheduleTable thead th:first-child,
+        #plotScheduleTable tbody tr td:first-child {
+            position: sticky;
+            left: 0;
+            background: rgb(29, 29, 29);
+            z-index: 1; /* Ensure the leftmost column is behind the header */
+        }
+    </style>
+@endsection
 @section('content')
     <div class="container-fluid mt-3 animate__animated animate__bounceInRight">
         <div class="">
@@ -24,6 +35,7 @@
                         
                             <div class="card-body card-block">
                                 <form action="" method="post" class="">
+                                    @csrf
                                     <div class="row mb-3">
                                         <div class="form-group col-lg-6">
                                             <label for="name" class=" form-label">First Name</label>
@@ -72,11 +84,11 @@
                                     <div class="row mb-3">
                                         <div class="form-group col-lg-6">
                                             <label for="workload" class=" form-label">Units</label>
-                                            <input type="text" id="workload" name="workload" disabled value="21" class="form-control">
+                                            <input type="text" id="workload" name="workload" disabled value="{{$totalLoad}}" class="form-control">
                                         </div>
                                         <div class="form-group col-lg-6">
-                                            <label for="workload" class=" form-label">Designation</label>
-                                            <input type="text" id="workload" name="workload" disabled value="ICT Director" class="form-control">
+                                            <label for="designation" class=" form-label">Designation</label>
+                                            <input class="form-control" type="text" id="designation" name="designation" disabled value="@if ($designations->count() > 0)@foreach ($designations as $designation){{$designation->designation }}{{ !$loop->last ? ', ' : '' }}@endforeach @else None @endif">
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary rounded float-right">Update</button>
@@ -93,29 +105,45 @@
                             <strong class="card-title">Work Load</strong>
                         </div>
                         <div class="card-body">
-                            <table 
-                                id="table" 
-                                data-toggle="table" 
-                                class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Day/Time</th>
-                                        <th scope="col">Code</th>
-                                        <th scope="col">Description</th>
-                                        <th scope="col">Unit</th>
-                                        <th scope="col">Students</th>
-                                        <th scope="col">Room</th>
-                                        <th scope="col">Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
+                            <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Tabular View</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Calendar View</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                                    @include('partials.tabular-view')
+                                </div>
+                                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                    @include('partials.calendar-view')
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/tableExport.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/libs/jsPDF/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function fetchFacultyLoading() {
+            let url= `{{ route("show-faculty", [":facultyId"]) }}`.replace(':facultyId', facultyId);
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+        }
+    });
+</script>
 @endsection

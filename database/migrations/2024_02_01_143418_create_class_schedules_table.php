@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('classroom_id')->nullable()->constrained();
             $table->foreignId('academic_year_term_id')->nullable()->constrained();
             $table->foreignId('faculty_id')->nullable()->constrained();
+            $table->integer('student_count')->default(0);
+            $table->decimal('units', 5, 2)->nullable();
+            $table->enum('class_type', ['laboratory', 'lecture'])->nullable();
             $table->string('time_start')->nullable();
             $table->string('time_end')->nullable();
             $table->foreignId('load_type_id')->nullable()->constrained();
