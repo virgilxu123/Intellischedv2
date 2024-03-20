@@ -177,4 +177,13 @@ class ClassScheduleController extends Controller
         $classSchedule->days()->attach($validated['day_id'] + 3);
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
+
+    public function updateLoadType(Request $request, ClassSchedule $classSchedule) {
+        $validated = $request->validate([
+            'load_type' => 'required',
+        ]);
+        $classSchedule->load_type_id = $validated['load_type'];
+        $classSchedule->save();
+        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule]);
+    }
 }

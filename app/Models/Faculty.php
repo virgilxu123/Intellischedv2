@@ -31,19 +31,34 @@ class Faculty extends Model
 
     public function loadCalculation($academicYearTerm)
     {
-        $load = 0;
+        $designationsUnits = $this->designations()
+            ->wherePivot('academic_year_term_id', $academicYearTerm->id)
+            ->sum('units');
 
-        $classSchedules = $this->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)->get();
-        $classSchedules->load('subject');
-        $designations = $this->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
+        $classSchedulesUnits = $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->sum('units');
 
-        foreach($designations as $designation) {
-            $load += $designation->units;
-        }
-        foreach ($classSchedules as $classSchedule) {
-            $units = $classSchedule->units;
-            $load += $units;
-        }
-        return $load;
+        return $designationsUnits + $classSchedulesUnits;
     }
+
+    public function loadCalculationByType($academicYearTerm, $loadType)
+    {
+        $query = $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->whereHas('load_type', function ($query) use ($loadType) {
+                $query->where('load_type', $loadType);
+            });
+
+        if ($loadType === 'Regular Load') {
+            $designationsUnits = $this->designations()
+                ->wherePivot('academic_year_term_id', $academicYearTerm->id)
+                ->sum('units');
+            
+            return $query->sum('units') + $designationsUnits;
+        }
+
+        return $query->sum('units');
+    }
+
 }

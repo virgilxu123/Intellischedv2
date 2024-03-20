@@ -1,16 +1,16 @@
 @extends('layouts.layout')
-@section('scripts')
-    <style>
-        #plotScheduleTable thead th:first-child,
-        #plotScheduleTable tbody tr td:first-child {
-            position: sticky;
-            left: 0;
-            background: rgb(29, 29, 29);
-            z-index: 1; /* Ensure the leftmost column is behind the header */
-        }
-    </style>
-@endsection
 @section('content')
+    {{-- toast --}}
+    <div class="toast-container top-0 start-50 translate-middle-x position-fixed">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {{-- toast --}}
     <div class="container-fluid mt-3 animate__animated animate__bounceInRight">
         <div class="">
             <div class="row">
@@ -105,21 +105,65 @@
                             <strong class="card-title">Work Load</strong>
                         </div>
                         <div class="card-body">
-                            <ul class="nav nav-tabs justify-content-end" id="myTab" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Tabular View</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Calendar View</button>
-                                </li>
-                            </ul>
-                            <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-                                    @include('partials.tabular-view')
-                                </div>
-                                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-                                    @include('partials.calendar-view')
-                                </div>
+                            <table 
+                                id="table" 
+                                data-toggle="table" 
+                                data-search="true"
+                                class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th data-field="date" data-sortable="true" scope="col">Day/Time</th>
+                                        <th data-field="code" data-sortable="true" scope="col">Code</th>
+                                        <th data-field="desc" data-sortable="true" scope="col">Description</th>
+                                        <th data-field="units" data-sortable="true" scope="col">Units</th>
+                                        <th data-field="room" data-sortable="true" scope="col">Room</th>
+                                        <th data-field="stud" data-sortable="true" scope="col">Students</th>
+                                        <th data-field="type" data-sortable="true" scope="col">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($classes as $class)
+                                        @php
+                                            if($class->time_start){
+                                                $day = $class->days[0]->day== "Monday"&&$class->days[1]->day=="Thursday"?"MTh":"TF";
+                                                $schedule = $day." ".$class->time_start."-".$class->time_end;
+                                                $room = $class->classroom->room_number;
+                                            }else {
+                                                $schedule = "TBD";
+                                                $room = "TBD";
+                                            }
+                                        @endphp
+                                        <tr>
+                                            <td class="col-2">{{$schedule}}</td>
+                                            <td class="col-1">{{$class->subject->course_code}}</td>
+                                            <td class="col-4">{{$class->subject->description}}</td>
+                                            <td class="col-1">{{$class->units}}</td>
+                                            <td class="col-1">{{$room}}</td>
+                                            <td class="col-1"><input type="number" class="form-control form-control-sm" value="{{$class->student_count}}"></td>
+                                            <td class="col-2">
+                                                <form action="{{route('update-load-type', ['classSchedule'=>$class->id])}}" method="POST">
+                                                    @csrf
+                                                    <select class="form-select form-select-sm loadTypeSelect" aria-label="Load Type">
+                                                        <option value="{{$class->load_type?$class->load_type:""}}">{{$class->load_type?$class->load_type->load_type:"Load Type"}}</option>
+                                                        @foreach ($loadTypes as $loadType)
+                                                        @if (!$class->load_type || $class->load_type->id !== $loadType->id)
+                                                            <option value="{{$loadType->id}}">{{$loadType->load_type}}</option>
+                                                        @endif
+                                                        @endforeach
+                                                    </select>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-3">Regular load: {{$regularLoad}}</div>
+                                <div class="col-3">Overload: {{$overLoad}}</div>
+                                <div class="col-3">Emergency Load:</div>
+                                <div class="col-3">Praise Load:</div>
                             </div>
                         </div>
                     </div>
@@ -129,21 +173,59 @@
     </div>
 @endsection
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/tableExport.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/libs/jsPDF/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>
-<script>
-    $(document).ready(function() {
-        function fetchFacultyLoading() {
-            let url= `{{ route("show-faculty", [":facultyId"]) }}`.replace(':facultyId', facultyId);
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
+    <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/tableExport.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/libs/jsPDF/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>  
+    <script>
+        $(document).ready(function() {
+            $('.loadTypeSelect').change(function(e){
+                let form = $(this).closest('form');
+                let url = form.attr('action');
+                let selectedValue = $(this).val();
+                let formData = new FormData(form[0]);
+                formData.append('load_type', selectedValue);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    showToast('success', data.message);
+                })
+                .catch(error => {
+                    let message = "An error has occured";
+                    showToast('error', message);
+                });
+            });
+            function showToast(status, message) {
+                let toastElement = document.getElementById('liveToast');
+                const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
+                let toastBody = toastElement.querySelector('.toast-body');
+                toastBody.textContent = message;
+                if(status==='success'){
+                    toastElement.classList.remove('text-bg-danger');
+                    toastElement.classList.add('text-bg-success');
                 }
-            })
-        }
-    });
-</script>
+                if(status==='error'){
+                    toastElement.classList.remove('text-bg-success');
+                    toastElement.classList.add('text-bg-danger');
+                }
+                toastElement.classList.remove('hide');
+                toastElement.classList.add('show');
+                setTimeout(() => {
+                    toastElement.classList.remove('show');
+                    toastElement.classList.add('hide');
+                }, 4000);
+            }
+        });
+    </script>
 @endsection

@@ -71,12 +71,14 @@ class FacultyController extends Controller
             ->get();
         $loadTypes = LoadType::all();
         $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
+        $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         $rooms = Classroom::all();
         if (request()->ajax()) {
-            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms'=>$rooms]);
+            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms'=>$rooms, 'regularLoad' => $regularLoad, 'overLoad'=>$overLoad]);
         }
-        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms'));
+        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad'));
     }
 
     /**
