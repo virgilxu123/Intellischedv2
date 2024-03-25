@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('designations', function (Blueprint $table) {
             $table->id();
             $table->string('designation');
-            $table->decimal('units');
+            $table->decimal('units')->nullable();
             $table->boolean('unique')->default(false);
             $table->timestamps();
         });

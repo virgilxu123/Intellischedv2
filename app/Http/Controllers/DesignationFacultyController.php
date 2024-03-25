@@ -37,6 +37,12 @@ class DesignationFacultyController extends Controller
         $designationsToDisplayInOptions = Designation::whereNotIn('id', $designationIdsWithUniqueOne)->get();
         return response()->json(['designations' => $designations, 'designationsToDisplayInOptions' => $designationsToDisplayInOptions, 'totalLoad' => $totalLoad]);
     }
+
+    public function removeDesignation(Faculty $faculty, AcademicYearTerm $academicYearTerm, Designation $designation)
+    {
+        $faculty->designations()->detach($designation->id, ['academic_year_term_id' => $academicYearTerm->id]);
+        return response()->json(['success' => true, 'message' => 'Designation has been removed from faculty!']);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -381,6 +381,13 @@
                 console.log(facultyId);
                 assignDesignation(facultyId, academicYearTerm, formData)
             })
+            $('#designation-body').on('click', '.btn-danger', function() {
+                let designationId = $(this).data('designation-id');
+                facultyId = $('.faculty-row.selected-row').data('faculty-id');
+                removeDesignation(facultyId, academicYearTerm, designationId);
+                fetchClassSchedules(facultyId, academicYearTerm);
+                fetchDesignations(facultyId, academicYearTerm);
+            });
         //function to fetch schedule of faculty a and render in load overview
             function fetchClassSchedules(facultyId, academicYearTerm) {
                 fetch(`{{ route("show-faculty-load", [":facultyId", ":academicYearTerm"]) }}`.replace(':facultyId', facultyId).replace(':academicYearTerm', academicYearTerm))
@@ -457,7 +464,7 @@
                         data.designations.forEach(designation => {
                             let html = `<tr class=" animate fadeIn" data-faculty-id="${designation.faculty_id}">
                                             <td>${designation.designation}</td>
-                                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
+                                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-designation-id="${designation.id}" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>`;
                             $('#designation-body').append(html);
                         });
@@ -473,7 +480,7 @@
                     data.designationsToDisplayInOptions.forEach(designationsToDisplayInOption => {
                         let option = document.createElement('option');
                         option.value = designationsToDisplayInOption.id;
-                        option.innerText = designationsToDisplayInOption.designation;
+                        option.innerText = designationsToDisplayInOption.designation=='Research & Extension'?`${designationsToDisplayInOption.designation} (${designationsToDisplayInOption.units})`:designationsToDisplayInOption.designation;
                         document.getElementById('assignDesignationForm').querySelector('.form-select').appendChild(option);
                     });
                 });
@@ -505,6 +512,32 @@
                 })
             }
         //script for assigning designation
+        //script for unassigning designation
+            function removeDesignation(facultyId, academicYearTermId, designationId) {
+                fetch(`{{ route("remove-designation", [":facultyId", ":academicYearTerm", ":designation"]) }}`.replace(':facultyId', facultyId).replace(':academicYearTerm', academicYearTermId).replace(':designation', designationId), {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // Add CSRF token header
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    message = 'Designation has been removed';
+                    showToast("success", message);
+                    fetchDesignations(facultyId, academicYearTerm);
+                })
+                .catch(error => {
+
+                })
+            }
+        //script for unassigning designation
+
 
         //script for tab 2
 
@@ -539,12 +572,12 @@
             const empties = document.querySelectorAll('.empty');
             
             // Add event delegation for drag-and-drop events
-            $('#classesWithNoRoomAndTime').on('dragstart', '.fill', dragStart);
-            $('#classesWithNoRoomAndTime').on('dragend', '.fill', dragEnd);
-            $('#classesWithNoRoomAndTime').on('dragover', '.empty', dragOver);
-            $('#classesWithNoRoomAndTime').on('dragenter', '.empty', dragEnter);
-            $('#classesWithNoRoomAndTime').on('dragleave', '.empty', dragLeave);
-            $('#classesWithNoRoomAndTime').on('drop', '.empty', dragDrop);
+            $('.classesWithNoRoomAndTime').on('dragstart', '.fill', dragStart);
+            $('.classesWithNoRoomAndTime').on('dragend', '.fill', dragEnd);
+            $('.classesWithNoRoomAndTime').on('dragover', '.empty', dragOver);
+            $('.classesWithNoRoomAndTime').on('dragenter', '.empty', dragEnter);
+            $('.classesWithNoRoomAndTime').on('dragleave', '.empty', dragLeave);
+            $('.classesWithNoRoomAndTime').on('drop', '.empty', dragDrop);
 
             // Add listeners for each fill element
             empties.forEach(empty => {
@@ -642,15 +675,15 @@
                     }
                 })
                 .then(data => {
-                    $('#classesWithNoRoomAndTime').empty();
+                    $('.classesWithNoRoomAndTime').empty();
                     console.log(data);
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
-                            let badge = `<div class="badge fill mb-3" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
+                            let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
                                 <em>${classSchedule.subject.course_code}-${classSchedule.block.block} ${classSchedule.class_type == 'lecture' ? 'Lec' : classSchedule.class_type == 'laboratory' ? 'Lab' : ''}</em><br>
                                 ${classSchedule.faculty.first_name} ${classSchedule.faculty.last_name}
                                 </div>`;
-                                $('#classesWithNoRoomAndTime').append(badge);
+                                $('.classesWithNoRoomAndTime').append(badge);
                         }
                     });
                     displayPlottedClasses(data.classSchedulesWithRooms, dayId);

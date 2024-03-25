@@ -53,7 +53,7 @@
                             </li>
                             <li class="sidebar-item ms-3">
                                 <a class="sidebar-link" href="{{ $academic_year_terms->isNotEmpty() ? route('create-schedule', $academic_year_terms->sortByDesc('created_at')->first()->id) : '#' }}" style="font-size: small">
-                                    {{ $academic_year_terms->isNotEmpty() ? $academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start . '-' . ($academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start + 1) . ' ' . $academic_year_terms->sortByDesc('created_at')->first()->term->term : '' }}
+                                    {{ $academic_year_terms->isNotEmpty() ? $academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start . '-' . ($academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start + 1) . ' ' . $academic_year_terms->sortByDesc('created_at')->first()->term->term : 'No recent schedule' }}
                                 </a>
                             </li>
                         </ul>

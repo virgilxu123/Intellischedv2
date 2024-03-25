@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('assign-designation/{faculty}/{academic_year_term}', [DesignationFacultyController::class, 'assignDesignation'])->name('assign-designation');
     Route::get('show-designation/{faculty}/{academic_year_term}', [DesignationFacultyController::class, 'showDesignation'])->name('show-designation');
+    Route::post('remove-designation/{faculty}/{academic_year_term}/{designation}', [DesignationFacultyController::class, 'removeDesignation'])->name('remove-designation');
 
     Route::get('manage-designations', [DesignationController::class, 'index'])->name('manage-designations');
     Route::post('add-designation', [DesignationController::class, 'store'])->name('add-designation');
