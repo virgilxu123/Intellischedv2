@@ -33,30 +33,59 @@
         <div class="card-header text-bg-info">
             <h5 class="m-0"><i class="fa-regular fa-calendar-days"></i> Faculty Load Overview</h5>
         </div>
-        @php
-            $firstFaculty = $faculties->first();
-            $faculty = $firstFaculty->id;
-            $classSchedulesForFirstFaculty = $classSchedules->where('faculty_id', $faculty);
-        @endphp
         <div class="card-body">
-            Name: <strong><span id="facultyName">{{$firstFaculty->first_name}} {{$firstFaculty->last_name}}</span></strong>
-            <p class="m-0">Total No. of Units: <strong id="totalUnits"></strong> </p>
-            <hr>
-            <table class="table table-bordered table-sm"
-                data-toggle="table">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Schedule</th>
-                        <th class="text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="class-schedule-body">
-                    
-                </tbody>
-            </table>
+            @if($faculties->isNotEmpty())
+                @php
+                    $firstFaculty = $faculties->first();
+                    $faculty = $firstFaculty->id;
+                    $classSchedulesForFirstFaculty = $classSchedules->where('faculty_id', $faculty);
+                @endphp
+                <div class="d-flex justify-content-between">
+                    <p class="d-inline">Name: <strong><span id="facultyName">{{$firstFaculty->first_name}} {{$firstFaculty->last_name}}</span></strong></p>
+                    <div class="d-inline">
+                        <form action="" method="Post" target="__blank" class="d-inline">
+                            @csrf
+                            <button class="btn btn-light btn-sm py-0 px-1" data-toggle="tooltip" data-placement="top" title="View PDF"><i class="fa-regular fa-file-pdf"></i></button>
+                        </form>
+                        <form action="" method="Post" target="__blank" class="d-inline">
+                            @csrf
+                            <button class="btn btn-light btn-sm py-0 px-1" data-toggle="tooltip" data-placement="top" title="Download PDF"><i class="fa-solid fa-download"></i></button>
+                        </form>
+                    </div>
+                </div>
+                <p class="m-0">Total No. of Units: <strong id="totalUnits"></strong></p>
+                <hr>
+                <table class="table table-bordered table-sm" data-toggle="table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Schedule</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-schedule-body">
+                        <!-- Table content for faculty schedules -->
+                    </tbody>
+                </table>
+            @else
+                <p>No faculty records found.</p>
+                <hr>
+                <table class="table table-bordered table-sm" data-toggle="table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Schedule</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="class-schedule-body">
+                        <!-- Table content for faculty schedules -->
+                    </tbody>
+                </table>
+            @endif
         </div>
     </div>
+    
     <div class="card">
         <div class="card-header text-bg-warning">
             Designation

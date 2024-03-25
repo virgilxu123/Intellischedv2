@@ -36,10 +36,27 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="{{route('schedule')}}" class="sidebar-link">
-                            <i class="fa fa-table pe-2"></i>
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
+                            aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i>
                             Schedules
                         </a>
+                        {{-- <a href="{{route('schedule')}}" class="sidebar-link">
+                            <i class="fa fa-table pe-2"></i>
+                            Schedules
+                        </a> --}}
+                        <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item ms-3">
+                                <a href="{{route('schedule')}}" class="sidebar-link">Create Schedule</a>
+                            </li>
+                            <li class="sidebar-header ms-3 py-0">
+                                Recent
+                            </li>
+                            <li class="sidebar-item ms-3">
+                                <a class="sidebar-link" href="{{ $academic_year_terms->isNotEmpty() ? route('create-schedule', $academic_year_terms->sortByDesc('created_at')->first()->id) : '#' }}" style="font-size: small">
+                                    {{ $academic_year_terms->isNotEmpty() ? $academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start . '-' . ($academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start + 1) . ' ' . $academic_year_terms->sortByDesc('created_at')->first()->term->term : '' }}
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="sidebar-header">
                         Manage

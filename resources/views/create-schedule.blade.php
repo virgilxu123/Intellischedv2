@@ -38,6 +38,17 @@
             background: rgb(29, 29, 29);
             z-index: 1; /* Ensure the leftmost column is behind the header */
         }
+        .delete-sched {
+            position: absolute;
+            top: 0;
+            right: 0;
+            visibility: hidden;
+            cursor: pointer;
+            padding-right: 5px;
+        }
+        .fill:hover .delete-sched {
+            visibility: visible;
+        }
     </style>
 @endsection
 @section('content')
@@ -347,10 +358,13 @@
             });
             //script for loading subject modal
             //script for tab 2
-            fetchClassSchedules($('.faculty-row.selected-row').data('faculty-id'), academicYearTerm);
-            fetchDesignations($('.faculty-row.selected-row').data('faculty-id'), academicYearTerm);
+            $('#pills-loading-tab').click(function(){
+                fetchClassSchedules($('.faculty-row.selected-row').data('faculty-id'), academicYearTerm);
+                fetchDesignations($('.faculty-row.selected-row').data('faculty-id'), academicYearTerm);
+            });
             $('.faculty-row').click(function () {
                 let facultyId = $(this).data('faculty-id');
+                console.log(facultyId)
                 let facultyName = $(this).data('faculty-name');
                 $('#facultyName').text(facultyName);
                 $('.faculty-row').removeClass('selected-row');
@@ -386,6 +400,7 @@
                         let html = `<tr><td colspan="3" class="text-center">No Classes to Show</td></tr>`;
                         $('#class-schedule-body').append(html);
                     } else {
+                        
                         data.classSchedules.forEach(classSchedule => {
                             if(classSchedule.class_type=='lecture') {
                                 let yearLevel;
@@ -513,8 +528,13 @@
                 $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
                 fetchClasses(academicYearTermId, dayId);
             });
-            
-
+            $(document).on('click', '.delete-sched', function(e) {
+                e.stopPropagation();
+                const classScheduleId = $(this).closest('.fill').data('class-schedule-id');
+                console.log(classScheduleId);
+                deleteTimeRoom(classScheduleId);
+                fetchClasses(academicYearTermId, dayId);
+            });
             
             const empties = document.querySelectorAll('.empty');
             
@@ -599,8 +619,8 @@
                     showToast('success', message);
                 })
                 .catch(error => {
-                    message = "Time in conflict";
-                    showToast('error', message);
+                    message = "Schedule Conflict: Instructor/Block conflict";
+                    showToast('error', message);    
                 });
             }
 
@@ -623,6 +643,7 @@
                 })
                 .then(data => {
                     $('#classesWithNoRoomAndTime').empty();
+                    console.log(data);
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
                             let badge = `<div class="badge fill mb-3" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
@@ -656,10 +677,7 @@
                     const facultyName = classSchedule.faculty.first_name + ' ' + classSchedule.faculty.last_name;
                     const facultyColor = classSchedule.faculty.color;
                     const rowsToSpan = 3;
-                    const html = `<div class="rounded fill p-1" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:120px;" data-class-schedule-id="${classSchedule.id}">
-                        ${courseCode} <em>${description}</em>-${block} <br>
-                        <b>${facultyName}</b>
-                    </div>`;
+                    const html = `<div class="rounded fill p-1" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:120px;position:relative;" data-class-schedule-id="${classSchedule.id}"><span class="delete-sched"><i class="fa-solid fa-xmark"></i></span>${courseCode} <em>${description}</em>-${block} <br><b>${facultyName}</b></div>`;
 
                     // Find the first empty cell for the given room and time
                     const timeCell = document.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);
@@ -688,6 +706,32 @@
                     }
                 });
             }
+
+            function deleteTimeRoom(classScheduleId) {
+                const url = '{{route("delete-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    message = "Successfully deleted time and room!";
+                    showToast('success', message);
+                })
+                .catch(error => {
+                    message = "Error deleting time and room!";
+                    showToast('error', message);
+                });
+            }
+
             function showToast(status, message) {
                 let toastElement = document.getElementById('liveToast');
                 const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)

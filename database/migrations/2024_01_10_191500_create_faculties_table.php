@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
+            $table->string('middle_initial')->nullable();
             $table->string('last_name');
-            $table->string('rank');
+            $table->string('rank')->nullable();
             $table->string('status');
             $table->binary('image')->nullable();
             $table->boolean('availability')->default(true);
+            $table->string('educational_qualification');
             $table->string('color')->nullable();
             $table->timestamps();
         });

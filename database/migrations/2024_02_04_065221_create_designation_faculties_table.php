@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('designation_faculties', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('faculty_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('designation_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('academic_year_term_id')->nullable()->constrained()->onDelete('set null');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('faculty_id')->nullable();
+            $table->unsignedBigInteger('designation_id')->nullable();
+            $table->unsignedBigInteger('academic_year_term_id')->nullable();
             $table->timestamps();
         });
     }

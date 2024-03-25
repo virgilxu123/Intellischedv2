@@ -16,7 +16,7 @@ class ClassSchedule extends Model
         'time_end',
     ];
 
-    public function checkForFacultyTimeConflicts($newTimeStart, $newTimeEnd, $dayId, $classSchedule)
+    public function checkForFacultyBlockTimeConflicts($newTimeStart, $newTimeEnd, $dayId, $classSchedule)
     {
         // Retrieve all class schedules for the given faculty and day
         $existingClassSchedules = $this->where('academic_year_term_id', $classSchedule->academic_year_term_id)
@@ -26,7 +26,6 @@ class ClassSchedule extends Model
                                 $query->where('day_id', $dayId);
                             })
                             ->get();
-
          // Check for conflicts with each class schedule
         foreach ($existingClassSchedules as $existingClassSchedule) {
             // Convert time strings to Unix timestamp for comparison
@@ -38,15 +37,36 @@ class ClassSchedule extends Model
             // Check if the new time range overlaps with the existing class schedule
             if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
                 ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
-                ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)) {
+                ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)){
                 return true; // Conflict found, return true
             }
         }
+        $existtingClassSchedulesWithSameBlockAndYear = $this->where('academic_year_term_id', $classSchedule->academic_year_term_id)
+                            ->whereNotNull('classroom_id')
+                            ->whereHas('days', function ($query) use ($dayId) {
+                                $query->where('day_id', $dayId);
+                            })
+                            ->where('block_id', $classSchedule->block_id)
+                            ->get();
+        foreach ($existtingClassSchedulesWithSameBlockAndYear as $existingClassSchedule) {
+            // Convert time strings to Unix timestamp for comparison
+            $classStartTime = strtotime($existingClassSchedule->time_start);
+            $classEndTime = strtotime($existingClassSchedule->time_end);
+            $newStartTime = strtotime($newTimeStart);
+            $newEndTime = strtotime($newTimeEnd);
 
+            // Check if the new time range overlaps with the existing class schedule
+            if($existingClassSchedule->subject->year_level == $classSchedule->subject->year_level){
+                if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
+                    ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)){
+                    return true; // Conflict found, return true
+                }
+            }
+        }
         // No conflicts found, return false
         return false;
     }
-
 
 
 

@@ -84,11 +84,11 @@
                                     <div class="row mb-3">
                                         <div class="form-group col-lg-6">
                                             <label for="workload" class=" form-label">Units</label>
-                                            <input type="text" id="workload" name="workload" disabled value="{{$totalLoad}}" class="form-control">
+                                            <input type="text" id="workload" name="workload" disabled value="{{!$totalLoad?"":$totalLoad}}" class="form-control">
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label for="designation" class=" form-label">Designation</label>
-                                            <input class="form-control" type="text" id="designation" name="designation" disabled value="@if ($designations->count() > 0)@foreach ($designations as $designation){{$designation->designation }}{{ !$loop->last ? ', ' : '' }}@endforeach @else None @endif">
+                                            <input class="form-control" type="text" id="designation" name="designation" disabled value="@if (isset($designations) && $designations->count() > 0)@foreach ($designations as $designation){{$designation->designation }}{{ !$loop->last ? ', ' : '' }}@endforeach @else None @endif">
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary rounded float-right">Update</button>
@@ -105,10 +105,23 @@
                             <strong class="card-title">Work Load</strong>
                         </div>
                         <div class="card-body">
+                            <div class="toolbar">
+                                <form action="@if ($academicYearTerm)
+                                {{route('view-pdf',['faculty' => $faculty->id, 'academicYearTerm'=>$academicYearTerm->id])}}"@endif method="Post" target="__blank" class="d-inline">
+                                
+                                    @csrf
+                                    <button class="btn btn-light btn-sm" datatoggle="tooltip" data-placement="top" title="View PDF"><i class="fa-solid fa-eye"></i></button>
+                                </form>
+                                <form action="" method="Post" target="__blank" class="d-inline">
+                                    @csrf
+                                    <button class="btn btn-light btn-sm" data-toggle="tooltip" data-placement="top" title="Download PDF"><i class="fa-solid fa-download"></i></button>
+                                </form>
+                            </div>
                             <table 
                                 id="table" 
                                 data-toggle="table" 
                                 data-search="true"
+                                data-toolbar=".toolbar"
                                 class="table table-bordered">
                                 <thead>
                                     <tr>
@@ -135,8 +148,8 @@
                                         @endphp
                                         <tr>
                                             <td class="col-2">{{$schedule}}</td>
-                                            <td class="col-1">{{$class->subject->course_code}}</td>
-                                            <td class="col-4">{{$class->subject->description}}</td>
+                                            <td class="col-1">{{$class->subject->course_code}}-{{$class->block->block}}</td>
+                                            <td class="col-4">{{$class->subject->description}} <em>({{$class->class_type=='lecture'?'Lec.':'Lab.'}})</em></td>
                                             <td class="col-1">{{$class->units}}</td>
                                             <td class="col-1">{{$room}}</td>
                                             <td class="col-1"><input type="number" class="form-control form-control-sm" value="{{$class->student_count}}"></td>
@@ -158,7 +171,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer text-bg-warning">
                             <div class="row">
                                 <div class="col-3">Regular load: {{$regularLoad}}</div>
                                 <div class="col-3">Overload: {{$overLoad}}</div>

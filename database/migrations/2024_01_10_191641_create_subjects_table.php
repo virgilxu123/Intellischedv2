@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subjects', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('course_code');
             $table->string('description');
             $table->string('units');
             $table->string('year_level');
-            
+            $table->unsignedBigInteger('term_id')->nullable();
             $table->string('subject_type');
             $table->enum('laboratory', ['Yes', 'No']);
             $table->timestamps();

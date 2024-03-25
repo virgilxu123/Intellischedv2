@@ -25,11 +25,11 @@ class ClassScheduleController extends Controller
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $subjects = $subjects->sortBy('year_level');
         $rooms = Classroom::all();
-        $classSchedules = $classSchedules->sortBy(function ($schedule) {
-            $yearLevel = optional($schedule->subject)->year_level;
-            $subjectCode = optional($schedule->subject)->subject_code;
-            return [$yearLevel, $subjectCode];
-        });
+        // $classSchedules = $classSchedules->sortBy(function ($schedule) {
+        //     $yearLevel = optional($schedule->subject)->year_level;
+        //     $subjectCode = optional($schedule->subject)->subject_code;
+        //     return [$yearLevel, $subjectCode];
+        // });
         $classSchedulesWithRooms = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->get();
         $classSchedulesWithRooms->load('subject', 'block', 'classroom', 'faculty', 'days');
         if (request()->ajax()) {
@@ -94,9 +94,9 @@ class ClassScheduleController extends Controller
      */
     public function show(Faculty $faculty, AcademicYearTerm $academicYearTerm)
     {
-        $classSchedules = ClassSchedule::whereIn('faculty_id', $faculty)
-            ->where('academic_year_term_id', $academicYearTerm->id)
-            ->get();
+        $classSchedules = $faculty->class_schedules()
+                    ->where('academic_year_term_id', $academicYearTerm->id)
+                    ->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $totalLoad = $faculty->loadCalculation($academicYearTerm);
         return response()->json(['classSchedules' => $classSchedules, 'totalLoad'=>$totalLoad]);
@@ -163,7 +163,7 @@ class ClassScheduleController extends Controller
         ]);
         // Check for time conflicts
         $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
-        $conflicts = $classSchedule->checkForFacultyTimeConflicts($validated['time_start'], $time_end, $validated['day_id'], $classSchedule);
+        $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id'], $classSchedule);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
@@ -176,6 +176,16 @@ class ClassScheduleController extends Controller
         $classSchedule->days()->attach($validated['day_id']);
         $classSchedule->days()->attach($validated['day_id'] + 3);
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
+    }
+    public function deleteAssignedTimeRoomDay(Request $request, ClassSchedule $classSchedule) {
+        $classSchedule->days()->detach();
+    
+        // Reset class schedule attributes
+        $classSchedule->time_start = null;
+        $classSchedule->time_end = null;
+        $classSchedule->classroom_id = null;
+        $classSchedule->save();
+        return response()->json(['message' => 'Time and Room have been removed from class schedule.', 'classSchedule' => $classSchedule]);
     }
 
     public function updateLoadType(Request $request, ClassSchedule $classSchedule) {

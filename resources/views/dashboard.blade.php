@@ -40,9 +40,8 @@
                                     </span>
                                     <span>
                                         <em>
-                                            <a href="{{route('create-schedule', $academic_year_terms->sortByDesc('created_at')->first()->id)}}"  style="font-size: small">
-                                                {{$academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start}}-{{$academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start+1}}
-                                                {{$academic_year_terms->sortByDesc('created_at')->first()->term->term}}
+                                            <a href="{{ $academic_year_terms->isNotEmpty() ? route('create-schedule', $academic_year_terms->sortByDesc('created_at')->first()->id) : '#' }}" style="font-size: small">
+                                                {{ $academic_year_terms->isNotEmpty() ? $academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start . '-' . ($academic_year_terms->sortByDesc('created_at')->first()->academic_year->year_start + 1) . ' ' . $academic_year_terms->sortByDesc('created_at')->first()->term->term : '' }}
                                             </a>
                                         </em>
                                     </span>

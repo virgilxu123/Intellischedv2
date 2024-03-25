@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('academic_years', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->year('year_start');
             $table->timestamps();
         });

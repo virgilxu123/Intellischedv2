@@ -65,20 +65,27 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        $academicYearTerm = AcademicYearTerm::latest()->first();
-        $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
-            ->with('subject', 'block', 'classroom', 'load_type', 'days')
-            ->get();
         $loadTypes = LoadType::all();
-        $totalLoad = $faculty->loadCalculation($academicYearTerm);
-        $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
-        $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
-        $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         $rooms = Classroom::all();
-        if (request()->ajax()) {
-            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms'=>$rooms, 'regularLoad' => $regularLoad, 'overLoad'=>$overLoad]);
+        $totalLoad = "";
+        $regularLoad = "";
+        $overLoad = "";
+        $designations = null;
+        $classes = [];
+        if($academicYearTerm = AcademicYearTerm::latest()->first()){
+            $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
+                ->with('subject', 'block', 'classroom', 'load_type', 'days')
+                ->get();
+            $totalLoad = $faculty->loadCalculation($academicYearTerm);
+            $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
+            $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
+            $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         }
-        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad'));
+        
+        if (request()->ajax()) {
+            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm'=>$academicYearTerm]);
+        }
+        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm'));
     }
 
     /**
@@ -124,4 +131,6 @@ class FacultyController extends Controller
         }
         return redirect()->route('manage-faculty')->with('delete', 'A faculty member has been deleted!');
     }
+
+    
 }

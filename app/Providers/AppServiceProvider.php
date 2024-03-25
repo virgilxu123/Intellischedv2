@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
             'manage-subjects',
             'dashboard',
             'exports.export-plotted-schedules',
+            'layouts.layout',
         ], function ($view) {
             $view->with('faculties', Faculty::orderBy('first_name')->orderBy('last_name')->get());
             $view->with('terms', Term::all());

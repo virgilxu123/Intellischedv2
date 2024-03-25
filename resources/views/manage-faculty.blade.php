@@ -150,7 +150,7 @@
                                     <label class="form-label" for="status">Status</label>
                                     <select id="status" name="status" data-placeholder="" class="form-control form-select" tabindex="1">
                                         <option value=""></option>
-                                        <option value="Permanent">Permanent</option>
+                                        <option value="Regular">Regular</option>
                                         <option value="Contractual">Contractual</option>
                                         <option value="Part time">Part time</option>
                                     </select>
@@ -245,14 +245,15 @@
                                 return response.json(); // Parse the JSON response
                             })
                         .then(data => {
+                            console.log(data);
                             if(event.target.classList.contains('fa-pen-to-square')) {
                                 let updateFacultyForm = document.getElementById('updateFacultyForm');
                                 updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
-                                updateFacultyForm.first_name.value = data.first_name;
-                                updateFacultyForm.last_name.value = data.last_name;
-                                updateFacultyForm.rank.value = data.rank;
-                                updateFacultyForm.status.value = data.status;
-                                updateFacultyForm.availability.value = data.availability;
+                                updateFacultyForm.first_name.value = data.faculty.first_name;
+                                updateFacultyForm.last_name.value = data.faculty.last_name;
+                                updateFacultyForm.rank.value = data.faculty.rank;
+                                updateFacultyForm.status.value = data.faculty.status;
+                                updateFacultyForm.availability.value = data.faculty.availability;
                             } else {
                                 let deleteFacultyForm = document.getElementById('deleteFacultyForm');
                                 deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);

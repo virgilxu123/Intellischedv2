@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('class_schedule_day', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('class_schedule_id')->constrained();
-            $table->foreignId('day_id')->constrained();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('class_schedule_id');
+            $table->unsignedBigInteger('day_id');
             $table->timestamps();
         });
     }
