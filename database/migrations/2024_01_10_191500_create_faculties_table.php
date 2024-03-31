@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('status');
             $table->binary('image')->nullable();
             $table->boolean('availability')->default(true);
-            $table->string('educational_qualification');
+            $table->string('educational_qualification')->nullable();
             $table->string('color')->nullable();
             $table->timestamps();
         });

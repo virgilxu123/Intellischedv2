@@ -310,30 +310,20 @@
                     .then(data => {
                         // Call the success callback function with the response data
                         successCallback(data);
-                        // Show toast message
-                        let toastElement = document.getElementById('liveToast');
-                        const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                        let toastBody = toastElement.querySelector('.toast-body');
-                        toastBody.textContent = actionType=="delete"?`Warning: ${data.message}`:`Success: ${data.message}`;
-                        // let toastHeader = toastElement.querySelector('.toast-header');
-
                         if (actionType === 'update') {
-                            toastElement.classList.remove('text-bg-danger');
-                            toastElement.classList.add('text-bg-success');
+                            toastr.success(data.message);
                             const modalElement = document.querySelector('#editSubjectModal');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal
                             // toastElement.querySelector('strong').textContent = 'Saved!';
                         } else if (actionType === 'delete') {
-                            toastElement.classList.remove('text-bg-success');
-                            toastElement.classList.add('text-bg-danger');
+                            toastr.warning(data.message);
                             const modalElement = document.querySelector('#deleteSubject');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal
                             // toastElement.querySelector('strong').textContent = 'Deleted!';
                         } else if (actionType == 'add') {
-                            toastElement.classList.remove('text-bg-danger');
-                            toastElement.classList.add('text-bg-success');
+                            toastr.success(data.message);
                             const modalElement = document.querySelector('#addClassModal');
                             const modalInstance = bootstrap.Modal.getInstance(modalElement);
                             modalInstance.hide(); // Close the modal

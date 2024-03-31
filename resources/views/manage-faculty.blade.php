@@ -1,17 +1,6 @@
 @extends('layouts.layout')
 
 @section('content')
-    {{-- toast --}}
-    <div class="toast-container top-0 start-50 translate-middle-x">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-    {{-- toast --}}
     <div class="container-fluid">
         <div class="row animate__animated animate__bounceInRight">
             <div class="col-md-12">
@@ -258,7 +247,7 @@
                                 let deleteFacultyForm = document.getElementById('deleteFacultyForm');
                                 deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
                                 let deleteFacultyMessage = document.getElementById('deleteFacultyMessage');
-                                deleteFacultyMessage.textContent = `Are you sure you want to delete ${data.first_name} ${data.last_name} from the record?`;
+                                deleteFacultyMessage.textContent = `Are you sure you want to delete ${data.faculty.first_name} ${data.faculty.last_name} from the record?`;
                             }
                         })
                         .catch(error => {
@@ -287,32 +276,18 @@
                         })
                         .then(data => {
                             successCallback(data);
-            
-                            // Show toast message
-                            let toastElement = document.getElementById('liveToast');
-                            const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                            let toastBody = toastElement.querySelector('.toast-body');
-                            toastBody.textContent = actionType=="delete"?`Warning: ${data.message}`:`Success: ${data.message}`;
-                            let toastHeader = toastElement.querySelector('.toast-header');
 
                             if (actionType === 'update') {
-                                
-                                toastBody.classList.remove('text-bg-danger');
-                                toastBody.classList.add('text-bg-success');
-                                toastElement.querySelector('.toast-body').textContent = `Success: ${data.message}`;
+                                toastr.success(data.message);
                                 const modalElement = document.querySelector('#updateFacultyModal');
                                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                                 modalInstance.hide(); // Close the modal
                             } else if (actionType === 'delete') {
-                                toastBody.classList.remove('text-bg-danger');
-                                toastBody.classList.add('text-bg-danger');
-                                toastElement.querySelector('.toast-body').textContent = `Warning: ${data.message}`;
+                                toastr.warning(data.message);
                                 const modalElement = document.querySelector('#deleteFaculty');
                                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                                 modalInstance.hide(); // Close the modal
                             }
-                            
-                            toastInstance.show();
                         })
                         .catch(error => {
                             console.error('There has been a problem with your fetch operation:', error);
@@ -333,4 +308,9 @@
             }, 'delete');
         });  
     </script>
+    @if (Session::has('success'))
+        <script>
+            toastr.success('{{ Session::get('success') }}');
+        </script>
+    @endif
 @endsection

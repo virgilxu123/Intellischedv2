@@ -1,16 +1,5 @@
 @extends('layouts.layout')
 @section('content')
-    {{-- toast --}}
-    <div class="toast-container top-0 start-50 translate-middle-x">
-        <div id="liveToast" class="toast align-items-centerborder-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-    {{-- toast --}}
     <div class="container-fluid">
         <div class="row animate__animated animate__bounceInRight">
             <div class="col-md-7">
@@ -100,12 +89,6 @@
                     }
                 }).then(response => response.json())
                 .then(data => {
-                    let toastElement = document.getElementById('liveToast');
-                    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                    let toastBody = toastElement.querySelector('.toast-body');
-                    toastElement.classList.remove('text-bg-danger');
-                    toastElement.classList.add('text-bg-success');
-                    toastBody.innerHTML = data.success;
                     let route = `{{route('create-schedule', ':id')}}`.replace(':id', data.academicYearTerm.id);
                     if ($('#table tbody tr').hasClass('no-records-found')) {
                         $('#table tbody').empty();
@@ -115,17 +98,9 @@
                                     <td><a href="${route}"><em>${data.academicYearTerm.term.term}</em></a></td>
                                 </tr>`;
                     $('#table tbody').prepend(row); 
-                    toastInstance.show();
+                    toastr.success(data.success);
                 }).catch(error => {
-                    if (!(error.response && error.response.status === 422)) {
-                        let toastElement = document.getElementById('liveToast');
-                        const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                        let toastBody = toastElement.querySelector('.toast-body');
-                        toastElement.classList.remove('text-bg-success');
-                        toastElement.classList.add('text-bg-warning');
-                        toastBody.innerHTML = 'Schedule already exist';
-                        toastInstance.show();
-                    }
+                    toastr.error('An error occurred. Please try again later.');
                 });
             });
         });

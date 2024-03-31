@@ -4,7 +4,7 @@
             <div class="card-header bg-dark text-light">
                 <h5 class="card-title">Classes</h5>
             </div>
-            <div id="classesWithNoRoomAndTime" class="card-body">
+            <div id="" class="card-body classesWithNoRoomAndTime">
                 {{-- @foreach ($classSchedules as $classSchedule)
                     @if ($classSchedule->faculty_id != null && $classSchedule->classroom_id == null)
                         <div class="badge fill mb-3" draggable="true" style="display: block;background-color: {{$classSchedule->faculty->color}};" data-class-schedule-id="{{$classSchedule->id}}">

@@ -52,17 +52,6 @@
     </style>
 @endsection
 @section('content')
-    {{-- toast --}}
-    <div class="toast-container top-0 start-50 translate-middle-x position-fixed">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                </div>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-    {{-- toast --}}
     <div class="container-fluid">
         <div class="row animate__animated animate__bounceInRight">
             <div class="col-md-12">
@@ -275,7 +264,7 @@
                     const modalInstance = bootstrap.Modal.getInstance(modalElement);
                     modalInstance.hide(); // Close the modal
                     message = "Classes successfully loaded!"
-                    showToast("success", message)
+                    toastr.success(message);
                     fetchClassSchedules(facultyId, academicYearTerm);
                 })
             });
@@ -504,7 +493,7 @@
                 })
                 .then(data => {
                     message = 'Designation successfully assigned';
-                    showToast("success", message);
+                    toastr.success(message);
                     fetchDesignations(facultyId, academicYearTerm);
                 })
                 .catch(error => {
@@ -529,7 +518,7 @@
                 })
                 .then(data => {
                     message = 'Designation has been removed';
-                    showToast("success", message);
+                    toastr.warning(message);
                     fetchDesignations(facultyId, academicYearTerm);
                 })
                 .catch(error => {
@@ -649,11 +638,11 @@
                 })
                 .then(data => {
                     message = "Successfully assigned time and room!";
-                    showToast('success', message);
+                    toastr.success(message);
                 })
                 .catch(error => {
                     message = "Schedule Conflict: Instructor/Block conflict";
-                    showToast('error', message);    
+                    toastr.error(message);
                 });
             }
 
@@ -676,9 +665,10 @@
                 })
                 .then(data => {
                     $('.classesWithNoRoomAndTime').empty();
-                    console.log(data);
+                    
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
+                            console.log(classSchedule);
                             let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
                                 <em>${classSchedule.subject.course_code}-${classSchedule.block.block} ${classSchedule.class_type == 'lecture' ? 'Lec' : classSchedule.class_type == 'laboratory' ? 'Lab' : ''}</em><br>
                                 ${classSchedule.faculty.first_name} ${classSchedule.faculty.last_name}
@@ -710,7 +700,7 @@
                     const facultyName = classSchedule.faculty.first_name + ' ' + classSchedule.faculty.last_name;
                     const facultyColor = classSchedule.faculty.color;
                     const rowsToSpan = 3;
-                    const html = `<div class="rounded fill p-1" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:120px;position:relative;" data-class-schedule-id="${classSchedule.id}"><span class="delete-sched"><i class="fa-solid fa-xmark"></i></span>${courseCode} <em>${description}</em>-${block} <br><b>${facultyName}</b></div>`;
+                    const html = `<div class="rounded fill p-1 text-dark" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:120px;position:relative;" data-class-schedule-id="${classSchedule.id}"><span class="delete-sched"><i class="fa-solid fa-xmark"></i></span>${courseCode} <em>${description}</em>-${block} <br><b>${facultyName}</b></div>`;
 
                     // Find the first empty cell for the given room and time
                     const timeCell = document.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);
@@ -756,12 +746,12 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    message = "Successfully deleted time and room!";
-                    showToast('success', message);
+                    message = "Warning: A schedule has been removed!";
+                    toastr.warning(message);
                 })
                 .catch(error => {
                     message = "Error deleting time and room!";
-                    showToast('error', message);
+                    toastr.error(message);
                 });
             }
 
@@ -788,4 +778,9 @@
         //script for tab 3
         });
     </script>
+    @if(Session::has('success'))
+        <script>
+            toastr.success("{{Session::get('success')}}");
+        </script>
+    @endif
 @endsection

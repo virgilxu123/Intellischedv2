@@ -25,11 +25,6 @@ class ClassScheduleController extends Controller
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $subjects = $subjects->sortBy('year_level');
         $rooms = Classroom::all();
-        // $classSchedules = $classSchedules->sortBy(function ($schedule) {
-        //     $yearLevel = optional($schedule->subject)->year_level;
-        //     $subjectCode = optional($schedule->subject)->subject_code;
-        //     return [$yearLevel, $subjectCode];
-        // });
         $classSchedulesWithRooms = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->get();
         $classSchedulesWithRooms->load('subject', 'block', 'classroom', 'faculty', 'days');
         if (request()->ajax()) {
@@ -86,7 +81,7 @@ class ClassScheduleController extends Controller
                 }
             }
         }
-        return back()->with('success', 'Class Schedule has been created.');
+        return back()->with('success', 'Classes have been openned.');
     }
 
     /**
@@ -163,7 +158,7 @@ class ClassScheduleController extends Controller
         ]);
         // Check for time conflicts
         $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
-        $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id'], $classSchedule);
+        $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id']);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
@@ -187,13 +182,14 @@ class ClassScheduleController extends Controller
         $classSchedule->save();
         return response()->json(['message' => 'Time and Room have been removed from class schedule.', 'classSchedule' => $classSchedule]);
     }
-
     public function updateLoadType(Request $request, ClassSchedule $classSchedule) {
         $validated = $request->validate([
             'load_type' => 'required',
         ]);
         $classSchedule->load_type_id = $validated['load_type'];
         $classSchedule->save();
-        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule]);
+        $faculty = $classSchedule->faculty;
+        $facultyLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Regular Load');
+        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'facultyLoad'=>$facultyLoad]);
     }
 }

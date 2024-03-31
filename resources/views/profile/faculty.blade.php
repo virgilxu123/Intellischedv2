@@ -173,10 +173,10 @@
                         </div>
                         <div class="card-footer text-bg-warning">
                             <div class="row">
-                                <div class="col-3">Regular load: {{$regularLoad}}</div>
-                                <div class="col-3">Overload: {{$overLoad}}</div>
-                                <div class="col-3">Emergency Load:</div>
-                                <div class="col-3">Praise Load:</div>
+                                <div class="col-3">Regular load: <span id="regularLoad">{{$regularLoad}}</span></div>
+                                <div id="overLoad" class="col-3">Overload: {{$overLoad}}</div>
+                                <div id="emergencyLoad" class="col-3">Emergency Load:</div>
+                                <div id="praiseLoad" class="col-3">Praise Load:</div>
                             </div>
                         </div>
                     </div>
@@ -212,33 +212,14 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    showToast('success', data.message);
+                    $('#regularLoad').text(data.facultyLoad);
+                    toastr.success(data.message);
                 })
                 .catch(error => {
                     let message = "An error has occured";
                     showToast('error', message);
                 });
             });
-            function showToast(status, message) {
-                let toastElement = document.getElementById('liveToast');
-                const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                let toastBody = toastElement.querySelector('.toast-body');
-                toastBody.textContent = message;
-                if(status==='success'){
-                    toastElement.classList.remove('text-bg-danger');
-                    toastElement.classList.add('text-bg-success');
-                }
-                if(status==='error'){
-                    toastElement.classList.remove('text-bg-success');
-                    toastElement.classList.add('text-bg-danger');
-                }
-                toastElement.classList.remove('hide');
-                toastElement.classList.add('show');
-                setTimeout(() => {
-                    toastElement.classList.remove('show');
-                    toastElement.classList.add('hide');
-                }, 4000);
-            }
         });
     </script>
 @endsection

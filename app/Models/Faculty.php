@@ -54,7 +54,6 @@ class Faculty extends Model
             $designationsUnits = $this->designations()
                 ->wherePivot('academic_year_term_id', $academicYearTerm->id)
                 ->sum('units');
-            
             return $query->sum('units') + $designationsUnits;
         }
 

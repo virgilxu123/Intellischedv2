@@ -46,7 +46,7 @@ class FacultyController extends Controller
                 }),
             ],
             'last_name' => 'required|string|max:255',
-            'rank' => 'required|string|max:255',
+            'rank' => '',
             'status' => 'required|string|max:255',
         ]);
 
@@ -54,7 +54,7 @@ class FacultyController extends Controller
         $faculty = Faculty::create($validatedData);
 
         if ($faculty) {
-            // Return a JSON response indicating success
+
             return redirect()->route('manage-faculty')->with('success', 'Faculty created successfully!');
         }
     }
@@ -72,7 +72,7 @@ class FacultyController extends Controller
         $overLoad = "";
         $designations = null;
         $classes = [];
-        if($academicYearTerm = AcademicYearTerm::latest()->first()){
+        if ($academicYearTerm = AcademicYearTerm::latest()->first()) {
             $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
                 ->with('subject', 'block', 'classroom', 'load_type', 'days')
                 ->get();
@@ -81,9 +81,9 @@ class FacultyController extends Controller
             $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
             $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         }
-        
+
         if (request()->ajax()) {
-            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm'=>$academicYearTerm]);
+            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm' => $academicYearTerm]);
         }
         return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm'));
     }
@@ -111,7 +111,7 @@ class FacultyController extends Controller
         $validatedData = $request->validate([
             'first_name' => ['required', $uniqueName],
             'last_name' => ['required', $uniqueName],
-            'rank' => 'required',
+            'rank' => '',
             'status' => 'required',
             'availability' => 'required',
         ]);
@@ -131,6 +131,4 @@ class FacultyController extends Controller
         }
         return redirect()->route('manage-faculty')->with('delete', 'A faculty member has been deleted!');
     }
-
-    
 }
