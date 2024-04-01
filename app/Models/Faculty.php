@@ -56,8 +56,60 @@ class Faculty extends Model
                 ->sum('units');
             return $query->sum('units') + $designationsUnits;
         }
-
+        if($loadType === 'Overload'){
+            return $query->sum('units');
+        }
         return $query->sum('units');
     }
 
+    public function regularLoad($academicYearTerm) 
+    {
+        return $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->whereHas('load_type', function ($query) {
+                $query->where('load_type', 'Regular Load');
+            })
+            ->sum('units');
+    }
+    public function overLoad($academicYearTerm)
+    {
+        return $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->whereHas('load_type', function ($query) {
+                $query->where('load_type', 'Overload');
+            })
+            ->sum('units');
+    }
+    public function emergencyLoad($academicYearTerm)
+    {
+        return $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->whereHas('load_type', function ($query) {
+                $query->where('load_type', 'Emergency Load');
+            })
+            ->sum('units');
+    }
+    public function praiseLoad($academicYearTerm)
+    {
+        return $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->whereHas('load_type', function ($query) {
+                $query->where('load_type', 'Praise Load');
+            })
+            ->sum('units');
+    }
+    public function designationLoad($academicYearTerm)
+    {
+        return $this->designations()
+            ->where('unique', 1)
+            ->wherePivot('academic_year_term_id', $academicYearTerm->id)
+            ->sum('units');
+    }
+    public function mandatoryDeLoading($academicYearTerm)
+    {
+        return $this->designations()
+            ->where('unique', 0)
+            ->wherePivot('academic_year_term_id', $academicYearTerm->id)
+            ->sum('units');
+    }
 }

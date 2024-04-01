@@ -69,6 +69,7 @@
                                                 <option value="Professor 4">Professor 4</option>
                                                 <option value="Professor 5">Professor 5</option>
                                                 <option value="Professor 6">Professor 6</option>
+                                                <option value="University Professor">University Professor</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-lg-6">
@@ -110,11 +111,11 @@
                                 {{route('view-pdf',['faculty' => $faculty->id, 'academicYearTerm'=>$academicYearTerm->id])}}"@endif method="Post" target="__blank" class="d-inline">
                                 
                                     @csrf
-                                    <button class="btn btn-light btn-sm" datatoggle="tooltip" data-placement="top" title="View PDF"><i class="fa-solid fa-eye"></i></button>
+                                    <button class="btn btn-light btn-sm py-0 px-1" datatoggle="tooltip" data-placement="top" title="View PDF"><i class="fa-regular fa-file-pdf"></i></button>
                                 </form>
                                 <form action="" method="Post" target="__blank" class="d-inline">
                                     @csrf
-                                    <button class="btn btn-light btn-sm" data-toggle="tooltip" data-placement="top" title="Download PDF"><i class="fa-solid fa-download"></i></button>
+                                    <button class="btn btn-light btn-sm py-0 px-1" data-toggle="tooltip" data-placement="top" title="Download PDF"><i class="fa-solid fa-download"></i></button>
                                 </form>
                             </div>
                             <table 
@@ -152,7 +153,12 @@
                                             <td class="col-4">{{$class->subject->description}} <em>({{$class->class_type=='lecture'?'Lec.':'Lab.'}})</em></td>
                                             <td class="col-1">{{$class->units}}</td>
                                             <td class="col-1">{{$room}}</td>
-                                            <td class="col-1"><input type="number" class="form-control form-control-sm" value="{{$class->student_count}}"></td>
+                                            <td class="col-1">
+                                                <form action="{{route('update-student-count', ['classSchedule'=>$class->id])}}" method="POST" id="studentCountForm">
+                                                    @csrf
+                                                    <input type="number" name="student_count" class="form-control form-control-sm studentCount" value="{{$class->student_count}}">
+                                                </form>
+                                            </td>
                                             <td class="col-2">
                                                 <form action="{{route('update-load-type', ['classSchedule'=>$class->id])}}" method="POST">
                                                     @csrf
@@ -174,7 +180,7 @@
                         <div class="card-footer text-bg-warning">
                             <div class="row">
                                 <div class="col-3">Regular load: <span id="regularLoad">{{$regularLoad}}</span></div>
-                                <div id="overLoad" class="col-3">Overload: {{$overLoad}}</div>
+                                <div class="col-3">Overload: <span id="overLoad">{{$overLoad}}</span></div>
                                 <div id="emergencyLoad" class="col-3">Emergency Load:</div>
                                 <div id="praiseLoad" class="col-3">Praise Load:</div>
                             </div>
@@ -212,7 +218,37 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    $('#regularLoad').text(data.facultyLoad);
+                    $('#regularLoad').text(data.regularLoad);
+                    $('#overLoad').text(data.overLoad);
+                    toastr.success(data.message);
+                })
+                .catch(error => {
+                    let message = "An error has occured";
+                    showToast('error', message);
+                });
+            });
+            $('.studentCount').on('focusout', function(e){
+                e.preventDefault();
+                let form = $(this).closest('form');
+                let url = form.attr('action');
+                let value = $(this).val();
+                let formData = new FormData(form[0]);
+                formData.append('student_count', value);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
                     toastr.success(data.message);
                 })
                 .catch(error => {

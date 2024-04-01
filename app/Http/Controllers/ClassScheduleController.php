@@ -59,7 +59,7 @@ class ClassScheduleController extends Controller
         ]);
         $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
         foreach ($subject_ids as $subject_id) {
-            for ($i = 1; $i <= $validated['blocks']; $i++) {// create a class for lecture
+            for ($i = 1; $i <= $validated['blocks']; $i++) { // create a class for lecture
                 $classSchedule = new ClassSchedule();
                 $classSchedule->subject_id = $subject_id;
                 $classSchedule->academic_year_term_id = $academicYearTerm->id;
@@ -68,8 +68,8 @@ class ClassScheduleController extends Controller
                 $classSchedule->class_type = 'lecture';
                 $classSchedule->save();
             }
-            $subject = Subject::find($subject_id);//if the subject has a laboratory create a class for laboratory
-            if($subject->laboratory==='Yes'){
+            $subject = Subject::find($subject_id); //if the subject has a laboratory create a class for laboratory
+            if ($subject->laboratory === 'Yes') {
                 for ($i = 1; $i <= $validated['blocks']; $i++) {
                     $classSchedule = new ClassSchedule();
                     $classSchedule->subject_id = $subject_id;
@@ -81,7 +81,7 @@ class ClassScheduleController extends Controller
                 }
             }
         }
-        return back()->with('success', 'Classes have been openned.');
+        return back()->with('success', 'Subjects successfully opened!');
     }
 
     /**
@@ -90,11 +90,11 @@ class ClassScheduleController extends Controller
     public function show(Faculty $faculty, AcademicYearTerm $academicYearTerm)
     {
         $classSchedules = $faculty->class_schedules()
-                    ->where('academic_year_term_id', $academicYearTerm->id)
-                    ->get();
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $totalLoad = $faculty->loadCalculation($academicYearTerm);
-        return response()->json(['classSchedules' => $classSchedules, 'totalLoad'=>$totalLoad]);
+        return response()->json(['classSchedules' => $classSchedules, 'totalLoad' => $totalLoad]);
     }
 
     /**
@@ -134,7 +134,7 @@ class ClassScheduleController extends Controller
         // Assign the faculty to each class schedule
         $classSchedules->each(function ($classSchedule) use ($faculty) {
             $classSchedule->faculty_id = $faculty->id;
-            if($classSchedule->subject->laboratory=='Yes'){//assign also the laboratory class to faculty
+            if ($classSchedule->subject->laboratory == 'Yes') { //assign also the laboratory class to faculty
                 $labSchedule = ClassSchedule::where('subject_id', $classSchedule->subject_id)
                     ->where('block_id', $classSchedule->block_id)
                     ->where('class_type', 'laboratory')
@@ -147,6 +147,23 @@ class ClassScheduleController extends Controller
         $classSchedules = ClassSchedule::where('faculty_id', $faculty->id)->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty',);
         return response()->json(['message' => 'Class Schedules have been assigned to faculty.', 'classSchedules' => $classSchedules]);
+    }
+
+    public function unAssignClassScheduleFromFaculty(ClassSchedule $classSchedule)
+    {
+        $subject_id = $classSchedule->subject_id;
+        $block_id = $classSchedule->block_id;
+        $classSchedules = ClassSchedule::selectBothLabAndLecClasses($subject_id, $block_id);
+        $classSchedules->each(function ($classSchedule) {
+            $classSchedule->days()->detach();
+            $classSchedule->faculty_id = null;
+            $classSchedule->time_start = null;
+            $classSchedule->time_end = null;
+            $classSchedule->classroom_id = null;
+            $classSchedule->load_type_id = null;
+            $classSchedule->save();
+        });
+        return response()->json(['message' => 'Class has been unassigned from faculty.', 'classSchedule' => $classSchedule]);
     }
 
     public function assignTimeRoomDay(Request $request, ClassSchedule $classSchedule)
@@ -172,9 +189,11 @@ class ClassScheduleController extends Controller
         $classSchedule->days()->attach($validated['day_id'] + 3);
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
-    public function deleteAssignedTimeRoomDay(Request $request, ClassSchedule $classSchedule) {
+
+    public function deleteAssignedTimeRoomDay(Request $request, ClassSchedule $classSchedule)
+    {
         $classSchedule->days()->detach();
-    
+
         // Reset class schedule attributes
         $classSchedule->time_start = null;
         $classSchedule->time_end = null;
@@ -182,14 +201,27 @@ class ClassScheduleController extends Controller
         $classSchedule->save();
         return response()->json(['message' => 'Time and Room have been removed from class schedule.', 'classSchedule' => $classSchedule]);
     }
-    public function updateLoadType(Request $request, ClassSchedule $classSchedule) {
+
+    public function updateLoadType(Request $request, ClassSchedule $classSchedule)
+    {
         $validated = $request->validate([
             'load_type' => 'required',
         ]);
         $classSchedule->load_type_id = $validated['load_type'];
         $classSchedule->save();
         $faculty = $classSchedule->faculty;
-        $facultyLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Regular Load');
-        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'facultyLoad'=>$facultyLoad]);
+        $regularLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Regular Load');
+        $overLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Overload');
+        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad]);
+    }
+
+    public function updateNumberOfStudents(Request $request, ClassSchedule $classSchedule) {
+        $validated = $request->validate([
+            'student_count' => 'required',
+        ]);
+
+        $classSchedule->student_count = $validated['student_count'];
+        $classSchedule->save();
+        return response()->json(['message' => 'Number of students updated successfully']);
     }
 }

@@ -68,7 +68,12 @@ class ClassSchedule extends Model
         return false;
     }
 
-
+    public static function selectBothLabAndLecClasses($subjectId, $blockId)
+    {
+        return self::where('subject_id', $subjectId)
+                    ->where('block_id', $blockId)
+                    ->get();
+    }
 
     public function block()
     {

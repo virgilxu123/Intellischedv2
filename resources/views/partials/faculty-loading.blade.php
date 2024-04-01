@@ -43,7 +43,7 @@
                 <div class="d-flex justify-content-between">
                     <p class="d-inline">Name: <strong><span id="facultyName">{{$firstFaculty->first_name}} {{$firstFaculty->last_name}}</span></strong></p>
                     <div class="d-inline">
-                        <form action="" method="Post" target="__blank" class="d-inline">
+                        <form action="" method="Post" target="__blank" class="d-inline" id="viewPDF">
                             @csrf
                             <button class="btn btn-light btn-sm py-0 px-1" data-toggle="tooltip" data-placement="top" title="View PDF"><i class="fa-regular fa-file-pdf"></i></button>
                         </form>

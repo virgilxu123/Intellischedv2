@@ -199,6 +199,7 @@
             let $filterSelect = $('#filterSelect');
             let academicYearTerm = $('#button').data('academic-year-term');
             let academicYearTermId = $('.academic_year_term').data('academic-year-term');
+            let facultyId;
             // select subjects to be opened
             $button.click(function () {
                 let $selected = $table.bootstrapTable('getSelections');
@@ -214,23 +215,6 @@
                     alert('Please select a subject');
                 }
             });
-            //filter subjects by year level
-            // $(function() {
-            //     $filterSelect.change(function () {
-            //         let selectedValue = $filterSelect.val();
-            //         if (selectedValue === "") {
-            //             // Reset the table to display all data
-            //             $table.bootstrapTable('filterBy', {});
-            //         } else {
-            //             // Filter the table by the selected value
-            //             $table.bootstrapTable('filterBy', {
-            //                 year_level: [selectedValue]
-            //             });
-            //         }
-            //     });
-            // });
-            //script to open modal for loading of subject/classes
-            let facultyId;
             $(document).on('click', '.loadBtn', function(e) {
                 if ($(this).hasClass('loadBtn')) {
                     facultyId = $(this).data('faculty-id'); 
@@ -353,7 +337,6 @@
             });
             $('.faculty-row').click(function () {
                 let facultyId = $(this).data('faculty-id');
-                console.log(facultyId)
                 let facultyName = $(this).data('faculty-name');
                 $('#facultyName').text(facultyName);
                 $('.faculty-row').removeClass('selected-row');
@@ -362,6 +345,14 @@
                 fetchClassSchedules(facultyId, academicYearTerm);
                 fetchDesignations(facultyId, academicYearTerm);
             });
+            //unassign class from faculty
+            $('#class-schedule-body').on('click','.unAssignClass', function(e) {
+                e.preventDefault();
+                facultyId = $('.faculty-row.selected-row').data('faculty-id');
+                let classScheduleId = $(this).data('class-id');
+                unAssignClass(classScheduleId);
+                fetchClassSchedules(facultyId, academicYearTerm);
+            });
             //submit assign designation form
             $('#assignDesignationForm').on('submit', function(e){
                 e.preventDefault();
@@ -369,7 +360,7 @@
                 facultyId = $('.faculty-row.selected-row').data('faculty-id');
                 console.log(facultyId);
                 assignDesignation(facultyId, academicYearTerm, formData)
-            })
+            });
             $('#designation-body').on('click', '.btn-danger', function() {
                 let designationId = $(this).data('designation-id');
                 facultyId = $('.faculty-row.selected-row').data('faculty-id');
@@ -413,7 +404,7 @@
                                 let html = `<tr class="class-schedule-row animate fadeIn" data-faculty-id="${classSchedule.faculty_id}">
                                                 <td>${classSchedule.subject.course_code}- <em>${classSchedule.subject.description}</em> ${yearLevel}${classSchedule.block.block}</td>
                                                 <td style="font-size:x-small;"><em>${classSchedule.time_start ? `${classSchedule.days[0].day}/${classSchedule.days[1].day}<br>${classSchedule.time_start}-${classSchedule.time_end}` : 'TBD'}</em></td>
-                                                <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
+                                                <td class="text-center" data-class-id="${classSchedule.id}"><button class="btn btn-danger py-0 px-2 rounded unAssignClass" data-class-id="${classSchedule.id}" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
                                             </tr>`;
                                 $('#class-schedule-body').append(html);
                             }
@@ -426,6 +417,30 @@
                 });
             }
         //function to fetch schedule of faculty a and render in load overview
+        //function to unassign schedule from faculty
+            function unAssignClass(classSchedule_id) {
+                fetch(`{{ route("unassign-class", ":classScheduleId") }}`.replace(':classScheduleId', classSchedule_id), {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', // Add CSRF token header
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    message = 'Class has been removed';
+                    toastr.warning(message);
+                    fetchClassSchedules(facultyId, academicYearTerm);
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+            }
         //script for fetching designations   
             function fetchDesignations(facultyId, academicYearTerm) {
                 fetch(`{{ route("show-designation", [":facultyId", ":academicYearTerm"]) }}`.replace(':facultyId', facultyId).replace(':academicYearTerm', academicYearTerm),{
@@ -755,26 +770,26 @@
                 });
             }
 
-            function showToast(status, message) {
-                let toastElement = document.getElementById('liveToast');
-                const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-                let toastBody = toastElement.querySelector('.toast-body');
-                toastBody.textContent = message;
-                if(status==='success'){
-                    toastElement.classList.remove('text-bg-danger');
-                    toastElement.classList.add('text-bg-success');
-                }
-                if(status==='error'){
-                    toastElement.classList.remove('text-bg-success');
-                    toastElement.classList.add('text-bg-danger');
-                }
-                toastElement.classList.remove('hide');
-                toastElement.classList.add('show');
-                setTimeout(() => {
-                    toastElement.classList.remove('show');
-                    toastElement.classList.add('hide');
-                }, 4000);
-            }
+            // function showToast(status, message) {
+            //     let toastElement = document.getElementById('liveToast');
+            //     const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
+            //     let toastBody = toastElement.querySelector('.toast-body');
+            //     toastBody.textContent = message;
+            //     if(status==='success'){
+            //         toastElement.classList.remove('text-bg-danger');
+            //         toastElement.classList.add('text-bg-success');
+            //     }
+            //     if(status==='error'){
+            //         toastElement.classList.remove('text-bg-success');
+            //         toastElement.classList.add('text-bg-danger');
+            //     }
+            //     toastElement.classList.remove('hide');
+            //     toastElement.classList.add('show');
+            //     setTimeout(() => {
+            //         toastElement.classList.remove('show');
+            //         toastElement.classList.add('hide');
+            //     }, 4000);
+            // }
         //script for tab 3
         });
     </script>

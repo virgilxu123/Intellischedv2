@@ -62,10 +62,12 @@ Route::middleware('auth')->group(function () {
     Route::get('create-schedule/{academic_year_term}', [ClassScheduleController::class, 'index'])->name('create-schedule');
     Route::post('create-class-schedule/{academic_year_term}', [ClassScheduleController::class, 'store'])->name('create-class-schedule');
     Route::post('assign-classes/{faculty}', [ClassScheduleController::class, 'assignClassSchedulesToFaculty'])->name('assign-classes');
+    Route::post('unassign-class/{classSchedule}', [ClassScheduleController::class, 'unAssignClassScheduleFromFaculty'])->name('unassign-class');
     Route::get('show-faculty-load/{faculty}/{academicYearTerm}', [ClassScheduleController::class, 'show'])->name('show-faculty-load');
     Route::post('assign-time-room-day/{classSchedule}', [ClassScheduleController::class, 'assignTimeRoomDay'])->name('assign-time-room-day');
     Route::post('update-load-type/{classSchedule}', [ClassScheduleController::class, 'updateLoadType'])->name('update-load-type');
     Route::post('delete-time-room-day/{classSchedule}', [ClassScheduleController::class, 'deleteAssignedTimeRoomDay'])->name('delete-time-room-day');
+    Route::post('update-student-count/{classSchedule}', [ClassScheduleController::class, 'updateNumberOfStudents'])->name('update-student-count');
 
     Route::post('export-plotted-schedule/{academic_year_term}', [ExportController::class, 'exportPlottedSchedule'])->name('export-plotted-schedule');
     Route::post('view-pdf/{faculty}/{academicYearTerm}', [ExportController::class, 'viewPDF'])->name('view-pdf');
