@@ -113,11 +113,13 @@ class FacultyController extends Controller
             'last_name' => ['required', $uniqueName],
             'rank' => '',
             'status' => 'required',
-            'availability' => 'required',
         ]);
         $faculty->update($validatedData);
 
-        return response()->json(['success' => true, 'message' => 'Changes has been saved!', 'updatedData' => $faculty]);
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Changes has been saved!', 'updatedData' => $faculty]);
+        }
+        return back()->with(['success' => 'Information has been updated!']);
     }
 
     /**

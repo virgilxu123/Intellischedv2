@@ -147,7 +147,6 @@
                                 <div class="col-lg-6">
                                     <label class="form-label" for="availability">Availability</label>
                                     <select id="availability" name="availability" data-placeholder="" class="form-control form-select" tabindex="1">
-                                        <option value=""></option>
                                         <option value="1">Available</option>
                                         <option value="0">Not Available</option>
                                     </select>

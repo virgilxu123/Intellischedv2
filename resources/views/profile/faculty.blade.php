@@ -34,16 +34,16 @@
                         </div>
                         
                             <div class="card-body card-block">
-                                <form action="" method="post" class="">
+                                <form action="{{route('update-faculty',['faculty'=>$faculty->id])}}" method="post">
                                     @csrf
                                     <div class="row mb-3">
                                         <div class="form-group col-lg-6">
                                             <label for="name" class=" form-label">First Name</label>
-                                            <input type="text" id="name" name="name" value="{{$faculty->first_name}}" class="form-control">
+                                            <input type="text" id="name" name="first_name" value="{{$faculty->first_name}}" class="form-control">
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label for="name" class=" form-label">Last Name</label>
-                                            <input type="text" id="name" name="name" value="{{$faculty->last_name}}" class="form-control">
+                                            <input type="text" id="name" name="last_name" value="{{$faculty->last_name}}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="row mb-3">
@@ -75,10 +75,9 @@
                                         <div class="form-group col-lg-6">
                                             <label for="nf-password" class=" form-label">Status</label>
                                             <select name="status" data-placeholder="" class="form-control form-select" tabindex="1">
-                                                <option value="{{$faculty->status}}">{{$faculty->status}}</option>
-                                                <option value="Permanent">Permanent</option>
-                                                <option value="Contractual">Contractual</option>
-                                                <option value="Part time">Part time</option>
+                                                <option value="Regular" {{$faculty->status == 'Regular' ? 'selected' : ''}}>Regular</option>
+                                                <option value="Contractual" {{$faculty->status == 'Contractual' ? 'selected' : ''}}>Contractual</option>
+                                                <option value="Part time" {{$faculty->status == 'Part time' ? 'selected' : ''}}>Part time</option>
                                             </select>
                                         </div>
                                     </div>
@@ -258,4 +257,9 @@
             });
         });
     </script>
+    @if (Session::has('success'))
+        <script>
+            toastr.success('{{ Session::get('success') }}');
+        </script>
+    @endif
 @endsection

@@ -330,7 +330,6 @@
                             document.querySelector('#addClassModal form').reset();
                             // toastElement.querySelector('strong').textContent = 'Added!';
                         }
-                        toastInstance.show();
                     })
                     .catch(error => {
                         console.error('There was a problem with the fetch operation:', error);
