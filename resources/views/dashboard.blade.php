@@ -82,17 +82,17 @@
                         <div class="d-flex align-items-start">
                             <div class="flex-grow-1">
                                 <h4 class="mb-2">
-                                    $ 78.00
+                                    {{$numberOfClasses}}
                                 </h4>
                                 <p class="mb-2">
-                                    Total Number of Classes
+                                    Number of Classes
                                 </p>
                                 <div class="mb-0">
-                                    <span class="badge text-success me-2">
-                                        +9.0%
+                                    <span class="badge text-bg-success me-2">
+                                        Scheduled: {{$numberOfScheduledClasses}}
                                     </span>
-                                    <span class="text-muted">
-                                        Since Last Month
+                                    <span class="badge text-bg-danger me-2">
+                                        Unscheduled: {{$numberOfUnScheduledClasses}}
                                     </span>
                                 </div>
                             </div>

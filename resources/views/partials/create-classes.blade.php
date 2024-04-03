@@ -1,7 +1,7 @@
 <h5>Course Offerings</h5>
 <div id="toolbar" class="me-1">
 
-    <button id="button" class="btn btn-primary rounded" data-academic-year-term="{{$academicYearTerm->id}}"><i class="fa fa-plus-square"></i> Open</button>
+    <button id="button" class="btn btn-primary rounded" data-academic-year-term="{{$academicYearTerm->id}}"><i class="fa fa-plus-square"></i> Open|Edit</button>
     {{-- <select id="filterSelect" class="form-control" >
         <option value="">All</option>
         <option value="1st Year">1st Year</option>

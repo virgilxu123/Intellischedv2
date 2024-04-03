@@ -116,6 +116,7 @@
                                     @csrf
                                     <button class="btn btn-light btn-sm py-0 px-1" data-toggle="tooltip" data-placement="top" title="Download PDF"><i class="fa-solid fa-download"></i></button>
                                 </form>
+                                <a href=@if ($academicYearTerm)"{{route('create-schedule', ['academic_year_term'=>$academicYearTerm->id])}}"@endif style="font-size: small">&nbsp;&nbsp;Faculty loading >></a>
                             </div>
                             <table 
                                 id="table" 

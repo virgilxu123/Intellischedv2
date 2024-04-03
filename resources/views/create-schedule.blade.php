@@ -114,6 +114,31 @@
         </div>
     </div>
     {{-- open classes modal --}}
+    {{-- edit class modal start --}}
+    <div id="editClass" class="modal fade fadeIn" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="" method="POST" id="editClassForm">
+            @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Open New Classes/Blocks</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="subjectId[]" value="">
+                        <label class="form-label" for="blocks">Enter number of blocks for selected subjects</label>
+                        <input id="blocks" name="blocks" class="form-control" type="number">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary rounded">Ok</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>   
+    {{-- edit class modal end --}}
     {{-- loadSubject --}}
     <div class="modal fade" id="loadSubject" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">

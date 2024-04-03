@@ -11,12 +11,17 @@ use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use App\Models\ClassSchedule;
 use App\Models\AcademicYearTerm;
+use App\Services\ClassScheduleService;
 
 class ClassScheduleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $classScheduleService;
+
+    public function __construct(ClassScheduleService $classScheduleService)
+    {
+        $this->classScheduleService = $classScheduleService;
+    }
+
     public function index(AcademicYearTerm $academicYearTerm)
     {
         $designations = Designation::all();
@@ -59,27 +64,7 @@ class ClassScheduleController extends Controller
         ]);
         $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
         foreach ($subject_ids as $subject_id) {
-            for ($i = 1; $i <= $validated['blocks']; $i++) { // create a class for lecture
-                $classSchedule = new ClassSchedule();
-                $classSchedule->subject_id = $subject_id;
-                $classSchedule->academic_year_term_id = $academicYearTerm->id;
-                $classSchedule->block_id = $i;
-                $classSchedule->units = 3;
-                $classSchedule->class_type = 'lecture';
-                $classSchedule->save();
-            }
-            $subject = Subject::find($subject_id); //if the subject has a laboratory create a class for laboratory
-            if ($subject->laboratory === 'Yes') {
-                for ($i = 1; $i <= $validated['blocks']; $i++) {
-                    $classSchedule = new ClassSchedule();
-                    $classSchedule->subject_id = $subject_id;
-                    $classSchedule->academic_year_term_id = $academicYearTerm->id;
-                    $classSchedule->block_id = $i;
-                    $classSchedule->units = 1.25;
-                    $classSchedule->class_type = 'laboratory';
-                    $classSchedule->save();
-                }
-            }
+            $this->classScheduleService->createAdjustBlocks($subject_id,$validated['blocks'],$academicYearTerm);
         }
         return back()->with('success', 'Subjects successfully opened!');
     }
@@ -161,6 +146,7 @@ class ClassScheduleController extends Controller
             $classSchedule->time_end = null;
             $classSchedule->classroom_id = null;
             $classSchedule->load_type_id = null;
+            $classSchedule->student_count = 0;
             $classSchedule->save();
         });
         return response()->json(['message' => 'Class has been unassigned from faculty.', 'classSchedule' => $classSchedule]);
@@ -215,7 +201,8 @@ class ClassScheduleController extends Controller
         return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad]);
     }
 
-    public function updateNumberOfStudents(Request $request, ClassSchedule $classSchedule) {
+    public function updateNumberOfStudents(Request $request, ClassSchedule $classSchedule)
+    {
         $validated = $request->validate([
             'student_count' => 'required',
         ]);
