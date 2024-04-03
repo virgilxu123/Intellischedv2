@@ -181,8 +181,8 @@
                             <div class="row">
                                 <div class="col-3">Regular load: <span id="regularLoad">{{$regularLoad}}</span></div>
                                 <div class="col-3">Overload: <span id="overLoad">{{$overLoad}}</span></div>
-                                <div id="emergencyLoad" class="col-3">Emergency Load:</div>
-                                <div id="praiseLoad" class="col-3">Praise Load:</div>
+                                <div id="emergencyLoad" class="col-3">Emergency Load: {{$emergencyLoad}}</div>
+                                <div id="praiseLoad" class="col-3">Praise Load: {{$praiseLoad}}</div>
                             </div>
                         </div>
                     </div>
@@ -220,6 +220,8 @@
                 .then(data => {
                     $('#regularLoad').text(data.regularLoad);
                     $('#overLoad').text(data.overLoad);
+                    $('#emergencyLoad').text(data.emergencyLoad);
+                    $('#praiseLoad').text(data.praiseLoad);
                     toastr.success(data.message);
                 })
                 .catch(error => {

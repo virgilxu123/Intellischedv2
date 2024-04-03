@@ -49,7 +49,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Mark Anthony',
-                'middle_initial' => 'H.',
+                'middle_initial' => 'H',
                 'last_name' => 'Erizo',
                 'rank' => 'Instructor 2',
                 'status' => 'Regular',
@@ -71,7 +71,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Melbrick',
-                'middle_initial' => 'A.',
+                'middle_initial' => 'A',
                 'last_name' => 'Evallar',
                 'rank' => 'Assistan Professor 1',
                 'status' => 'Regular',
@@ -93,7 +93,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Divine Grace',
-                'middle_initial' => 'N.',
+                'middle_initial' => 'N',
                 'last_name' => 'Loren',
                 'rank' => 'Assistant Professor 2',
                 'status' => 'Regular',
@@ -104,7 +104,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Esmael',
-                'middle_initial' => 'V.',
+                'middle_initial' => 'V',
                 'last_name' => 'Maliberan',
                 'rank' => 'Professor 3',
                 'status' => 'Regular',
@@ -115,7 +115,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Sheilla Ann',
-                'middle_initial' => 'B.',
+                'middle_initial' => 'B',
                 'last_name' => 'Pacheco',
                 'rank' => 'Instructor 3',
                 'status' => 'Regular',
@@ -126,7 +126,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Nap Nichole Greg',
-                'middle_initial' => 'S.',
+                'middle_initial' => 'S',
                 'last_name' => 'Salera',
                 'rank' => 'Assistant Professor 2',
                 'status' => 'Regular',
@@ -137,7 +137,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Cherly',
-                'middle_initial' => 'B.',
+                'middle_initial' => 'B',
                 'last_name' => 'Sardovia',
                 'rank' => 'Assistant Professor 2',
                 'status' => 'Regular',
@@ -148,7 +148,7 @@ class FacultySeeder extends Seeder
             ],
             [
                 'first_name' => 'Virgilio',
-                'middle_initial' => 'F.',
+                'middle_initial' => 'F',
                 'last_name' => 'Tuga',
                 'rank' => '',
                 'status' => 'Contractual',

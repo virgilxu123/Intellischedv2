@@ -46,6 +46,7 @@ class FacultyController extends Controller
                 }),
             ],
             'last_name' => 'required|string|max:255',
+            'middle_initial'=> '',
             'rank' => '',
             'status' => 'required|string|max:255',
         ]);
@@ -79,13 +80,15 @@ class FacultyController extends Controller
             $totalLoad = $faculty->loadCalculation($academicYearTerm);
             $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
             $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
+            $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm,'Emergency Load');
+            $praiseLoad = $faculty->loadCalculationByType($academicYearTerm, 'Praise Load');
             $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         }
 
         if (request()->ajax()) {
-            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm' => $academicYearTerm]);
+            return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm' => $academicYearTerm, 'emergencyLoad' => $emergencyLoad, 'praiseLoad' => $praiseLoad]);
         }
-        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm'));
+        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm', 'emergencyLoad', 'praiseLoad'));
     }
 
     /**
@@ -111,6 +114,7 @@ class FacultyController extends Controller
         $validatedData = $request->validate([
             'first_name' => ['required', $uniqueName],
             'last_name' => ['required', $uniqueName],
+            'middle_initial'  => '',
             'rank' => '',
             'status' => 'required',
         ]);

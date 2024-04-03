@@ -31,7 +31,7 @@
                             <tbody>
                                 @foreach ($faculties as $faculty)
                                     <tr data-facultyId="{{$faculty->id}}">
-                                        <td><a href="{{route('show-faculty', $faculty)}}">{{$faculty->first_name}} {{$faculty->last_name}}</a></td>
+                                        <td><a href="{{route('show-faculty', $faculty)}}">{{$faculty->first_name}} {{$faculty->middle_initial}}. {{$faculty->last_name}}</a></td>
                                         <td>{{$faculty->rank}}</td>
                                         <td>{{$faculty->status}}</td>
                                         <td><span class="badge {{$faculty->availability == 1 ? 'text-bg-success' : 'text-bg-danger'}}">{{$faculty->availability==1?"Available":"Unavailable"}}</span></td>
@@ -60,11 +60,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="row mb-3">
-                            <div class="col-lg-6">
+                            <div class="col-lg-5">
                                 <label class="form-label" for="first_name">First Name</label>
                                 <input type="text" id="first_name" name="first_name" class="form-control">
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-2">
+                                <label class="form-label" for="middle_initial">M.I.</label>
+                                <input type="text" id="middle_initial" name="middle_initial" class="form-control">
+                            </div>
+                            <div class="col-lg-5">
                                 <label class="form-label" for="last_name">Last Name</label>
                                 <input type="text" id="last_name" name="last_name" class="form-control">
                             </div>
@@ -125,11 +129,15 @@
                     <div class="modal-body">
                         <div class="card-body card-block">
                             <div class="row mb-3">
-                                <div class="col-lg-6">
+                                <div class="col-lg-5">
                                     <label class="form-label" for="first_name">First Name</label>
                                     <input type="text" id="first_name" name="first_name" class="form-control">
                                 </div>
-                                <div class="col-lg-6">
+                                <div class="col-lg-2">
+                                    <label class="form-label" for="middle_initial">M.I.</label>
+                                    <input type="text" id="middle_initial" name="middle_initial" class="form-control">
+                                </div>
+                                <div class="col-lg-5">
                                     <label class="form-label" for="last_name">Last Name</label>
                                     <input type="text" id="last_name" name="last_name" class="form-control">
                                 </div>
@@ -239,6 +247,7 @@
                                 updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
                                 updateFacultyForm.first_name.value = data.faculty.first_name;
                                 updateFacultyForm.last_name.value = data.faculty.last_name;
+                                updateFacultyForm.middle_initial.value = data.faculty.middle_initial;
                                 updateFacultyForm.rank.value = data.faculty.rank;
                                 updateFacultyForm.status.value = data.faculty.status;
                                 updateFacultyForm.availability.value = data.faculty.availability;
@@ -296,7 +305,7 @@
             handleFormSubmission('updateFacultyForm', function(data) {
                 let tableRow = document.querySelector(`tr[data-facultyId="${data.updatedData.id}"]`);
                 let facultyId = data.updatedData.id;
-                tableRow.querySelector('td:nth-child(1)').innerHTML = `<a href="{{ route('show-faculty', ':facultyId') }}">${ data.updatedData.first_name} ${ data.updatedData.last_name }</a>`.replace(':facultyId', facultyId);
+                tableRow.querySelector('td:nth-child(1)').innerHTML = `<a href="{{ route('show-faculty', ':facultyId') }}">${ data.updatedData.first_name} ${ data.updatedData.middle_initial}. ${ data.updatedData.last_name }</a>`.replace(':facultyId', facultyId);
                 tableRow.querySelector('td:nth-child(2)').textContent = data.updatedData.rank;
                 tableRow.querySelector('td:nth-child(3)').textContent = data.updatedData.status;
                 tableRow.querySelector('td:nth-child(4)').innerHTML = `<span class="badge ${data.updatedData.availability == 1 ? 'text-bg-success' : 'text-bg-danger'}">${data.updatedData.availability == 1 ? 'Available' : 'Unavailable'}</span>`;
