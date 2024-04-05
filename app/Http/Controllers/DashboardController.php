@@ -14,10 +14,15 @@ class DashboardController extends Controller
         $numberOfFacultyMembers = Faculty::count();
         $numberOfAvailableFacultyMembers = Faculty::where('availability', true)->count();
         $numberOfUnAvailableFacultyMembers = Faculty::where('availability', false)->count();
-        $academicYearTerm = AcademicYearTerm::all()->sortByDesc('created_at')->first();
-        $numberOfClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->count();
-        $numberOfScheduledClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->count();
-        $numberOfUnScheduledClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNull('classroom_id')->count();
+        if ($academicYearTerm = AcademicYearTerm::all()->sortByDesc('created_at')->first()) {
+            $numberOfClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->count();
+            $numberOfScheduledClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->count();
+            $numberOfUnScheduledClasses = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNull('classroom_id')->count();
+        } else {
+            $numberOfClasses = 0;
+            $numberOfScheduledClasses = 0;
+            $numberOfUnScheduledClasses = 0;
+        }
         return view('dashboard', compact('numberOfFacultyMembers', 'numberOfAvailableFacultyMembers', 'numberOfUnAvailableFacultyMembers', 'numberOfClasses', 'numberOfScheduledClasses', 'numberOfUnScheduledClasses'));
     }
 }

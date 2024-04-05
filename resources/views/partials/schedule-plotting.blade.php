@@ -5,14 +5,7 @@
                 <h5 class="card-title">Classes</h5>
             </div>
             <div id="" class="card-body classesWithNoRoomAndTime">
-                {{-- @foreach ($classSchedules as $classSchedule)
-                    @if ($classSchedule->faculty_id != null && $classSchedule->classroom_id == null)
-                        <div class="badge fill mb-3" draggable="true" style="display: block;background-color: {{$classSchedule->faculty->color}};" data-class-schedule-id="{{$classSchedule->id}}">
-                            {{$classSchedule->subject->course_code}}-{{$classSchedule->block->block}} <br>
-                            {{$classSchedule->faculty->first_name}} {{$classSchedule->faculty->last_name}}
-                        </div>
-                    @endif
-                @endforeach --}}
+                
             </div>
         </div>
     </div>
@@ -57,7 +50,7 @@
                                 @php
                                     $current_time = date('h:i', $time);
                                 @endphp
-                                <tr>
+                                <tr class="classesWithRoomAndTime">
                                     <td scope="row" style="white-space: nowrap;">{{ $current_time }} - {{ date('h:i A', strtotime('+30 minutes', $time)) }}</td>
                                     @foreach ($rooms as $room)
                                         <td class="empty" data-room="{{ $room->id }}" data-time="{{ date('h:i A', $time) }}" data-toggle="tooltip" title="{{$room->room_number}} {{ $current_time }} - {{ date('h:i A', strtotime('+30 minutes', $time)) }}"></td>

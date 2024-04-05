@@ -46,7 +46,7 @@ class FacultyController extends Controller
                 }),
             ],
             'last_name' => 'required|string|max:255',
-            'middle_initial'=> '',
+            'middle_initial' => '',
             'rank' => '',
             'status' => 'required|string|max:255',
         ]);
@@ -68,9 +68,11 @@ class FacultyController extends Controller
     {
         $loadTypes = LoadType::all();
         $rooms = Classroom::all();
-        $totalLoad = "";
-        $regularLoad = "";
-        $overLoad = "";
+        $totalLoad = 0;
+        $regularLoad = 0;
+        $overLoad = 0;
+        $emergencyLoad = 0;
+        $praiseLoad = 0;
         $designations = null;
         $classes = [];
         if ($academicYearTerm = AcademicYearTerm::latest()->first()) {
@@ -80,7 +82,7 @@ class FacultyController extends Controller
             $totalLoad = $faculty->loadCalculation($academicYearTerm);
             $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
             $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
-            $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm,'Emergency Load');
+            $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm, 'Emergency Load');
             $praiseLoad = $faculty->loadCalculationByType($academicYearTerm, 'Praise Load');
             $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         }
@@ -117,6 +119,7 @@ class FacultyController extends Controller
             'middle_initial'  => '',
             'rank' => '',
             'status' => 'required',
+            'availability'  => 'required',
         ]);
         $faculty->update($validatedData);
 

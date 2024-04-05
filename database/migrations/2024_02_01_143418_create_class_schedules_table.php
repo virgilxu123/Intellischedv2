@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('classroom_id')->nullable();
             $table->unsignedBigInteger('academic_year_term_id')->nullable();
             $table->unsignedBigInteger('faculty_id')->nullable();
-            $table->integer('student_count')->default(0);
+            $table->integer('student_count')->default(25);
             $table->decimal('units', 5, 2)->nullable();
             $table->enum('class_type', ['laboratory', 'lecture'])->nullable();
             $table->string('time_start')->nullable();

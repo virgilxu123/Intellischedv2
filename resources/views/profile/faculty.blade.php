@@ -156,7 +156,7 @@
                                             <td class="col-1">
                                                 <form action="{{route('update-student-count', ['classSchedule'=>$class->id])}}" method="POST" id="studentCountForm">
                                                     @csrf
-                                                    <input type="number" name="student_count" class="form-control form-control-sm studentCount" value="{{$class->student_count}}">
+                                                    <input data-class-id={{$class->id}} type="number" name="student_count" class="form-control form-control-sm studentCount" value="{{$class->student_count}}" {{$class->units==1.25?"disabled":""}}>
                                                 </form>
                                             </td>
                                             <td class="col-2">
@@ -197,6 +197,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>  
     <script>
         $(document).ready(function() {
+            let initialStudCount;
             $('.loadTypeSelect').change(function(e){
                 let form = $(this).closest('form');
                 let url = form.attr('action');
@@ -229,34 +230,45 @@
                     showToast('error', message);
                 });
             });
+    //fetch when focus is lost        
             $('.studentCount').on('focusout', function(e){
                 e.preventDefault();
-                let form = $(this).closest('form');
-                let url = form.attr('action');
                 let value = $(this).val();
-                let formData = new FormData(form[0]);
-                formData.append('student_count', value);
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json(); // Parse the JSON response
-                })
-                .then(data => {
-                    toastr.success(data.message);
-                })
-                .catch(error => {
-                    let message = "An error has occured";
-                    showToast('error', message);
-                });
+                if(value != initialStudCount) {
+                    let form = $(this).closest('form');
+                    let url = form.attr('action');
+                    let formData = new FormData(form[0]);
+                    formData.append('student_count', value);
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        $('.studentCount').each(function(){
+                            if(data.labSchedule!=null && $(this).data('class-id') == data.labSchedule.id){
+                                $(this).val(data.labSchedule.student_count);
+                            }
+                        })
+                        toastr.success(data.message);
+                    })
+                    .catch(error => {
+                        let message = "An error has occured";
+                        toastr.error(message);
+                    });
+                }
+            });
+            $('.studentCount').on('focusin', function () {
+                initialStudCount = $(this).val();
             });
         });
     </script>

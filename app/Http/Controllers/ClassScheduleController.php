@@ -64,7 +64,7 @@ class ClassScheduleController extends Controller
         ]);
         $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
         foreach ($subject_ids as $subject_id) {
-            $this->classScheduleService->createAdjustBlocks($subject_id,$validated['blocks'],$academicYearTerm);
+            $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
         }
         return back()->with('success', 'Subjects successfully opened!');
     }
@@ -206,9 +206,17 @@ class ClassScheduleController extends Controller
         $validated = $request->validate([
             'student_count' => 'required',
         ]);
-
+        $labSchedule = null;
+        if ($classSchedule->subject->laboratory == 'Yes') {
+            $labSchedule = ClassSchedule::where('subject_id', $classSchedule->subject_id)
+                ->where('block_id', $classSchedule->block_id)
+                ->where('class_type', 'laboratory')
+                ->first();
+            $labSchedule->student_count = $validated['student_count'];
+            $labSchedule->save();
+        }
         $classSchedule->student_count = $validated['student_count'];
         $classSchedule->save();
-        return response()->json(['message' => 'Number of students updated successfully']);
+        return response()->json(['message' => 'Number of students updated successfully', 'labSchedule' => $labSchedule]);
     }
 }

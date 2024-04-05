@@ -241,7 +241,6 @@
                                 return response.json(); // Parse the JSON response
                             })
                         .then(data => {
-                            console.log(data);
                             if(event.target.classList.contains('fa-pen-to-square')) {
                                 let updateFacultyForm = document.getElementById('updateFacultyForm');
                                 updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
@@ -305,6 +304,7 @@
             handleFormSubmission('updateFacultyForm', function(data) {
                 let tableRow = document.querySelector(`tr[data-facultyId="${data.updatedData.id}"]`);
                 let facultyId = data.updatedData.id;
+                console.log(data.updatedData.availability);
                 tableRow.querySelector('td:nth-child(1)').innerHTML = `<a href="{{ route('show-faculty', ':facultyId') }}">${ data.updatedData.first_name} ${ data.updatedData.middle_initial}. ${ data.updatedData.last_name }</a>`.replace(':facultyId', facultyId);
                 tableRow.querySelector('td:nth-child(2)').textContent = data.updatedData.rank;
                 tableRow.querySelector('td:nth-child(3)').textContent = data.updatedData.status;

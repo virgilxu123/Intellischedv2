@@ -159,10 +159,10 @@
                                 <div class="col-lg-9 col-md-3" style="max-height: 460px; overflow-y: auto;">
                                 <select class="form-select mb-3" id="filterYear" style="position: sticky;top: 0;z-index: 1;">
                                     <option value="all" selected>All</option>
-                                    <option value="1st Year">1st Year</option>
-                                    <option value="2nd Year">2nd Year</option>
-                                    <option value="3rd Year">3rd Year</option>
-                                    <option value="4th Year">4th Year</option>
+                                    <option value="First Year">1st Year</option>
+                                    <option value="Second Year">2nd Year</option>
+                                    <option value="Third Year">3rd Year</option>
+                                    <option value="Fourth Year">4th Year</option>
                                 </select>
                                 <table class="table table-hover table-bordered">
                                     <thead class="bg-dark text-light" >
@@ -383,7 +383,6 @@
                 e.preventDefault();
                 let formData = new FormData(this);
                 facultyId = $('.faculty-row.selected-row').data('faculty-id');
-                console.log(facultyId);
                 assignDesignation(facultyId, academicYearTerm, formData)
             });
             $('#designation-body').on('click', '.btn-danger', function() {
@@ -403,7 +402,6 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    console.log(data);
                     // Clear existing class schedules
                     $('#class-schedule-body').empty();
                     // Loop through class schedules and append HTML to the tbody
@@ -412,17 +410,16 @@
                         let html = `<tr><td colspan="3" class="text-center">No Classes to Show</td></tr>`;
                         $('#class-schedule-body').append(html);
                     } else {
-                        
                         data.classSchedules.forEach(classSchedule => {
                             if(classSchedule.class_type=='lecture') {
                                 let yearLevel;
-                                if (classSchedule.subject.year_level === '1st Year') {
+                                if (classSchedule.subject.year_level === 'First Year') {
                                     yearLevel = '1CS';
-                                } else if (classSchedule.subject.year_level === '2nd Year') {
+                                } else if (classSchedule.subject.year_level === 'Second Year') {
                                     yearLevel = '2CS';
-                                } else if (classSchedule.subject.year_level === '3rd Year') {
+                                } else if (classSchedule.subject.year_level === 'Third Year') {
                                     yearLevel = '3CS';
-                                } else if (classSchedule.subject.year_level === '4th Year') {
+                                } else if (classSchedule.subject.year_level === 'Fourth Year') {
                                     yearLevel = '4CS';
                                 }
     
@@ -593,7 +590,6 @@
             $(document).on('click', '.delete-sched', function(e) {
                 e.stopPropagation();
                 const classScheduleId = $(this).closest('.fill').data('class-schedule-id');
-                console.log(classScheduleId);
                 deleteTimeRoom(classScheduleId);
                 fetchClasses(academicYearTermId, dayId);
             });
@@ -607,6 +603,18 @@
             $('.classesWithNoRoomAndTime').on('dragenter', '.empty', dragEnter);
             $('.classesWithNoRoomAndTime').on('dragleave', '.empty', dragLeave);
             $('.classesWithNoRoomAndTime').on('drop', '.empty', dragDrop);
+            $('.classesWithRoomAndTime').on('dragstart', '.fill', function() {
+                this.classList.add('hold');
+                setTimeout(() => this.classList.add('invisible'), 0);
+                let classScheduleId = $(this).closest('.fill').data('class-schedule-id');
+                console.log(classScheduleId);
+                deleteTimeRoom(classScheduleId);
+            });
+            $('.classesWithRoomAndTime').on('dragend', '.fill', dragEnd);
+            $('.classesWithRoomAndTime').on('dragover', '.empty', dragOver);
+            $('.classesWithRoomAndTime').on('dragenter', '.empty', dragEnter);
+            $('.classesWithRoomAndTime').on('dragleave', '.empty', dragLeave);
+            // $('.classesWithRoomAndTime').on('drop', '.empty', dragDrop);
 
             // Add listeners for each fill element
             empties.forEach(empty => {
@@ -649,6 +657,7 @@
                 const classScheduleId = filledCell.dataset.classScheduleId; // Retrieve classScheduleId
                 const url = '{{route("assign-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
                 // Send AJAX request to save data
+                
                 assignRoomTimeDay(classScheduleId, roomNumber, time);
                 fetchClasses(academicYearTermId, dayId);
                 // // Update UI immediately if needed
@@ -708,7 +717,6 @@
                     
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
-                            console.log(classSchedule);
                             let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
                                 <em>${classSchedule.subject.course_code}-${classSchedule.block.block} ${classSchedule.class_type == 'lecture' ? 'Lec' : classSchedule.class_type == 'laboratory' ? 'Lab' : ''}</em><br>
                                 ${classSchedule.faculty.first_name} ${classSchedule.faculty.last_name}
@@ -794,27 +802,6 @@
                     toastr.error(message);
                 });
             }
-
-            // function showToast(status, message) {
-            //     let toastElement = document.getElementById('liveToast');
-            //     const toastInstance = bootstrap.Toast.getOrCreateInstance(toastElement)
-            //     let toastBody = toastElement.querySelector('.toast-body');
-            //     toastBody.textContent = message;
-            //     if(status==='success'){
-            //         toastElement.classList.remove('text-bg-danger');
-            //         toastElement.classList.add('text-bg-success');
-            //     }
-            //     if(status==='error'){
-            //         toastElement.classList.remove('text-bg-success');
-            //         toastElement.classList.add('text-bg-danger');
-            //     }
-            //     toastElement.classList.remove('hide');
-            //     toastElement.classList.add('show');
-            //     setTimeout(() => {
-            //         toastElement.classList.remove('show');
-            //         toastElement.classList.add('hide');
-            //     }, 4000);
-            // }
         //script for tab 3
         });
     </script>
