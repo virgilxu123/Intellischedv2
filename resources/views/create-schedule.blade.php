@@ -354,6 +354,52 @@
                 $('.subject-row').removeClass('selected-row'); // Remove
                 $("#filterYear").val("all").trigger('change');
             });
+            
+            let intialBlockCount;
+                // Double click event handler for the table row
+            $('.classCount').on('dblclick', function() {
+                $(this).prop('readonly', false);
+                // Get the current value of the input field
+            });
+            $('.classCount').on('focusin', function () {
+                intialBlockCount = $(this).val();
+            });
+            $('.classCount').on('focusout', function(e){
+                e.preventDefault();
+                let value = $(this).val();
+
+                if(value != intialBlockCount){
+                    let form = $(this).closest('form');
+                    let formData = new FormData(form[0]);
+                    formData.append('subjectId[]', $(this).data('subject-id'));
+                    formData.append('blocks', value);
+                    let url = "{{ route('create-class-schedule', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        console.log(data);
+                        toastr.success(data.message);
+                    })
+                    .catch(error => {
+                        let message = "An error has occured";
+                        toastr.error(message);
+                    });
+                }
+                $(this).prop('readonly', true);
+            })
+        
             //script for loading subject modal
             //script for tab 2
             $('#pills-loading-tab').click(function(){

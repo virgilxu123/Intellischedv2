@@ -59,16 +59,40 @@ class ClassScheduleController extends Controller
     public function store(Request $request, AcademicYearTerm $academicYearTerm)
     {
         $validated = $request->validate([
-            'subjectId' => 'required',
+            'subjectId' => '',
             'blocks' => 'required',
         ]);
-        $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
-        foreach ($subject_ids as $subject_id) {
+        if (is_array($validated['subjectId'])) {
+            // Handle array of subject IDs
+            $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
+            foreach ($subject_ids as $subject_id) {
+                $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
+            }
+        } else {
+            // Handle single subject ID
+            $subject_id = intval($validated['subjectId']);
             $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
+        }
+        // $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
+        // foreach ($subject_ids as $subject_id) {
+        //     $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
+        // }
+        if (\request()->ajax()) {
+            return response()->json(['message' => 'Block count updated successfully!']);
         }
         return back()->with('success', 'Subjects successfully opened!');
     }
 
+    public function updateBlockCount(Request $request, AcademicYearTerm $academicYearTerm)
+    {
+
+        $validated = $request->validate([
+            'subjectId' => 'required',
+            'blocks' => 'required',
+        ]);
+        $this->classScheduleService->createAdjustBlocks($validated['subjectId'], $validated['blocks'], $academicYearTerm);
+        return \response()->json(['message' => 'Block count updated successfully!']);
+    }
     /**
      * Display the specified resource.
      */

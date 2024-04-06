@@ -28,8 +28,7 @@
             <th data-field="course_code" data-sortable="true">Subject Code</th>
             <th data-field="description" data-sortable="true">Description</th>
             <th data-field="year_level" data-sortable="true" >Year Level</th>
-            <th data-field="blocks" data-sortable="true">Blocks</th>
-            <th data-click-to-select="false">Action</th>
+            <th data-field="blocks" data-sortable="true" data-click-to-select="false">Blocks</th>
         </tr>
     </thead>
     <tbody>
@@ -39,9 +38,11 @@
                 <td>{{$subject->course_code}}</td>
                 <td>{{$subject->description}}</td>
                 <td>{{$subject->year_level}}</td>
-                <td class="text-center">{{$classSchedules->where('subject_id', $subject->id)->where('class_type','lecture')->count()}}</td>
-                <td class="text-center">
-                    <button class="btn btn-primary rounded px-2 py-0 loadBtn" data-toggle="tooltip" title="Add/Remove Blocks"><i class="fa fa-edit"></i></button>
+                <td class="text-center col-1 ">
+                    <form action="" method="POST">
+                        @csrf
+                        <input name="blocks" class="form-control form-control-sm text-center classCount" readonly="true" type="number" data-subject-id={{$subject->id}} value="{{$classSchedules->where('subject_id', $subject->id)->where('class_type','lecture')->count()}}">
+                    </form>
                 </td>
             </tr>
         @endforeach

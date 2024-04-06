@@ -34,7 +34,7 @@
                         </div>
                         
                             <div class="card-body card-block">
-                                <form action="{{route('update-faculty',['faculty'=>$faculty->id])}}" method="post">
+                                <form action="{{route('update-faculty',['faculty'=>$faculty->id])}}" method="post" id="updateFacultyForm">
                                     @csrf
                                     <div class="row mb-3">
                                         <div class="form-group col-lg-6">
@@ -198,6 +198,11 @@
     <script>
         $(document).ready(function() {
             let initialStudCount;
+            $('#updateFacultyForm').on('submit', function(e) {
+                e.preventDefault();
+                
+            })
+            
             $('.loadTypeSelect').change(function(e){
                 let form = $(this).closest('form');
                 let url = form.attr('action');

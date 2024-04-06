@@ -119,7 +119,7 @@ class FacultyController extends Controller
             'middle_initial'  => '',
             'rank' => '',
             'status' => 'required',
-            'availability'  => 'required',
+            'availability'  => '',
         ]);
         $faculty->update($validatedData);
 
