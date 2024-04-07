@@ -101,7 +101,7 @@
                             <label class="form-label" for="status">Status</label>
                             <select id="status" name="status" data-placeholder="" class="form-control form-select" tabindex="1">
                                 <option value=""></option>
-                                <option value="Permanent">Permanent</option>
+                                <option value="Regular">Regular</option>
                                 <option value="Contractual">Contractual</option>
                                 <option value="Part time">Part time</option>
                             </select>
