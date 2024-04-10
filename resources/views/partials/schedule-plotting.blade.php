@@ -3,6 +3,28 @@
         <div class="card " style="height: 90vh;overflow:auto;">
             <div class="card-header bg-dark text-light">
                 <h5 class="card-title">Classes</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label" for="selectType">Type</label>
+                        <select class="form-select form-select-sm" aria-label="Select Class Type" id="selectType">
+                            <option value="all" selected>All</option>
+                            <option value="lecture">Lectures</option>
+                            <option value="laboratory">Laboratories</option>
+                          </select>
+                          
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" for="selectYrLvl">Year Level</label>
+                        <select class="form-select form-select-sm" aria-label="Select Year Level" id="selectYrLvl">
+                            <option value="all" selected>All</option>
+                            <option value="First Year">First Year</option>
+                            <option value="Second Year">Second Year</option>
+                            <option value="Third Year">Third Year</option>
+                            <option value="Fourth Year">Fourth Year</option>
+
+                          </select>
+                    </div>
+                </div>
             </div>
             <div id="" class="card-body classesWithNoRoomAndTime">
                 

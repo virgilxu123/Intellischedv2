@@ -171,7 +171,6 @@
                                             <th>Description</th>
                                             <th>Blocks</th>
                                             <th>Year Level</th>
-                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -357,15 +356,14 @@
             
             let intialBlockCount;
                 // Double click event handler for the table row
-            $('.classCount').on('dblclick', function() {
+            $(document).on('dblclick', '.classCount', function() {
                 $(this).prop('readonly', false);
                 // Get the current value of the input field
             });
-            $('.classCount').on('focusin', function () {
+            $(document).on('focusin', '.classCount', function () {
                 intialBlockCount = $(this).val();
             });
-            $('.classCount').on('focusout', function(e){
-                e.preventDefault();
+            $(document).on('focusout', '.classCount', function(){
                 let value = $(this).val();
 
                 if(value != intialBlockCount){
@@ -609,7 +607,7 @@
                 })
             }
         //script for unassigning designation
-
+        
 
         //script for tab 2
 
@@ -633,11 +631,56 @@
                 $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
                 fetchClasses(academicYearTermId, dayId);
             });
+
+        //script for filtering classes that has no room and time
+            
+            function applyFilters(classSchedules) {
+                let selectedYearLevel = $('#selectYrLvl').val();
+                let selectedType = $('#selectType').val();
+                console.log(selectedYearLevel, selectedType);
+                
+                // Get all class schedules
+                // Loop through class schedules and apply filters
+                classSchedules.forEach(classSchedule => {
+                    let classScheduleYrLvl = classSchedule.dataset.classYearLevel;
+                    let classScheduleType = classSchedule.dataset.classType;
+                    
+                    // Check if the class meets the year level filter
+                    let passYearLevelFilter = selectedYearLevel === 'all' || classScheduleYrLvl === selectedYearLevel;
+                    // Check if the class meets the class type filter
+                    let passTypeFilter = selectedType === 'all' || classScheduleType === selectedType;
+                    // Show the class schedule if it meets both filters, otherwise hide it
+                    if (passYearLevelFilter && passTypeFilter) {
+                        $(classSchedule).show();
+                    } else {
+                        $(classSchedule).hide();
+                    }
+                });
+            }
+            
+            // Event listener for year level filter
+            $('#selectYrLvl').on('change', function() {
+                // Pass classSchedules to the applyFilters function
+                let classSchedules = document.querySelectorAll('.classesWithSched');
+                applyFilters(classSchedules);
+            });
+            
+            // Event listener for class type filter
+            $('#selectType').on('change', function() {
+                // Pass classSchedules to the applyFilters function
+                let classSchedules = document.querySelectorAll('.classesWithSched');
+                applyFilters(classSchedules);
+            });
+                
+                // Initially apply filters
+        //script for filtering classes that has no room and time
+
             $(document).on('click', '.delete-sched', function(e) {
                 e.stopPropagation();
                 const classScheduleId = $(this).closest('.fill').data('class-schedule-id');
                 deleteTimeRoom(classScheduleId);
                 fetchClasses(academicYearTermId, dayId);
+                applyFilters();
             });
             
             const empties = document.querySelectorAll('.empty');
@@ -651,12 +694,20 @@
             $('.classesWithNoRoomAndTime').on('drop', '.empty', dragDrop);
             $('.classesWithRoomAndTime').on('dragstart', '.fill', function() {
                 this.classList.add('hold');
-                setTimeout(() => this.classList.add('invisible'), 0);
+                setTimeout(() => {
+                    this.classList.add('invisible'), 0;
+                    $(this).css('display', 'none');
+                });
                 let classScheduleId = $(this).closest('.fill').data('class-schedule-id');
-                console.log(classScheduleId);
-                deleteTimeRoom(classScheduleId);
+                $(this).closest('td').attr('rowspan', 1);
+                // console.log(classScheduleId);
+                // deleteTimeRoom(classScheduleId);
             });
-            $('.classesWithRoomAndTime').on('dragend', '.fill', dragEnd);
+            $('.classesWithRoomAndTime').on('dragend', '.fill', function() {
+                this.classList.remove('hold', 'invisible');
+                $(this).css('display', 'block');
+                $(this).closest('td').attr('rowspan', 3);
+            });
             $('.classesWithRoomAndTime').on('dragover', '.empty', dragOver);
             $('.classesWithRoomAndTime').on('dragenter', '.empty', dragEnter);
             $('.classesWithRoomAndTime').on('dragleave', '.empty', dragLeave);
@@ -709,6 +760,8 @@
                 // // Update UI immediately if needed
                 emptyCell.appendChild(filledCell);
                 filledCell.classList.remove('mb-3');
+                filledCell.classList.remove('empty');
+                applyFilters();
             }
             function assignRoomTimeDay(classScheduleId,room,time) {
                 const url = '{{route("assign-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
@@ -744,6 +797,8 @@
             //ajax request to fetch classes
             function fetchClasses($academicYearTerm, dayId) {
                 let url = '{{route("create-schedule", ":academicYearTerm")}}'.replace(':academicYearTerm', $academicYearTerm);
+                let selectedYearLevel = $('#selectYrLvl').val();
+                let selectedType = $('#selectType').val();
                 fetch(url, {
                     method: 'GET',
                     headers: {
@@ -763,13 +818,24 @@
                     
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
-                            let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}">
+                            let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}" data-class-year-level="${classSchedule.subject.year_level}" data-class-type="${classSchedule.class_type}">
                                 <em>${classSchedule.subject.course_code}-${classSchedule.block.block} ${classSchedule.class_type == 'lecture' ? 'Lec' : classSchedule.class_type == 'laboratory' ? 'Lab' : ''}</em><br>
                                 ${classSchedule.faculty.first_name} ${classSchedule.faculty.last_name}
                                 </div>`;
                                 $('.classesWithNoRoomAndTime').append(badge);
                         }
                     });
+                    $('.classesWithNoRoomAndTime .classesWithSched').each(function() {
+                    let classScheduleYrLvl = $(this).data('class-year-level');
+                    let classScheduleType = $(this).data('class-type');
+                    let passYearLevelFilter = selectedYearLevel === 'all' || classScheduleYrLvl === selectedYearLevel;
+                    let passTypeFilter = selectedType === 'all' || classScheduleType === selectedType;
+                    if (passYearLevelFilter && passTypeFilter) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
                     displayPlottedClasses(data.classSchedulesWithRooms, dayId);
                 })
                 .catch(error => {
