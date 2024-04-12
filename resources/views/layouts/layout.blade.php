@@ -47,7 +47,7 @@
                         </a> --}}
                         <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item ms-3">
-                                <a href="{{route('schedule')}}" class="sidebar-link">Create Schedule</a>
+                                <a href="{{route('schedule')}}" class="sidebar-link">Manage/Create Schedule</a>
                             </li>
                             <li class="sidebar-header ms-3 py-0">
                                 Recent

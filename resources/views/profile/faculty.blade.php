@@ -203,7 +203,7 @@
                 
             })
             
-            $('.loadTypeSelect').change(function(e){
+            $(document).on('change', '.loadTypeSelect',function(e){
                 let form = $(this).closest('form');
                 let url = form.attr('action');
                 let selectedValue = $(this).val();

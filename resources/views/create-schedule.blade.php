@@ -864,7 +864,6 @@
 
                     // Find the first empty cell for the given room and time
                     const timeCell = document.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);
-
                     // Set the innerHTML of the timeCell with the HTML content
                     if (timeCell) {
                         // Set rowspan for the first cell
@@ -884,6 +883,7 @@
                                 break;
                             }
                         }
+                        
                     } else {
                         console.error('No empty cell found for room', roomId, 'and time', time);
                     }

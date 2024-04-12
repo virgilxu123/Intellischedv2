@@ -17,7 +17,7 @@
                 <tbody>
                     @foreach ($faculties as $faculty)
                     <tr class="faculty-row {{$loop->first ? 'selected-row' : ''}}" data-faculty-id="{{$faculty->id}}" data-faculty-name="{{ htmlspecialchars($faculty->first_name . ' ' . $faculty->last_name) }}">
-                        <td class="col-11" style="cursor: pointer;"><a href="{{route('show-faculty', $faculty)}}">{{$faculty->first_name}} {{$faculty->last_name}}</a></td>
+                        <td class="col-11" style="cursor: pointer;"><a href="{{route('show-faculty', ['faculty'=>$faculty, 'academic_year_term'=>$academicYearTerm])}}">{{$faculty->first_name}} {{$faculty->last_name}}</a></td>
                         <td class="text-center col-1">
                             <button class="btn btn-primary rounded px-2 py-0 loadBtn" data-bs-toggle="modal" data-bs-target="#loadSubject" data-toggle="tooltip" title="Add/Edit Load" data-faculty-id="{{$faculty->id}}" data-faculty-first-name="{{$faculty->first_name}}" data-faculty-last-name="{{$faculty->last_name}}"><i class="fa fa-edit"></i></button>
                         </td>

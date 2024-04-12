@@ -64,28 +64,22 @@ class FacultyController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Faculty $faculty)
+    public function show(Faculty $faculty, AcademicYearTerm $academicYearTerm = null)
     {
         $loadTypes = LoadType::all();
         $rooms = Classroom::all();
-        $totalLoad = 0;
-        $regularLoad = 0;
-        $overLoad = 0;
-        $emergencyLoad = 0;
-        $praiseLoad = 0;
-        $designations = null;
-        $classes = [];
-        if ($academicYearTerm = AcademicYearTerm::latest()->first()) {
-            $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
-                ->with('subject', 'block', 'classroom', 'load_type', 'days')
-                ->get();
-            $totalLoad = $faculty->loadCalculation($academicYearTerm);
-            $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
-            $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
-            $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm, 'Emergency Load');
-            $praiseLoad = $faculty->loadCalculationByType($academicYearTerm, 'Praise Load');
-            $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
+        if ($academicYearTerm == null)  {
+            $academicYearTerm = AcademicYearTerm::latest()->first();
         }
+        $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
+            ->with('subject', 'block', 'classroom', 'load_type', 'days')
+            ->get();
+        $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
+        $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
+        $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm, 'Emergency Load');
+        $praiseLoad = $faculty->loadCalculationByType($academicYearTerm, 'Praise Load');
+        $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
 
         if (request()->ajax()) {
             return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm' => $academicYearTerm, 'emergencyLoad' => $emergencyLoad, 'praiseLoad' => $praiseLoad]);

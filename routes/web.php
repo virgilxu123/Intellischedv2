@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('manage-faculty', [FacultyController::class, 'index'])->name('manage-faculty');
     Route::post('add-faculty', [FacultyController::class, 'store'])->name('add-faculty');
-    Route::get('show-faculty/{faculty}', [FacultyController::class, 'show'])->name('show-faculty');
+    Route::get('show-faculty/{faculty}/{academic_year_term?}', [FacultyController::class, 'show'])->name('show-faculty');
     Route::post('update-faculty/{faculty}', [FacultyController::class, 'update'])->name('update-faculty');
     Route::post('delete-faculty/{faculty}', [FacultyController::class, 'destroy'])->name('delete-faculty');
 
