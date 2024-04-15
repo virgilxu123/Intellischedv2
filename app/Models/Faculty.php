@@ -30,47 +30,47 @@ class Faculty extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
-    public function loadCalculation($academicYearTerm)
+    public function totalLoad($academicYearTerm)
     {
+        $totalSubjectUnits = $this->class_schedules()
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->sum('units');
         $designationsUnits = $this->designations()
             ->wherePivot('academic_year_term_id', $academicYearTerm->id)
-            ->sum('units');
+            ->sum('units')  ;
 
-        $classSchedulesUnits = $this->class_schedules()
-            ->where('academic_year_term_id', $academicYearTerm->id)
-            ->sum('units');
-
-        return $designationsUnits + $classSchedulesUnits;
+        return $totalSubjectUnits + $designationsUnits;
     }
 
-    public function loadCalculationByType($academicYearTerm, $loadType)
-    {
-        $query = $this->class_schedules()
-            ->where('academic_year_term_id', $academicYearTerm->id)
-            ->whereHas('load_type', function ($query) use ($loadType) {
-                $query->where('load_type', $loadType);
-            });
+    // public function loadCalculationByType($academicYearTerm, $loadType)
+    // {
+    //     $query = $this->class_schedules()
+    //         ->where('academic_year_term_id', $academicYearTerm->id)
+    //         ->whereHas('load_type', function ($query) use ($loadType) {
+    //             $query->where('load_type', $loadType);
+    //         });
 
-        if ($loadType === 'Regular Load') {
-            $designationsUnits = $this->designations()
-                ->wherePivot('academic_year_term_id', $academicYearTerm->id)
-                ->sum('units');
-            return $query->sum('units') + $designationsUnits;
-        }
-        if($loadType === 'Overload'){
-            return $query->sum('units');
-        }
-        return $query->sum('units');
-    }
+    //     if ($loadType === 'Regular Load') {
+    //         $designationsUnits = $this->designations()
+    //             ->wherePivot('academic_year_term_id', $academicYearTerm->id)
+    //             ->sum('units');
+    //         return $query->sum('units') + $designationsUnits;
+    //     }
+    //     if($loadType === 'Overload'){
+    //         return $query->sum('units');
+    //     }
+    //     return $query->sum('units');
+    // }
 
     public function regularLoad($academicYearTerm) 
     {
-        return $this->class_schedules()
+        $regularLoad = $this->class_schedules()
             ->where('academic_year_term_id', $academicYearTerm->id)
             ->whereHas('load_type', function ($query) {
                 $query->where('load_type', 'Regular Load');
             })
             ->sum('units');
+        return $regularLoad + $this->designationLoad($academicYearTerm) + $this->mandatoryDeLoading($academicYearTerm);
     }
     public function overLoad($academicYearTerm)
     {

@@ -450,6 +450,7 @@
                     $('#class-schedule-body').empty();
                     // Loop through class schedules and append HTML to the tbody
                     $('#totalUnits').text(data.totalLoad);
+                    $('#'+facultyId).text(data.totalLoad);
                     if (data.classSchedules.length === 0) {
                         let html = `<tr><td colspan="3" class="text-center">No Classes to Show</td></tr>`;
                         $('#class-schedule-body').append(html);
@@ -527,6 +528,7 @@
                     $('#designation-body').empty();
                     // Loop through designations and append HTML to the tbody
                     $('#totalUnits').text(data.totalLoad);
+                    $('#'+facultyId).text(data.totalLoad);
                     if (data.designations.length === 0) {
                         let html = `<tr><td colspan="3" class="text-center">No Designations to Show</td></tr>`;
                         $('#designation-body').append(html);
@@ -534,7 +536,7 @@
                         data.designations.forEach(designation => {
                             let html = `<tr class=" animate fadeIn" data-faculty-id="${designation.faculty_id}">
                                             <td>${designation.designation}</td>
-                                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-designation-id="${designation.id}" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
+                                            <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-designation-id="${designation.id}" data-toggle="tooltip" title="Delete Designation"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>`;
                             $('#designation-body').append(html);
                         });

@@ -102,7 +102,7 @@ class ClassScheduleController extends Controller
             ->where('academic_year_term_id', $academicYearTerm->id)
             ->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
-        $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        $totalLoad = $faculty->totalLoad($academicYearTerm);
         return response()->json(['classSchedules' => $classSchedules, 'totalLoad' => $totalLoad]);
     }
 
@@ -220,9 +220,11 @@ class ClassScheduleController extends Controller
         $classSchedule->load_type_id = $validated['load_type'];
         $classSchedule->save();
         $faculty = $classSchedule->faculty;
-        $regularLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Regular Load');
-        $overLoad = $faculty->loadCalculationByType($classSchedule->academic_year_term, 'Overload');
-        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad]);
+        $regularLoad = $faculty->regularLoad($classSchedule->academic_year_term);
+        $overLoad = $faculty->overLoad($classSchedule->academic_year_term);
+        $emergencyLoad = $faculty->emergencyLoad($classSchedule->academic_year_term);
+        $praiseLoad = $faculty->praiseLoad($classSchedule->academic_year_term);
+        return response()->json(['message' => 'Load Type has been updated.', 'classSchedule' => $classSchedule, 'regularLoad'=>$regularLoad, 'overLoad'=>$overLoad, 'emergencyLoad'=>$emergencyLoad, 'praiseLoad'=>$praiseLoad]);
     }
 
     public function updateNumberOfStudents(Request $request, ClassSchedule $classSchedule)

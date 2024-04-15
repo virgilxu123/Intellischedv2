@@ -22,7 +22,7 @@ class DesignationFacultyController extends Controller
     public function showDesignation(Faculty $faculty, AcademicYearTerm $academicYearTerm)
     {
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
-        $totalLoad = $faculty->loadCalculation($academicYearTerm);
+        $totalLoad = $faculty->totalLoad($academicYearTerm);
         $allFacultiesDesignations = array();
         $faculties = Faculty::all();
         foreach ($faculties as $faculty) {

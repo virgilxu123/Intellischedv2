@@ -163,11 +163,13 @@
                                                 <form action="{{route('update-load-type', ['classSchedule'=>$class->id])}}" method="POST">
                                                     @csrf
                                                     <select class="form-select form-select-sm loadTypeSelect" aria-label="Load Type">
-                                                        <option value="{{$class->load_type?$class->load_type:""}}">{{$class->load_type?$class->load_type->load_type:"Load Type"}}</option>
+                                                        <option value="{{ $class->load_type ? $class->load_type->id : '' }}">
+                                                            {{ $class->load_type ? $class->load_type->load_type : 'Load Type' }}
+                                                        </option>
                                                         @foreach ($loadTypes as $loadType)
-                                                        @if (!$class->load_type || $class->load_type->id !== $loadType->id)
-                                                            <option value="{{$loadType->id}}">{{$loadType->load_type}}</option>
-                                                        @endif
+                                                            @if (!$class->load_type || $class->load_type->id !== $loadType->id)
+                                                                <option value="{{ $loadType->id }}">{{ $loadType->load_type }}</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </form>
@@ -181,8 +183,8 @@
                             <div class="row">
                                 <div class="col-3">Regular load: <span id="regularLoad">{{$regularLoad}}</span></div>
                                 <div class="col-3">Overload: <span id="overLoad">{{$overLoad}}</span></div>
-                                <div id="emergencyLoad" class="col-3">Emergency Load: {{$emergencyLoad}}</div>
-                                <div id="praiseLoad" class="col-3">Praise Load: {{$praiseLoad}}</div>
+                                <div class="col-3">Emergency Load: <span id="emergencyLoad">{{$emergencyLoad}}</span></div>
+                                <div class="col-3">Praise Load: <span id="praiseLoad">{{$praiseLoad}}</span></div>
                             </div>
                         </div>
                     </div>
@@ -224,6 +226,7 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
+                    console.log(data);
                     $('#regularLoad').text(data.regularLoad);
                     $('#overLoad').text(data.overLoad);
                     $('#emergencyLoad').text(data.emergencyLoad);

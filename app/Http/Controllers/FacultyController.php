@@ -74,11 +74,12 @@ class FacultyController extends Controller
         $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
             ->with('subject', 'block', 'classroom', 'load_type', 'days')
             ->get();
-        $totalLoad = $faculty->loadCalculation($academicYearTerm);
-        $regularLoad = $faculty->loadCalculationByType($academicYearTerm, 'Regular Load');
-        $overLoad = $faculty->loadCalculationByType($academicYearTerm, 'Overload');
-        $emergencyLoad = $faculty->loadCalculationByType($academicYearTerm, 'Emergency Load');
-        $praiseLoad = $faculty->loadCalculationByType($academicYearTerm, 'Praise Load');
+        
+        $regularLoad = $faculty->regularLoad($academicYearTerm);
+        $overLoad = $faculty->overLoad($academicYearTerm);
+        $emergencyLoad = $faculty->emergencyLoad($academicYearTerm);
+        $praiseLoad = $faculty->praiseLoad($academicYearTerm);
+        $totalLoad = $regularLoad+$overLoad+$emergencyLoad+$praiseLoad;
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
 
         if (request()->ajax()) {
