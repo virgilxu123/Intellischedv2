@@ -79,7 +79,7 @@ class FacultyController extends Controller
         $overLoad = $faculty->overLoad($academicYearTerm);
         $emergencyLoad = $faculty->emergencyLoad($academicYearTerm);
         $praiseLoad = $faculty->praiseLoad($academicYearTerm);
-        $totalLoad = $regularLoad+$overLoad+$emergencyLoad+$praiseLoad;
+        $totalLoad = $faculty->totalLoad($academicYearTerm);
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
 
         if (request()->ajax()) {

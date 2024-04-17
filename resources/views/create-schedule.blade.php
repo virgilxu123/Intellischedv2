@@ -233,7 +233,7 @@
                         selectedSubjectIds.push(row._data['subject-id']);
                     });
                     $modal.find('input[name="subjectId[]"]').val(selectedSubjectIds);
-                    $('#openClassesForm').attr('action', '{{route("create-class-schedule", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTerm));
+                    $('#openClassesForm').attr('action', '{{route("open-classes", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTerm));
                     $modal.modal('show');
                 }else {
                     alert('Please select a subject');
@@ -371,7 +371,7 @@
                     let formData = new FormData(form[0]);
                     formData.append('subjectId[]', $(this).data('subject-id'));
                     formData.append('blocks', value);
-                    let url = "{{ route('create-class-schedule', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
+                    let url = "{{ route('open-classes', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
                     fetch(url, {
                         method: 'POST',
                         headers: {
@@ -470,7 +470,7 @@
     
                                 let html = `<tr class="class-schedule-row animate fadeIn" data-faculty-id="${classSchedule.faculty_id}">
                                                 <td>${classSchedule.subject.course_code}- <em>${classSchedule.subject.description}</em> ${yearLevel}${classSchedule.block.block}</td>
-                                                <td style="font-size:x-small;"><em>${classSchedule.time_start ? `${classSchedule.days[0].day}/${classSchedule.days[1].day}<br>${classSchedule.time_start}-${classSchedule.time_end}` : 'TBD'}</em></td>
+                                                <td style="font-size:x-small;"><em>${classSchedule.time_start ? `${classSchedule.days.length === 1 ? classSchedule.days[0].day : `${classSchedule.days[0].day}/${classSchedule.days[1].day}`}<br>${classSchedule.time_start}-${classSchedule.time_end}` : 'TBD'}</em></td>
                                                 <td class="text-center" data-class-id="${classSchedule.id}"><button class="btn btn-danger py-0 px-2 rounded unAssignClass" data-class-id="${classSchedule.id}" data-toggle="tooltip" title="Delete Class"><i class="fa-regular fa-trash-can"></i></button></td>
                                             </tr>`;
                                 $('#class-schedule-body').append(html);
@@ -614,50 +614,69 @@
         //script for tab 2
 
         //script for tab 3 drag and drop operation
+            let dayId = 2;
             $('#pills-plot-schedule-tab').click(function(){
                 fetchClasses(academicYearTermId, dayId);
                 $('#export_plotted_schedule').attr('action','{{route("export-plotted-schedule", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTermId));
             });
-            let dayId = $('#scheduledDay').data('day1');
-            $('#scheduledDay').on('click', '.fa', function() {
-                let day1Id = $('#scheduledDay').data('day1');
-                let day2Id = $('#scheduledDay').data('day2');
-                let day = "";
-                if (dayId === day1Id) {
-                    dayId = day2Id;
-                    day = "{{$days[2]->day}}/{{$days[5]->day}}"; // Replace with Blade syntax to get the day
-                } else {
-                    dayId = day1Id;
-                    day = "{{$days[1]->day}}/{{$days[4]->day}}"; // Replace with Blade syntax to get the day
+            $('#scheduledDay').on('click', '.fa-chevron-right', function() {
+                dayId++;
+                let day;
+                if(dayId == 3) {
+                    day = "{{$days[2]->day}}/{{$days[5]->day}}";
+                }
+                if(dayId == 4) {
+                    day = "{{$days[3]->day}}";
+                    dayId = 1;
+                }
+                if(dayId == 2) {
+                    day = "{{$days[1]->day}}/{{$days[4]->day}}";
                 }
                 $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
                 fetchClasses(academicYearTermId, dayId);
-            });
+            })
+            $('#scheduledDay').on('click', '.fa-chevron-left', function() {
+                dayId--;
+                let day;
+                if(dayId == 2) {
+                    day = "{{$days[1]->day}}/{{$days[4]->day}}";
+                }
+                if(dayId == 3) {
+                    day = "{{$days[2]->day}}/{{$days[5]->day}}";
+                }
+                if(dayId == 1) {
+                    dayId = 4;
+                    day = "{{$days[3]->day}}";
+                }
+                $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
+                fetchClasses(academicYearTermId, dayId);
+            })
 
         //script for filtering classes that has no room and time
             
             function applyFilters(classSchedules) {
                 let selectedYearLevel = $('#selectYrLvl').val();
                 let selectedType = $('#selectType').val();
-                console.log(selectedYearLevel, selectedType);
                 
                 // Get all class schedules
                 // Loop through class schedules and apply filters
-                classSchedules.forEach(classSchedule => {
-                    let classScheduleYrLvl = classSchedule.dataset.classYearLevel;
-                    let classScheduleType = classSchedule.dataset.classType;
-                    
-                    // Check if the class meets the year level filter
-                    let passYearLevelFilter = selectedYearLevel === 'all' || classScheduleYrLvl === selectedYearLevel;
-                    // Check if the class meets the class type filter
-                    let passTypeFilter = selectedType === 'all' || classScheduleType === selectedType;
-                    // Show the class schedule if it meets both filters, otherwise hide it
-                    if (passYearLevelFilter && passTypeFilter) {
-                        $(classSchedule).show();
-                    } else {
-                        $(classSchedule).hide();
-                    }
-                });
+                if(classSchedules) {
+                    classSchedules.forEach(classSchedule => {
+                        let classScheduleYrLvl = classSchedule.dataset.classYearLevel;
+                        let classScheduleType = classSchedule.dataset.classType;
+                        
+                        // Check if the class meets the year level filter
+                        let passYearLevelFilter = selectedYearLevel === 'all' || classScheduleYrLvl === selectedYearLevel;
+                        // Check if the class meets the class type filter
+                        let passTypeFilter = selectedType === 'all' || classScheduleType === selectedType;
+                        // Show the class schedule if it meets both filters, otherwise hide it
+                        if (passYearLevelFilter && passTypeFilter) {
+                            $(classSchedule).show();
+                        } else {
+                            $(classSchedule).hide();
+                        }
+                    });
+                }
             }
             
             // Event listener for year level filter
@@ -702,7 +721,6 @@
                 });
                 let classScheduleId = $(this).closest('.fill').data('class-schedule-id');
                 $(this).closest('td').attr('rowspan', 1);
-                // console.log(classScheduleId);
                 // deleteTimeRoom(classScheduleId);
             });
             $('.classesWithRoomAndTime').on('dragend', '.fill', function() {
@@ -817,7 +835,12 @@
                 })
                 .then(data => {
                     $('.classesWithNoRoomAndTime').empty();
-                    
+                    if(data.classSchedules.length === 0){
+                        let html = `<div class="alert alert-warning text-center" role="alert">
+                                        No classes to show
+                                    </div>`;
+                        $('.classesWithNoRoomAndTime').append(html);
+                    }
                     data.classSchedules.forEach(classSchedule => {
                         if(classSchedule.faculty != null && classSchedule.classroom_id == null) {
                             let badge = `<div class="badge fill mb-3 classesWithSched" draggable="true" style="display: block;background-color: ${classSchedule.faculty.color};" data-class-schedule-id="${classSchedule.id}" data-class-year-level="${classSchedule.subject.year_level}" data-class-type="${classSchedule.class_type}">

@@ -56,7 +56,7 @@ class ClassScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, AcademicYearTerm $academicYearTerm)
+    public function openClasses(Request $request, AcademicYearTerm $academicYearTerm)
     {
         $validated = $request->validate([
             'subjectId' => '',
@@ -196,7 +196,9 @@ class ClassScheduleController extends Controller
 
         // Attach the day to the class schedule
         $classSchedule->days()->attach($validated['day_id']);
-        $classSchedule->days()->attach($validated['day_id'] + 3);
+        if($validated['day_id']!==4){
+            $classSchedule->days()->attach($validated['day_id'] + 3);
+        }
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
 

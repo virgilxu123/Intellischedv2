@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('create-academic-year-term', [AcademicYearTermController::class, 'store'])->name('create-academic-year-term');
 
     Route::get('create-schedule/{academic_year_term}', [ClassScheduleController::class, 'index'])->name('create-schedule');
-    Route::post('create-class-schedule/{academic_year_term}', [ClassScheduleController::class, 'store'])->name('create-class-schedule');
+    Route::post('create-class-schedule/{academic_year_term}', [ClassScheduleController::class, 'openClasses'])->name('open-classes');
     Route::post('assign-classes/{faculty}', [ClassScheduleController::class, 'assignClassSchedulesToFaculty'])->name('assign-classes');
     Route::post('unassign-class/{classSchedule}', [ClassScheduleController::class, 'unAssignClassScheduleFromFaculty'])->name('unassign-class');
     Route::get('show-faculty-load/{faculty}/{academicYearTerm}', [ClassScheduleController::class, 'show'])->name('show-faculty-load');

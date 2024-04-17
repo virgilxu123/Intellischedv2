@@ -1,6 +1,6 @@
 <div class="row animated fadeIn">
     <div class="col-3">
-        <div class="card " style="height: 90vh;overflow:auto;">
+        <div class="card " style="max-height: 90vh;overflow:auto;">
             <div class="card-header bg-dark text-light">
                 <h5 class="card-title">Classes</h5>
                 <div class="row">
@@ -39,7 +39,7 @@
                     <div class="col-8">
                         <h5>S.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}} {{$academicYearTerm->term->term}}</h5>
     
-                        <p id="scheduledDay" data-day1="{{$days[1]->id}}" data-day2="{{$days[2]->id}}" class="mb-0 d-inline-block"><i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> {{$days[1]->day}}/{{$days[4]->day}} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i></p>
+                        <p id="scheduledDay" class="mb-0 d-inline-block"><i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> {{$days[1]->day}}/{{$days[4]->day}} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i></p>
                     </div>
                     <div class="col-4">
                         <form action="" method="POST" target="__blank" id="export_plotted_schedule">
