@@ -85,13 +85,12 @@ class ClassScheduleController extends Controller
 
     public function updateBlockCount(Request $request, AcademicYearTerm $academicYearTerm)
     {
-
         $validated = $request->validate([
             'subjectId' => 'required',
             'blocks' => 'required',
         ]);
         $this->classScheduleService->createAdjustBlocks($validated['subjectId'], $validated['blocks'], $academicYearTerm);
-        return \response()->json(['message' => 'Block count updated successfully!']);
+        return response()->json(['message' => 'Block count updated successfully!']);
     }
     /**
      * Display the specified resource.

@@ -33,10 +33,17 @@ class PlottedClassSchedules implements FromView, ShouldAutoSize
                                         })
                                         ->get();
         $classSchedulesForTF->load('subject', 'block', 'classroom', 'faculty', 'days');
+        $classSchedulesForW = ClassSchedule::where('academic_year_term_id', $this->academicYearTerm->id)
+                                        ->whereHas('days', function ($query) {
+                                            $query->where('day_id', 4);
+                                        })
+                                        ->get();
+        $classSchedulesForW->load('subject', 'block', 'classroom', 'faculty', 'days');
         return view('exports.export-plotted-schedules', [
             'academicYearTerm' => $this->academicYearTerm,
             'classSchedulesForMTh' => $classSchedulesForMTh,
             'classSchedulesForTF' => $classSchedulesForTF,
+            'classSchedulesForW' => $classSchedulesForW,
         ]);
     }
 }
