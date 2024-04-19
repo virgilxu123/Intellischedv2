@@ -615,42 +615,33 @@
 
         //script for tab 3 drag and drop operation
             let dayId = 2;
+            let counter = 0;
             $('#pills-plot-schedule-tab').click(function(){
                 fetchClasses(academicYearTermId, dayId);
                 $('#export_plotted_schedule').attr('action','{{route("export-plotted-schedule", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTermId));
             });
-            $('#scheduledDay').on('click', '.fa-chevron-right', function() {
-                dayId++;
+
+            $('#scheduledDay').on('click', '.fa-chevron-right, .fa-chevron-left', function() {
+                const direction = $(this).hasClass('fa-chevron-right') ? 1 : -1; // 1 for right, -1 for left
+                counter = (counter + direction + 3) % 3 || 3; // Modulo operation to cycle dayId between 1 and 3
+
                 let day;
-                if(dayId == 3) {
+                if (counter === 1) {
+                    dayId = 3;
                     day = "{{$days[2]->day}}/{{$days[5]->day}}";
                 }
-                if(dayId == 4) {
+                if (counter === 2) {
                     day = "{{$days[3]->day}}";
-                    dayId = 1;
-                }
-                if(dayId == 2) {
-                    day = "{{$days[1]->day}}/{{$days[4]->day}}";
-                }
-                $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
-                fetchClasses(academicYearTermId, dayId);
-            })
-            $('#scheduledDay').on('click', '.fa-chevron-left', function() {
-                dayId--;
-                let day;
-                if(dayId == 2) {
-                    day = "{{$days[1]->day}}/{{$days[4]->day}}";
-                }
-                if(dayId == 3) {
-                    day = "{{$days[2]->day}}/{{$days[5]->day}}";
-                }
-                if(dayId == 1) {
                     dayId = 4;
-                    day = "{{$days[3]->day}}";
                 }
-                $("#scheduledDay").html(`<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small;cursor: pointer;"></i>`);
+                if (counter === 3) {
+                    day = "{{$days[1]->day}}/{{$days[4]->day}}";
+                    dayId = 2;
+                }
+                const scheduledDayHtml = `<i class="fa fa-chevron-left" style="font-size:x-small; cursor: pointer;"></i> ${day} <i class="fa fa-chevron-right" style="font-size:x-small; cursor: pointer;"></i>`;
+                $("#scheduledDay").html(scheduledDayHtml);
                 fetchClasses(academicYearTermId, dayId);
-            })
+            });
 
         //script for filtering classes that has no room and time
             
@@ -721,7 +712,7 @@
                 });
                 let classScheduleId = $(this).closest('.fill').data('class-schedule-id');
                 $(this).closest('td').attr('rowspan', 1);
-                // deleteTimeRoom(classScheduleId);
+                deleteTimeRoom(classScheduleId);
             });
             $('.classesWithRoomAndTime').on('dragend', '.fill', function() {
                 this.classList.remove('hold', 'invisible');
@@ -773,14 +764,9 @@
                 const time = emptyCell.dataset.time;
                 const classScheduleId = filledCell.dataset.classScheduleId; // Retrieve classScheduleId
                 const url = '{{route("assign-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
-                // Send AJAX request to save data
-                
                 assignRoomTimeDay(classScheduleId, roomNumber, time);
                 fetchClasses(academicYearTermId, dayId);
-                // // Update UI immediately if needed
                 emptyCell.appendChild(filledCell);
-                filledCell.classList.remove('mb-3');
-                filledCell.classList.remove('empty');
                 applyFilters();
             }
             function assignRoomTimeDay(classScheduleId,room,time) {
@@ -805,8 +791,8 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    message = "Successfully assigned time and room!";
-                    toastr.success(message);
+                    // message = "Successfully assigned time and room!";
+                    // toastr.success(message);
                 })
                 .catch(error => {
                     message = "Schedule Conflict: Instructor/Block conflict";
@@ -894,21 +880,6 @@
                         // Set rowspan for the first cell
                         timeCell.innerHTML = html;
                         timeCell.setAttribute('rowspan', rowsToSpan);
-
-                        // Set the rowspan attribute to the remaining rows for the same room and time
-                        let nextRow = timeCell.parentElement.nextElementSibling;
-                        let rowspanCount = 1;
-                        while (nextRow && rowspanCount < rowsToSpan) {
-                            const nextTimeCell = nextRow.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);
-                            if (nextTimeCell) {
-                                nextTimeCell.style.display = 'none'; // Hide the cell
-                                rowspanCount++;
-                                nextRow = nextRow.nextElementSibling;
-                            } else {
-                                break;
-                            }
-                        }
-                        
                     } else {
                         console.error('No empty cell found for room', roomId, 'and time', time);
                     }
@@ -931,8 +902,8 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    message = "Warning: A schedule has been removed!";
-                    toastr.warning(message);
+                    // message = "Warning: A schedule has been removed!";
+                    // toastr.warning(message);
                 })
                 .catch(error => {
                     message = "Error deleting time and room!";

@@ -37,7 +37,7 @@ class ClassroomController extends Controller
         ]);
         // Create a new faculty using mass assignment
         $room = Classroom::create($validatedData);
-    
+
         return redirect()->route('manage-rooms')->with('success', 'Room created successfully!');
     }
 
@@ -62,7 +62,14 @@ class ClassroomController extends Controller
      */
     public function update(Request $request, Classroom $classroom)
     {
-        //
+        $validatedData = $request->validate([
+            'room_number' => 'required',
+            'capacity' => 'required',
+            'type' => 'required',
+            'availability' => 'required',
+        ]);
+        $classroom->update($validatedData);
+        return redirect()->route('manage-rooms')->with('success', 'Room updated successfully!');
     }
 
     /**
@@ -70,6 +77,7 @@ class ClassroomController extends Controller
      */
     public function destroy(Classroom $classroom)
     {
-        //
+        $classroom->delete();
+        return redirect()->back()->with('deleted', 'Room has been deleted!');
     }
 }

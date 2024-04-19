@@ -13,6 +13,7 @@ class Classroom extends Model
         'room_number',
         'type',
         'capacity',
+        'availability',
     ];
 
     public function class_schedules() {

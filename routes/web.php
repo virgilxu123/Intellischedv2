@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('manage-rooms', [ClassroomController::class, 'index'])->name('manage-rooms');
     Route::post('add-room', [ClassroomController::class, 'store'])->name('add-room');
+    Route::post('update-room/{classroom}', [ClassroomController::class, 'update'])->name('update-room');
+    Route::post('delete-room/{classroom}', [ClassroomController::class, 'destroy'])->name('delete-room');
 
     Route::get('manage-faculty', [FacultyController::class, 'index'])->name('manage-faculty');
     Route::post('add-faculty', [FacultyController::class, 'store'])->name('add-faculty');

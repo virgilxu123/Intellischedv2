@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('room_number');
             $table->string('type');
             $table->integer('capacity');
+            $table->boolean('availability')->default(true);
             $table->timestamps();
         });
     }
