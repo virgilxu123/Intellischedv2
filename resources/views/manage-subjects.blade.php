@@ -52,9 +52,9 @@
                                         <td>{{$subject->description}}</td>
                                         <td>{{$subject->units}}</td>
                                         <td>{{$subject->year_level}}</td>
-                                        <td>{{ optional($subject->term)->term ?? '' }}</td>
+                                        <td data-term="{{$subject->term->id}}">{{ optional($subject->term)->term ?? '' }}</td>
                                         <td class="text-center">
-                                            <span data-subject_id="{{$subject->id}}" class="fa-solid fa-pen-to-square p-1 text-success rounded btn" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#editSubjectModal" data-placement="top" title="Edit"  style="cursor: pointer"></span>
+                                            <span data-subject_id="{{$subject->id}}" data-subject-type="{{$subject->subject_type}}" data-laboratory="{{$subject->laboratory}}" class="fa-solid fa-pen-to-square p-1 text-success rounded btn" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#editSubjectModal" data-placement="top" title="Edit"  style="cursor: pointer"></span>
                                             <span data-subject_id="{{$subject->id}}" class="fa-regular fa-trash-can rounded p-1 btn text-danger" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#deleteSubject" data-placement="top" title="Delete" style="cursor: pointer"></span>
                                         </td>
                                     </tr>
@@ -97,10 +97,10 @@
                                 <label class="form-label" for="year_level">Year</label>
                                 <select id="year_level" name="year_level" data-placeholder="" class="form-select" tabindex="1">
                                     <option value=""></option>
-                                    <option value="1st Year">1st Year</option>
-                                    <option value="2nd Year">2nd Year</option>
-                                    <option value="3rd Year">3rd Year</option>
-                                    <option value="4th Year">4th Year</option>
+                                    <option value="First Year">1st Year</option>
+                                    <option value="Second Year">2nd Year</option>
+                                    <option value="Third Year">3rd Year</option>
+                                    <option value="Fourth Year">4th Year</option>
                                 </select>
                             </div>
                             <div class="col-lg-6">
@@ -171,10 +171,10 @@
                                 <label class="form-label" for="year_level2">Year</label>
                                 <select id="year_level2" name="year_level" class="form-select" tabindex="1">
                                     <option value=""></option>
-                                    <option value="1st Year">1st Year</option>
-                                    <option value="2nd Year">2nd Year</option>
-                                    <option value="3rd Year">3rd Year</option>
-                                    <option value="4th Year">4th Year</option>
+                                    <option value="First Year">1st Year</option>
+                                    <option value="Second Year">2nd Year</option>
+                                    <option value="Third Year">3rd Year</option>
+                                    <option value="Fourth Year">4th Year</option>
                                 </select>
                             </div>
                             <div class="col-lg-6 mb-3">
@@ -248,40 +248,69 @@
                 document.getElementById('addSubject').setAttribute('action', '{{route("add-subject")}}');
             });
             // Attach event listener to a parent element that exists when the page loads
-            document.addEventListener('click', function (event) {
-                if (event.target.classList.contains('fa-pen-to-square')||event.target.classList.contains('fa-trash-can')) {
-                    let pencilTrash = event.target;
-                    let subjectId = pencilTrash.getAttribute('data-subject_id');
-                    // Make AJAX request to fetch subject details
-                    fetch(`{{ route('show-subject', ':subjectId') }}`.replace(':subjectId', subjectId))
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json(); // Parse the JSON response
-                        })
-                        .then(data => {
-                            // Populate the edit modal with fetched data
-                            let editForm = document.querySelector('#editSubjectModal');
-                            editForm.querySelector('[name="course_code"]').value = data.course_code;
-                            editForm.querySelector('[name="description"]').value = data.description;
-                            editForm.querySelector('[name="units"]').value = data.units;
-                            editForm.querySelector('[name="year_level"]').value = data.year_level;
-                            editForm.querySelector('[name="term_id"]').value = data.term_id;
-                            editForm.querySelector('[name="laboratory"]').value = data.laboratory;
-                            editForm.querySelector('[name="subject_type"]').value = data.subject_type;
+            $(document).on('click', '.fa-pen-to-square', function() {
+                const trElement = $(this).closest('tr');
+                const courseCode = trElement.find('td:eq(0)').text().trim();
+                const description = trElement.find('td:eq(1)').text().trim();
+                const units = trElement.find('td:eq(2)').text().trim();
+                const yearLevel = trElement.find('td:eq(3)').text().trim();
+                const term = trElement.find('td:eq(4)').attr('data-term');
+                const subjectType = $(this).attr('data-subject-type');
+                const laboratory = $(this).attr('data-laboratory');
 
-                            document.getElementById('deleteSubjectMessage').textContent = `Are you sure you want to delete ${data.course_code} ${data.description}?`;
+                const subjectId = $(this).attr('data-subject_id');
 
-                            // Update action URL of the form
-                            document.querySelector('#update').setAttribute('action', '{{ route("update-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
-                            document.querySelector('#deleteSubjectForm').setAttribute('action', '{{ route("delete-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
-                        })
-                        .catch(error => {
-                            console.error('There was a problem with the fetch operation:', error);
-                        });
-                }
+                $('#code2').val(courseCode);
+                $('#description2').val(description);
+                $('#units2').val(units);
+                $('#year_level2').val(yearLevel);
+                $('#term2').val(term);
+                $('#subject_type2').val(subjectType);
+                $('#laboratory2').val(laboratory);
+                $('#update').attr('action', '{{ route("update-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
             });
+            $(document).on('click', '.fa-trash-can', function() {
+                const subjectId = $(this).attr('data-subject_id');
+                const trElement = $(this).closest('tr');
+                const courseCode = trElement.find('td:eq(0)').text().trim();
+                const description = trElement.find('td:eq(1)').text().trim();
+                $('#deleteSubjectForm').attr('action', '{{ route("delete-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
+                $('#deleteSubjectMessage').text(`Are you sure you want to delete subject ${courseCode} ${description}?`);
+            });
+            // document.addEventListener('click', function (event) {
+            //     if (event.target.classList.contains('fa-pen-to-square')||event.target.classList.contains('fa-trash-can')) {
+            //         let pencilTrash = event.target;
+            //         let subjectId = pencilTrash.getAttribute('data-subject_id');
+            //         // Make AJAX request to fetch subject details
+            //         fetch(`{{ route('show-subject', ':subjectId') }}`.replace(':subjectId', subjectId))
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Network response was not ok');
+            //                 }
+            //                 return response.json(); // Parse the JSON response
+            //             })
+            //             .then(data => {
+            //                 // Populate the edit modal with fetched data
+            //                 let editForm = document.querySelector('#editSubjectModal');
+            //                 editForm.querySelector('[name="course_code"]').value = data.course_code;
+            //                 editForm.querySelector('[name="description"]').value = data.description;
+            //                 editForm.querySelector('[name="units"]').value = data.units;
+            //                 editForm.querySelector('[name="year_level"]').value = data.year_level;
+            //                 editForm.querySelector('[name="term_id"]').value = data.term_id;
+            //                 editForm.querySelector('[name="laboratory"]').value = data.laboratory;
+            //                 editForm.querySelector('[name="subject_type"]').value = data.subject_type;
+
+            //                 document.getElementById('deleteSubjectMessage').textContent = `Are you sure you want to delete ${data.course_code} ${data.description}?`;
+
+            //                 // Update action URL of the form
+            //                 document.querySelector('#update').setAttribute('action', '{{ route("update-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
+            //                 document.querySelector('#deleteSubjectForm').setAttribute('action', '{{ route("delete-subject", ":subjectId") }}'.replace(':subjectId', subjectId));
+            //             })
+            //             .catch(error => {
+            //                 console.error('There was a problem with the fetch operation:', error);
+            //             });
+            //     }
+            // });
             // Function to make AJAX request and handle response
             function handleFormSubmission(formId, successCallback, actionType) {
                 document.querySelector(formId).addEventListener('submit', function (event) {
@@ -340,12 +369,16 @@
 
             // Call the function for update form
             handleFormSubmission('#update', function(data) {
+                console.log(data);
                 let tableRow = document.querySelector(`tr[data-subject_id="${data.updatedData.id}"]`);
                 tableRow.querySelector('td:nth-child(1)').textContent = data.updatedData.course_code;
                 tableRow.querySelector('td:nth-child(2)').textContent = data.updatedData.description;
                 tableRow.querySelector('td:nth-child(3)').textContent = data.updatedData.units;
                 tableRow.querySelector('td:nth-child(4)').textContent = data.updatedData.year_level;
                 tableRow.querySelector('td:nth-child(5)').textContent = data.updatedData.term_name;
+                tableRow.querySelector('td:nth-child(5)').setAttribute('data-term', data.updatedData.term.id);
+                tableRow.querySelector('td:nth-child(6) span').setAttribute('data-subject-type', data.updatedData.subject_type);
+                tableRow.querySelector('td:nth-child(6) span').setAttribute('data-laboratory', data.updatedData.laboratory);
             }, 'update');
 
             // Call the function for delete form
@@ -357,15 +390,16 @@
                 console.log(data);
                 let tableBody = document.querySelector('table tbody');
                 let newRow = tableBody.insertRow();
+                console.log(data);
                 newRow.innerHTML = `
                     <td>${data.subject.course_code}</td>
                     <td>${data.subject.description}</td>
                     <td>${data.subject.units}</td>
                     <td>${data.subject.year_level}</td>
-                    <td>${data.subject.term.term}</td>
+                    <td data-term="${subject.term.id}">${data.subject.term.term}</td>
                     <td class="text-center">
-                        <span data-subject_id="${data.subject.id}" class="fa-solid fa-pen-to-square p-1 text-success rounded btn" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#editSubjectModal" data-placement="top" title="Edit"  style="cursor: pointer"></span>
-                        <span data-subject_id="${data.subject.id}" class="fa-regular fa-trash-can rounded p-1 btn text-danger" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#deleteSubject" data-placement="top" title="Delete" style="cursor: pointer"></span>
+                        <span data-subject_id="${data.subject.id}" data-subject-type="${$data.subject.subject_type}" data-laboratory="${data.subject.laboratory}" class="fa-solid fa-pen-to-square p-1 text-success rounded btn" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#editSubjectModal" data-placement="top" title="Edit"  style="cursor: pointer"></span>
+                        <span data-subject_id="${data.subject.id}" data-subject-type="${$data.subject.subject_type}" data-laboratory="${data.subject.laboratory}" class="fa-regular fa-trash-can rounded p-1 btn text-danger" data-bs-toggle="modal" data-toggle="tooltip" data-bs-target="#deleteSubject" data-placement="top" title="Delete" style="cursor: pointer"></span>
                     </td>
                 `;
             }, 'add');
