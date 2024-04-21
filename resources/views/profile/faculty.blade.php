@@ -204,8 +204,13 @@
                 e.preventDefault();
                 
             })
+            let prevValue;
+            $(document).on('focus', '.loadTypeSelect', function() {
+                prevValue = $(this).val();
+            });
             
             $(document).on('change', '.loadTypeSelect',function(e){
+                let thisSelect = $(this);
                 let form = $(this).closest('form');
                 let url = form.attr('action');
                 let selectedValue = $(this).val();
@@ -226,16 +231,20 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
-                    console.log(data);
                     $('#regularLoad').text(data.regularLoad);
                     $('#overLoad').text(data.overLoad);
                     $('#emergencyLoad').text(data.emergencyLoad);
                     $('#praiseLoad').text(data.praiseLoad);
-                    toastr.success(data.message);
+                    if(data.message){
+                        toastr.success(data.message);
+                    }else {
+                        toastr.error(data.error);
+                        thisSelect.val(prevValue);
+                    }
                 })
                 .catch(error => {
-                    let message = "An error has occured";
-                    showToast('error', message);
+                    toastr.error('An Error has occurred');
+
                 });
             });
     //fetch when focus is lost        

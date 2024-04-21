@@ -42,26 +42,6 @@ class Faculty extends Model
         return $totalSubjectUnits + $designationsUnits;
     }
 
-    // public function loadCalculationByType($academicYearTerm, $loadType)
-    // {
-    //     $query = $this->class_schedules()
-    //         ->where('academic_year_term_id', $academicYearTerm->id)
-    //         ->whereHas('load_type', function ($query) use ($loadType) {
-    //             $query->where('load_type', $loadType);
-    //         });
-
-    //     if ($loadType === 'Regular Load') {
-    //         $designationsUnits = $this->designations()
-    //             ->wherePivot('academic_year_term_id', $academicYearTerm->id)
-    //             ->sum('units');
-    //         return $query->sum('units') + $designationsUnits;
-    //     }
-    //     if($loadType === 'Overload'){
-    //         return $query->sum('units');
-    //     }
-    //     return $query->sum('units');
-    // }
-
     public function regularLoad($academicYearTerm) 
     {
         $regularLoad = $this->class_schedules()
@@ -113,4 +93,21 @@ class Faculty extends Model
             ->wherePivot('academic_year_term_id', $academicYearTerm->id)
             ->sum('units');
     }
+
+    public function assignClassSchedules($classSchedules)
+    {
+        $classSchedules->each(function ($classSchedule){
+            $classSchedule->faculty_id = $this->id;
+            if ($classSchedule->subject->laboratory == 'Yes') { //assign also the laboratory class to faculty
+                $labSchedule = ClassSchedule::where('subject_id', $classSchedule->subject_id)
+                    ->where('block_id', $classSchedule->block_id)
+                    ->where('class_type', 'laboratory')
+                    ->first();
+                $labSchedule->faculty_id = $this->id;
+                $labSchedule->save();
+            }
+            $classSchedule->save();
+        });
+    }
+
 }

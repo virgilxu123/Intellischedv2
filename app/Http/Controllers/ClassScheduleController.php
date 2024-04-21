@@ -11,6 +11,7 @@ use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use App\Models\ClassSchedule;
 use App\Models\AcademicYearTerm;
+use Illuminate\Http\JsonResponse;
 use App\Services\ClassScheduleService;
 
 class ClassScheduleController extends Controller
@@ -73,10 +74,6 @@ class ClassScheduleController extends Controller
             $subject_id = intval($validated['subjectId']);
             $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
         }
-        // $subject_ids = array_map('intval', explode(',', $validated['subjectId'][0])); //Retrieve the string of subject IDs and Split the string into an array of individual IDs: convert to int
-        // foreach ($subject_ids as $subject_id) {
-        //     $this->classScheduleService->createAdjustBlocks($subject_id, $validated['blocks'], $academicYearTerm);
-        // }
         if (\request()->ajax()) {
             return response()->json(['message' => 'Block count updated successfully!']);
         }
@@ -139,21 +136,9 @@ class ClassScheduleController extends Controller
         // Find class schedules based on the provided class IDs
         $classSchedules = ClassSchedule::whereIn('id', $classIds)->get();
 
-        // Assign the faculty to each class schedule
-        $classSchedules->each(function ($classSchedule) use ($faculty) {
-            $classSchedule->faculty_id = $faculty->id;
-            if ($classSchedule->subject->laboratory == 'Yes') { //assign also the laboratory class to faculty
-                $labSchedule = ClassSchedule::where('subject_id', $classSchedule->subject_id)
-                    ->where('block_id', $classSchedule->block_id)
-                    ->where('class_type', 'laboratory')
-                    ->first();
-                $labSchedule->faculty_id = $faculty->id;
-                $labSchedule->save();
-            }
-            $classSchedule->save();
-        });
-        $classSchedules = ClassSchedule::where('faculty_id', $faculty->id)->get();
-        $classSchedules->load('subject', 'block', 'classroom', 'faculty',);
+        $faculty->assignClassSchedules($classSchedules);
+        $classSchedules = $faculty->class_schedules()->get();
+        $classSchedules->load('subject', 'block', 'classroom', 'faculty');
         return response()->json(['message' => 'Class Schedules have been assigned to faculty.', 'classSchedules' => $classSchedules]);
     }
 
@@ -218,8 +203,10 @@ class ClassScheduleController extends Controller
         $validated = $request->validate([
             'load_type' => 'required',
         ]);
-        $classSchedule->load_type_id = $validated['load_type'];
-        $classSchedule->save();
+        $response = $classSchedule->assignLoadType($validated['load_type']);
+        if ($response instanceof JsonResponse) {
+            return $response;
+        }
         $faculty = $classSchedule->faculty;
         $regularLoad = $faculty->regularLoad($classSchedule->academic_year_term);
         $overLoad = $faculty->overLoad($classSchedule->academic_year_term);

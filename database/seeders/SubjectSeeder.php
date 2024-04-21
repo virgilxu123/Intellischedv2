@@ -439,7 +439,7 @@ class SubjectSeeder extends Seeder
             ],
             [
                 'course_code' => 'CS 328',
-                'description' => 'Machie Learning',
+                'description' => 'Machine Learning',
                 'units' => '3',
                 'year_level' => 'Third Year',
                 'term_id' => '2',

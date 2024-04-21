@@ -20,6 +20,7 @@ class ClassScheduleService
                 $classSchedule->block_id = $i;
                 $classSchedule->units = 3;
                 $classSchedule->class_type = 'lecture';
+                $classSchedule->student_count = 25;
                 $classSchedule->save();
             }
             $subject = Subject::find($subject_id); //if the subject has a laboratory create a class for laboratory
@@ -31,6 +32,7 @@ class ClassScheduleService
                     $classSchedule->block_id = $i;
                     $classSchedule->units = 1.25;
                     $classSchedule->class_type = 'laboratory';
+                    $classSchedule->student_count = 25;
                     $classSchedule->save();
                 }
             }

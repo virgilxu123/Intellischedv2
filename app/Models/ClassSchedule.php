@@ -20,13 +20,13 @@ class ClassSchedule extends Model
     {
         // Retrieve all class schedules for the given faculty and day
         $existingClassSchedules = self::where('academic_year_term_id', $this->academic_year_term_id)
-                            ->whereNotNull('classroom_id')
-                            ->where('faculty_id', $this->faculty_id)
-                            ->whereHas('days', function ($query) use ($dayId) {
-                                $query->where('day_id', $dayId);
-                            })
-                            ->get();
-         // Check for conflicts with each class schedule
+            ->whereNotNull('classroom_id')
+            ->where('faculty_id', $this->faculty_id)
+            ->whereHas('days', function ($query) use ($dayId) {
+                $query->where('day_id', $dayId);
+            })
+            ->get();
+        // Check for conflicts with each class schedule
         foreach ($existingClassSchedules as $existingClassSchedule) {
             // Convert time strings to Unix timestamp for comparison
             $classStartTime = strtotime($existingClassSchedule->time_start);
@@ -37,17 +37,18 @@ class ClassSchedule extends Model
             // Check if the new time range overlaps with the existing class schedule
             if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
                 ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
-                ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)){
+                ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+            ) {
                 return true; // Conflict found, return true
             }
         }
         $existtingClassSchedulesWithSameBlockAndYear = self::where('academic_year_term_id', $this->academic_year_term_id)
-                            ->whereNotNull('classroom_id')
-                            ->whereHas('days', function ($query) use ($dayId) {
-                                $query->where('day_id', $dayId);
-                            })
-                            ->where('block_id', $this->block_id)
-                            ->get();
+            ->whereNotNull('classroom_id')
+            ->whereHas('days', function ($query) use ($dayId) {
+                $query->where('day_id', $dayId);
+            })
+            ->where('block_id', $this->block_id)
+            ->get();
         foreach ($existtingClassSchedulesWithSameBlockAndYear as $existingClassSchedule) {
             // Convert time strings to Unix timestamp for comparison
             $classStartTime = strtotime($existingClassSchedule->time_start);
@@ -56,10 +57,11 @@ class ClassSchedule extends Model
             $newEndTime = strtotime($newTimeEnd);
 
             // Check if the new time range overlaps with the existing class schedule
-            if($existingClassSchedule->subject->year_level == $this->subject->year_level){
+            if ($existingClassSchedule->subject->year_level == $this->subject->year_level) {
                 if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
                     ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
-                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)){
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+                ) {
                     return true; // Conflict found, return true
                 }
             }
@@ -68,11 +70,28 @@ class ClassSchedule extends Model
         return false;
     }
 
+    public function assignLoadType($loadType)
+    {
+        
+        if ($loadType==1 && $this->faculty->regularLoad($this->academic_year_term) + $this->units > 21) {
+            return response()->json(['error' => 'Faculty has reached maximum regular load.']);
+        }
+        
+        if ($loadType==2 && $this->faculty->overLoad($this->academic_year_term) + $this->units > 9.25) {
+            return response()->json(['error' => 'Faculty has reached maximum over load.']);
+        }
+                // $this->assignEmergencyLoad($loadType);
+                // $this->assignPraiseLoad($loadType);
+                
+        $this->load_type_id = $loadType;
+        $this->save();
+    }
+
     public static function selectBothLabAndLecClasses($subjectId, $blockId)
     {
         return self::where('subject_id', $subjectId)
-                    ->where('block_id', $blockId)
-                    ->get();
+            ->where('block_id', $blockId)
+            ->get();
     }
 
     public function block()
