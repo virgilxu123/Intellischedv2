@@ -14,6 +14,7 @@ class Classroom extends Model
         'type',
         'capacity',
         'availability',
+        'lab_type',
     ];
 
     public function class_schedules() {

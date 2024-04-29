@@ -9,7 +9,10 @@ class ClassScheduleService
 {
     public function createAdjustBlocks($subject_id, $desiredBlockCount, $academicYearTerm)
     {
-        $currentBlockCount = ClassSchedule::where('subject_id', $subject_id)->where('class_type','lecture')->count();
+        $currentBlockCount = ClassSchedule::where('subject_id', $subject_id)
+                                            ->where('class_type','lecture')
+                                            ->where('academic_year_term_id', $academicYearTerm->id)
+                                            ->count();
         $difference = $desiredBlockCount - $currentBlockCount;
         if ($difference > 0) {
             // Add additional blocks
@@ -38,10 +41,12 @@ class ClassScheduleService
             }
         } elseif ($difference < 0) {
             // Deduct blocks
-            $blocksToRemove = ClassSchedule::where('subject_id', $subject_id)->where('class_type','lecture')
-                ->orderBy('block_id', 'desc')
-                ->take(abs($difference))
-                ->get();
+            $blocksToRemove = ClassSchedule::where('subject_id', $subject_id)
+                                            ->where('class_type','lecture')
+                                            ->where('academic_year_term_id', $academicYearTerm->id)
+                                            ->orderBy('block_id', 'desc')
+                                            ->take(abs($difference))
+                                            ->get();
 
             foreach ($blocksToRemove as $block) {
                 $block->days()->detach();
@@ -50,9 +55,10 @@ class ClassScheduleService
             $subject = Subject::find($subject_id);
             if($subject) {
                 $blocksToRemove = ClassSchedule::where('subject_id', $subject_id)->where('class_type','laboratory')
-                ->orderBy('block_id', 'desc')
-                ->take(abs($difference))
-                ->get();
+                                                ->where('academic_year_term_id', $academicYearTerm->id)
+                                                ->orderBy('block_id', 'desc')
+                                                ->take(abs($difference))
+                                                ->get();
 
                 foreach ($blocksToRemove as $block) {
                     $block->days()->detach();

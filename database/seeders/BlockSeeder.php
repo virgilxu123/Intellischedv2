@@ -35,6 +35,48 @@ class BlockSeeder extends Seeder
             [
                 'block' => 'G'
             ],
+            [
+                'block' => 'H'
+            ],
+            [
+                'block' => 'I'
+            ],
+            [
+                'block' => 'J'
+            ],
+            [
+                'block' => 'K'
+            ],
+            [
+                'block' => 'L'
+            ],
+            [
+                'block' => 'M'
+            ],
+            [
+                'block' => 'N'
+            ],
+            [
+                'block' => 'O'
+            ],
+            [
+                'block' => 'P'
+            ],
+            [
+                'block' => 'Q'
+            ],
+            [
+                'block' => 'R'
+            ],
+            [
+                'block' => 'S'
+            ],
+            [
+                'block' => 'T'
+            ],
+            [
+                'block' => 'U'
+            ],
         ]);
     }
 }

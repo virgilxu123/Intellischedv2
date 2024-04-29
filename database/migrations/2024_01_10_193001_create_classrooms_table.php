@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('room_number');
             $table->string('type');
+            $table->enum('lab_type', ['0', '1', '2'])->default('0');
             $table->integer('capacity');
             $table->boolean('availability')->default(true);
             $table->timestamps();

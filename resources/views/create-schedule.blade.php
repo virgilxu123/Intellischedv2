@@ -57,7 +57,14 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <p data-academic-year-term="{{$academicYearTerm->id}}" class="academic_year_term">S.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}: <em>{{$academicYearTerm->term->term}}</em></p>
+                        <div class="row">
+                            <div class="col-10">
+                                <p data-academic-year-term="{{$academicYearTerm->id}}" class="academic_year_term">S.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}: <em>{{$academicYearTerm->term->term}}</em></p>
+                            </div>
+                            <div class="col-2">
+                                <button id="automateSchedule" style="visibility: hidden;float: right;" class="btn btn-primary btn-sm"><i class="fa-solid fa-robot"></i> Generate</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -225,6 +232,17 @@
             let academicYearTermId = $('.academic_year_term').data('academic-year-term');
             let facultyId;
             // select subjects to be opened
+            $('#pills-plot-schedule-tab').on('click', function() {
+                $('#automateSchedule').css('visibility', 'visible');
+            });
+            
+            $('#pills-loading-tab').on('click', function() {
+                $('#automateSchedule').css('visibility', 'hidden');
+            });
+            $('#pills-classes-tab').on('click', function() {
+                $('#automateSchedule').css('visibility', 'hidden');
+            });
+
             $button.click(function () {
                 let $selected = $table.bootstrapTable('getSelections');
                 let selectedSubjectIds = [];
@@ -235,6 +253,9 @@
                     $modal.find('input[name="subjectId[]"]').val(selectedSubjectIds);
                     $('#openClassesForm').attr('action', '{{route("open-classes", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTerm));
                     $modal.modal('show');
+                console.log(academicYearTerm);
+                console.log(selectedSubjectIds);
+                console.log($('#openClassesForm').attr('action'));
                 }else {
                     alert('Please select a subject');
                 }
@@ -365,12 +386,15 @@
             });
             $(document).on('focusout', '.classCount', function(){
                 let value = $(this).val();
-
                 if(value != intialBlockCount){
                     let form = $(this).closest('form');
                     let formData = new FormData(form[0]);
-                    formData.append('subjectId[]', $(this).data('subject-id'));
+                    formData.append('subjectId', $(this).data('subject-id'));
                     formData.append('blocks', value);
+                    // Iterate over FormData entries and log key-value pairs
+                    for (let pair of formData.entries()) {
+                        console.log(pair[0] + ', ' + pair[1]);
+                    }
                     let url = "{{ route('open-classes', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
                     fetch(url, {
                         method: 'POST',
@@ -694,8 +718,10 @@
                 fetchClasses(academicYearTermId, dayId);
                 applyFilters();
             });
+
             
-            const empties = document.querySelectorAll('.empty');
+            // const empties = document.querySelectorAll('.empty');
+
             
             // Add event delegation for drag-and-drop events
             $('.classesWithNoRoomAndTime').on('dragstart', '.fill', dragStart);
@@ -712,7 +738,7 @@
                 });
                 let classScheduleId = $(this).closest('.fill').data('class-schedule-id');
                 $(this).closest('td').attr('rowspan', 1);
-                deleteTimeRoom(classScheduleId);
+                // deleteTimeRoom(classScheduleId);
             });
             $('.classesWithRoomAndTime').on('dragend', '.fill', function() {
                 this.classList.remove('hold', 'invisible');
@@ -722,15 +748,15 @@
             $('.classesWithRoomAndTime').on('dragover', '.empty', dragOver);
             $('.classesWithRoomAndTime').on('dragenter', '.empty', dragEnter);
             $('.classesWithRoomAndTime').on('dragleave', '.empty', dragLeave);
-            // $('.classesWithRoomAndTime').on('drop', '.empty', dragDrop);
+            $('.classesWithRoomAndTime').on('drop', '.empty', dragDrop);
 
             // Add listeners for each fill element
-            empties.forEach(empty => {
-                empty.addEventListener('dragover', dragOver);
-                empty.addEventListener('dragenter', dragEnter);
-                empty.addEventListener('dragleave', dragLeave);
-                empty.addEventListener('drop', dragDrop);
-            });
+            // empties.forEach(empty => {
+            //     empty.addEventListener('dragover', dragOver);
+            //     empty.addEventListener('dragenter', dragEnter);
+            //     empty.addEventListener('dragleave', dragLeave);
+            //     empty.addEventListener('drop', dragDrop);
+            // });
             
 
             // Drag functions
@@ -745,6 +771,7 @@
 
             function dragOver(e) {
                 e.preventDefault();
+                console.log($(this).data('room'));
             }
 
             function dragEnter(e) {
@@ -758,16 +785,17 @@
 
             function dragDrop() {
                 this.classList.remove('hovered');
-                const emptyCell = this;
-                const filledCell = document.querySelector('.hold');
-                const roomNumber = emptyCell.dataset.room;
-                const time = emptyCell.dataset.time;
-                const classScheduleId = filledCell.dataset.classScheduleId; // Retrieve classScheduleId
-                const url = '{{route("assign-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
-                assignRoomTimeDay(classScheduleId, roomNumber, time);
-                fetchClasses(academicYearTermId, dayId);
-                emptyCell.appendChild(filledCell);
-                applyFilters();
+                if (this.children.length == 0){
+                    const emptyCell = this;
+                    const filledCell = document.querySelector('.hold');
+                    const roomNumber = emptyCell.dataset.room;
+                    const time = emptyCell.dataset.time;
+                    const classScheduleId = filledCell.dataset.classScheduleId; // Retrieve classScheduleId            
+                    assignRoomTimeDay(classScheduleId, roomNumber, time);
+                    fetchClasses(academicYearTermId, dayId);
+                    // emptyCell.appendChild(filledCell);
+                    applyFilters();
+                }
             }
             function assignRoomTimeDay(classScheduleId,room,time) {
                 const url = '{{route("assign-time-room-day", ":classScheduleId")}}'.replace(':classScheduleId', classScheduleId);
@@ -875,11 +903,15 @@
 
                     // Find the first empty cell for the given room and time
                     const timeCell = document.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);
+                    let nextRow = timeCell.parentNode.nextElementSibling;
+                    let nextRow2 = nextRow.nextElementSibling;
                     // Set the innerHTML of the timeCell with the HTML content
                     if (timeCell) {
                         // Set rowspan for the first cell
                         timeCell.innerHTML = html;
                         timeCell.setAttribute('rowspan', rowsToSpan);
+                        nextRow.querySelector(`.empty[data-room="${roomId}"]`).style.display='none';
+                        nextRow2.querySelector(`.empty[data-room="${roomId}"]`).style.display='none';
                     } else {
                         console.error('No empty cell found for room', roomId, 'and time', time);
                     }

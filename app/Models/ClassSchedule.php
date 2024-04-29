@@ -16,8 +16,9 @@ class ClassSchedule extends Model
         'time_end',
     ];
 
-    public function checkForFacultyBlockTimeConflicts($newTimeStart, $newTimeEnd, $dayId)
+    public function checkForFacultyBlockTimeConflicts($newTimeStart, $newTimeEnd, $dayId, $roomId)
     {
+        
         // Retrieve all class schedules for the given faculty and day
         $existingClassSchedules = self::where('academic_year_term_id', $this->academic_year_term_id)
             ->whereNotNull('classroom_id')
@@ -28,36 +29,66 @@ class ClassSchedule extends Model
             ->get();
         // Check for conflicts with each class schedule
         foreach ($existingClassSchedules as $existingClassSchedule) {
-            // Convert time strings to Unix timestamp for comparison
-            $classStartTime = strtotime($existingClassSchedule->time_start);
-            $classEndTime = strtotime($existingClassSchedule->time_end);
-            $newStartTime = strtotime($newTimeStart);
-            $newEndTime = strtotime($newTimeEnd);
-
-            // Check if the new time range overlaps with the existing class schedule
-            if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
-                ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
-                ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
-            ) {
-                return true; // Conflict found, return true
+            if($existingClassSchedule->id !== $this->id){
+                
+                // Convert time strings to Unix timestamp for comparison
+                $classStartTime = strtotime($existingClassSchedule->time_start);
+                $classEndTime = strtotime($existingClassSchedule->time_end);
+                $newStartTime = strtotime($newTimeStart);
+                $newEndTime = strtotime($newTimeEnd);
+    
+                // Check if the new time range overlaps with the existing class schedule
+                if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
+                    ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+                ) {
+                    return true; // Conflict found, return true
+                }
             }
         }
+        $yearLvl = $this->subject->year_level;
         $existtingClassSchedulesWithSameBlockAndYear = self::where('academic_year_term_id', $this->academic_year_term_id)
             ->whereNotNull('classroom_id')
             ->whereHas('days', function ($query) use ($dayId) {
                 $query->where('day_id', $dayId);
             })
+            ->whereHas('subject', function ($query) use ($yearLvl) {
+                $query->where('year_level', $yearLvl);
+            })
             ->where('block_id', $this->block_id)
             ->get();
         foreach ($existtingClassSchedulesWithSameBlockAndYear as $existingClassSchedule) {
             // Convert time strings to Unix timestamp for comparison
-            $classStartTime = strtotime($existingClassSchedule->time_start);
-            $classEndTime = strtotime($existingClassSchedule->time_end);
-            $newStartTime = strtotime($newTimeStart);
-            $newEndTime = strtotime($newTimeEnd);
+            if($existingClassSchedule->id !== $this->id){
 
-            // Check if the new time range overlaps with the existing class schedule
-            if ($existingClassSchedule->subject->year_level == $this->subject->year_level) {
+                $classStartTime = strtotime($existingClassSchedule->time_start);
+                $classEndTime = strtotime($existingClassSchedule->time_end);
+                $newStartTime = strtotime($newTimeStart);
+                $newEndTime = strtotime($newTimeEnd);
+    
+               // Check if the new time range overlaps with the existing class schedule
+                if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
+                    ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+                ) {
+                    return true; // Conflict found, return true
+                }
+            }
+        }
+        $existingClassScheduleInThisRoom = self::where('academic_year_term_id', $this->academic_year_term_id)
+                                    ->whereNotNull('classroom_id')
+                                    ->whereHas('days', function ($query) use ($dayId) {
+                                        $query->where('day_id', $dayId);
+                                    })
+                                    ->where('classroom_id', $roomId)
+                                    ->get();
+        foreach ($existingClassScheduleInThisRoom as $existingClassSchedule) {
+            if($existingClassSchedule->id !== $this->id){
+                // Convert time strings to Unix timestamp for comparison
+                $classStartTime = strtotime($existingClassSchedule->time_start);
+                $classEndTime = strtotime($existingClassSchedule->time_end);
+                $newStartTime = strtotime($newTimeStart);
+                $newEndTime = strtotime($newTimeEnd);
                 if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
                     ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
                     ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)

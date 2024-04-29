@@ -35,6 +35,7 @@ class DesignationController extends Controller
         $validatedData = $request->validate([
             'designation' => 'required',
             'units' => 'required',
+            'unique' => 'required',
         ]);
         // Create a new designation using mass assignment
         $designation = Designation::create($validatedData);
@@ -65,7 +66,16 @@ class DesignationController extends Controller
      */
     public function update(Request $request, Designation $designation)
     {
-        //
+        $validatedData = $request->validate([
+            'designation' => 'required',
+            'units' => 'required',
+            'unique' => 'required',
+        ]);
+        $designation->update($validatedData);
+        if(request()->ajax()){
+            return response()->json([$designation]);
+        }
+        return redirect()->route('manage-designations')->with('success', 'Designation updated successfully!');
     }
 
     /**
@@ -73,6 +83,10 @@ class DesignationController extends Controller
      */
     public function destroy(Designation $designation)
     {
-        //
+        $designation->delete();
+        if(request()->ajax()){
+            return response()->json(['deleted' => 'Designation deleted successfully!']);
+        }
+        return redirect()->route('manage-designations')->with('deleted', 'Designation has been deleted!');
     }
 }

@@ -18,41 +18,49 @@ class ClassroomSeeder extends Seeder
                 'room_number' => '501',
                 'type' => 'Lecture',
                 'capacity' => '25',
+                'lab_type' => '1',
             ],
             [
                 'room_number' => '502',
                 'type' => 'Laboratory',
                 'capacity' => '25',
+                'lab_type' => '1',
             ],
             [
                 'room_number' => '601',
                 'type' => 'Lecture',
                 'capacity' => '25',
+                'lab_type' => '0',
             ],
             [
                 'room_number' => '602',
                 'type' => 'Laboratory',
                 'capacity' => '25',
+                'lab_type' => '2',
             ],
             [
                 'room_number' => '603',
                 'type' => 'Laboratory',
                 'capacity' => '25',
+                'lab_type' => '2',
             ],
             [
                 'room_number' => 'Internet Lab 1',
                 'type' => 'Laboratory',
                 'capacity' => '25',
+                'lab_type' => '1',
             ],
             [
                 'room_number' => 'Internet Lab 2',
                 'type' => 'Lecture',
                 'capacity' => '25',
+                'lab_type' => '0',
             ],
             [
                 'room_number' => 'Internet Lab 3',
                 'type' => 'Lecture',
                 'capacity' => '25',
+                'lab_type' => '1',
             ],
         ]);
     }

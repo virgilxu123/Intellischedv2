@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('term_id')->nullable();
             $table->string('subject_type');
             $table->enum('laboratory', ['Yes', 'No']);
+            $table->enum('lab_type', ['0', '1', '2'])->default('0');
             $table->timestamps();
         });
     }

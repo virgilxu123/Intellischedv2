@@ -1,7 +1,7 @@
 @extends('layouts.layout')
 @section('content')
     <div class="container-fluid">
-        <div class="row animate__animated animate__bounceInRight">
+        <div class="row animate__animated animate__fadeIn">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">

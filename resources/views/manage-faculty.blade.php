@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="row animate__animated animate__bounceInRight">
+        <div class="row animate__animated animate__fadeIn">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -31,7 +31,7 @@
                             <tbody>
                                 @foreach ($faculties as $faculty)
                                     <tr data-facultyId="{{$faculty->id}}">
-                                        <td><a href="{{route('show-faculty', $faculty)}}">{{$faculty->first_name}} {{$faculty->middle_initial}}. {{$faculty->last_name}}</a></td>
+                                        <td>{{$faculty->first_name}} {{$faculty->middle_initial}}. {{$faculty->last_name}}</td>
                                         <td>{{$faculty->rank}}</td>
                                         <td>{{$faculty->status}}</td>
                                         <td><span class="badge {{$faculty->availability == 1 ? 'text-bg-success' : 'text-bg-danger'}}">{{$faculty->availability==1?"Available":"Unavailable"}}</span></td>

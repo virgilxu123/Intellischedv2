@@ -22,6 +22,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ], 
             [
                 'course_code' => 'CS 112',
@@ -31,6 +32,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ], 
             [
                 'course_code' => 'GE-US',
@@ -40,6 +42,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'GE-MMW',
@@ -49,6 +52,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'GE-PC',
@@ -58,6 +62,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'Math 1',
@@ -67,6 +72,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'IT-1',
@@ -76,6 +82,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'PATH-Fit 1',
@@ -85,6 +92,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'NSTP 1',
@@ -94,6 +102,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'GE-STS',
@@ -103,6 +112,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'GE-E',
@@ -112,6 +122,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'GE-CW',
@@ -121,6 +132,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'CS 121',
@@ -130,6 +142,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'CS 122',
@@ -139,6 +152,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ], 
             [
                 'course_code' => 'CS 123',
@@ -148,6 +162,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '2',
             ], 
             [
                 'course_code' => 'GE-BC',
@@ -157,6 +172,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'PATH-Fit 2',
@@ -166,6 +182,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ], 
             [
                 'course_code' => 'NSTP 2',
@@ -175,6 +192,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 211',
@@ -184,6 +202,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 212',
@@ -193,6 +212,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 213',
@@ -202,6 +222,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 214',
@@ -211,6 +232,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'GE-Stat',
@@ -220,6 +242,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'Entrep 1',
@@ -229,6 +252,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'GE-AA',
@@ -238,6 +262,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'PATH-Fit 3',
@@ -247,6 +272,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 221',
@@ -256,6 +282,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 222',
@@ -265,6 +292,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 223',
@@ -274,6 +302,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 224',
@@ -283,6 +312,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'Ecos 1',
@@ -292,6 +322,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'GE-RPH',
@@ -301,6 +332,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'PATH-Fit 4',
@@ -310,6 +342,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 311',
@@ -319,6 +352,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 312',
@@ -328,6 +362,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 313',
@@ -337,6 +372,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 314',
@@ -346,6 +382,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 315',
@@ -355,6 +392,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 316',
@@ -364,6 +402,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'Rizal',
@@ -373,6 +412,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Minor',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 321',
@@ -382,6 +422,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 322',
@@ -391,6 +432,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 323',
@@ -400,6 +442,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 324',
@@ -409,6 +452,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 325',
@@ -418,6 +462,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '2',
             ],
             [
                 'course_code' => 'CS 326',
@@ -427,6 +472,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 327',
@@ -436,6 +482,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 328',
@@ -445,6 +492,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 331',
@@ -454,6 +502,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '3',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 411',
@@ -463,6 +512,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 412',
@@ -472,6 +522,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 413',
@@ -481,6 +532,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 414',
@@ -490,6 +542,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
             [
                 'course_code' => 'CS 415',
@@ -499,6 +552,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 416',
@@ -508,6 +562,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '1',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '2',
             ],
             [
                 'course_code' => 'CS 421',
@@ -517,6 +572,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
+                'lab_type' => '1',
             ],
             [
                 'course_code' => 'CS 422',
@@ -526,6 +582,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'No',
+                'lab_type' => '0',
             ],
         ]);
     }

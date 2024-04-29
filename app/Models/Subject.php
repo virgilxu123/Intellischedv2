@@ -17,6 +17,7 @@ class Subject extends Model
         'term_id',
         'subject_type',
         'laboratory',
+        'lab_type',
     ];
 
     public function class_schedules() {

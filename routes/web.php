@@ -53,6 +53,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('manage-designations', [DesignationController::class, 'index'])->name('manage-designations');
     Route::post('add-designation', [DesignationController::class, 'store'])->name('add-designation');
+    Route::post('delete-designation/{designation}', [DesignationController::class, 'destroy'])->name('delete-designation');
+    Route::post('update-designation/{designation}', [DesignationController::class, 'update'])->name('update-designation');
 
     Route::get('manage-admin', function () {
         return view('manage-admin');

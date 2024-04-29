@@ -7,8 +7,8 @@
                     <div class="col-6">
                         <label class="form-label" for="selectType">Type</label>
                         <select class="form-select form-select-sm" aria-label="Select Class Type" id="selectType">
-                            <option value="all" selected>All</option>
-                            <option value="lecture">Lectures</option>
+                            <option value="all" >All</option>
+                            <option value="lecture" selected>Lectures</option>
                             <option value="laboratory">Laboratories</option>
                           </select>
                           
@@ -75,7 +75,7 @@
                                 <tr class="classesWithRoomAndTime">
                                     <td scope="row" style="white-space: nowrap;">{{ $current_time }} - {{ date('h:i A', strtotime('+30 minutes', $time)) }}</td>
                                     @foreach ($rooms as $room)
-                                        <td class="empty" data-room="{{ $room->id }}" data-time="{{ date('h:i A', $time) }}" data-toggle="tooltip" title="{{$room->room_number}} {{ $current_time }} - {{ date('h:i A', strtotime('+30 minutes', $time)) }}"></td>
+                                        <td class="empty" data-room="{{ $room->id }}" data-time="{{ date('h:i A', $time) }}"></td>
                                     @endforeach
                                 </tr>
                                 @php

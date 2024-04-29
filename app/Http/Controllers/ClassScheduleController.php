@@ -169,7 +169,7 @@ class ClassScheduleController extends Controller
         ]);
         // Check for time conflicts
         $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
-        $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id']);
+        $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id'], $validated['room_id']);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
