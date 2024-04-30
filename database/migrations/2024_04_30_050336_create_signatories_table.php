@@ -11,19 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faculties', function (Blueprint $table) {
+        Schema::create('signatories', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
             $table->string('middle_initial')->nullable();
             $table->string('last_name');
-            $table->string('rank')->nullable();
-            $table->string('status');
-            $table->binary('image')->nullable();
-            $table->boolean('availability')->default(true);
             $table->string('educ_qualification')->nullable();
-            $table->integer('years_in_service')->nullable();
-            $table->string('eligibility')->default('None');
-            $table->string('color')->nullable();
+            $table->string('position');
             $table->timestamps();
         });
     }
@@ -33,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faculties');
+        Schema::dropIfExists('signatories');
     }
 };

@@ -30,7 +30,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($faculties as $faculty)
-                                    <tr data-facultyId="{{$faculty->id}}">
+                                    <tr data-facultyId="{{$faculty->id}}" data-fname="{{$faculty->first_name}}" data-lname="{{$faculty->last_name}}" data-mi="{{$faculty->middle_initial}}" data-status="{{$faculty->status}}" data-rank="{{$faculty->rank}}" data-years-in-service="{{$faculty->years_in_service}}" data-eligibility="{{$faculty->eligibility}}" data-educ-qualification="{{$faculty->educ_qualification}}">
                                         <td>{{$faculty->first_name}} {{$faculty->middle_initial}}. {{$faculty->last_name}}</td>
                                         <td>{{$faculty->rank}}</td>
                                         <td>{{$faculty->status}}</td>
@@ -62,7 +62,7 @@
                         <div class="row mb-3">
                             <div class="col-lg-5">
                                 <label class="form-label" for="first_name">First Name</label>
-                                <input type="text" id="first_name" name="first_name" class="form-control">
+                                <input type="text" id="first_name" name="first_name" class="form-control" required>
                             </div>
                             <div class="col-lg-2">
                                 <label class="form-label" for="middle_initial">M.I.</label>
@@ -70,41 +70,57 @@
                             </div>
                             <div class="col-lg-5">
                                 <label class="form-label" for="last_name">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" class="form-control">
+                                <input type="text" id="last_name" name="last_name" class="form-control" required>
                             </div>
                         </div>
-                        <div class="col-lg-12 mb-3">
-                            <label class="form-label" for="rank">Rank</label>
-                            <select id="rank" name="rank" data-placeholder="" class="form-control form-select" tabindex="1">
-                                <option value=""></option>
-                                <option value="Instructor 1">Instructor 1</option>
-                                <option value="Instructor 2">Instructor 2</option>
-                                <option value="Instructor 3">Instructor 3</option>
-                                <option value="Assistant Professor 1">Assistant Professor 1</option>
-                                <option value="Assistant Professor 2">Assistant Professor 2</option>
-                                <option value="Assistant Professor 3">Assistant Professor 3</option>
-                                <option value="Assistant Professor 4">Assistant Professor 4</option>
-                                <option value="Associate Professor 1">Associate Professor 1</option>
-                                <option value="Associate Professor 2">Associate Professor 2</option>
-                                <option value="Associate Professor 3">Associate Professor 3</option>
-                                <option value="Associate Professor 4">Associate Professor 4</option>
-                                <option value="Associate Professor 5">Associate Professor 5</option>
-                                <option value="Professor 1">Professor 1</option>
-                                <option value="Professor 2">Professor 2</option>
-                                <option value="Professor 3">Professor 3</option>
-                                <option value="Professor 4">Professor 4</option>
-                                <option value="Professor 5">Professor 5</option>
-                                <option value="Professor 6">Professor 6</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label class="form-label" for="rank">Rank</label>
+                                <select id="rank" name="rank" data-placeholder="" class="form-control form-select" tabindex="1" required>
+                                    <option value=""></option>
+                                    <option value="Instructor 1">Instructor 1</option>
+                                    <option value="Instructor 2">Instructor 2</option>
+                                    <option value="Instructor 3">Instructor 3</option>
+                                    <option value="Assistant Professor 1">Assistant Professor 1</option>
+                                    <option value="Assistant Professor 2">Assistant Professor 2</option>
+                                    <option value="Assistant Professor 3">Assistant Professor 3</option>
+                                    <option value="Assistant Professor 4">Assistant Professor 4</option>
+                                    <option value="Associate Professor 1">Associate Professor 1</option>
+                                    <option value="Associate Professor 2">Associate Professor 2</option>
+                                    <option value="Associate Professor 3">Associate Professor 3</option>
+                                    <option value="Associate Professor 4">Associate Professor 4</option>
+                                    <option value="Associate Professor 5">Associate Professor 5</option>
+                                    <option value="Professor 1">Professor 1</option>
+                                    <option value="Professor 2">Professor 2</option>
+                                    <option value="Professor 3">Professor 3</option>
+                                    <option value="Professor 4">Professor 4</option>
+                                    <option value="Professor 5">Professor 5</option>
+                                    <option value="Professor 6">Professor 6</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label class="form-label" for="status">Status</label>
+                                <select id="status" name="status" data-placeholder="" class="form-control form-select" tabindex="1" required>
+                                    <option value=""></option>
+                                    <option value="Regular">Regular</option>
+                                    <option value="Contractual">Contractual</option>
+                                    <option value="Part time">Part time</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-lg-12 mb-3">
-                            <label class="form-label" for="status">Status</label>
-                            <select id="status" name="status" data-placeholder="" class="form-control form-select" tabindex="1">
-                                <option value=""></option>
-                                <option value="Regular">Regular</option>
-                                <option value="Contractual">Contractual</option>
-                                <option value="Part time">Part time</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="form-label" for="years_in_service">Years in Service</label>
+                                <input type="number" id="years_in_service" name="years_in_service" class="form-control">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label" for="eligibility">Eligibility</label>
+                                <input type="text" id="eligibility" name="eligibility" class="form-control">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label" for="educ_qualification">Educational Qualification</label>
+                                <input type="text" id="educ_qualification" name="educ_qualification" class="form-control">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -130,22 +146,22 @@
                         <div class="card-body card-block">
                             <div class="row mb-3">
                                 <div class="col-lg-5">
-                                    <label class="form-label" for="first_name">First Name</label>
-                                    <input type="text" id="first_name" name="first_name" class="form-control">
+                                    <label class="form-label" for="update_first_name">First Name</label>
+                                    <input type="text" id="update_first_name" name="first_name" class="form-control">
                                 </div>
                                 <div class="col-lg-2">
-                                    <label class="form-label" for="middle_initial">M.I.</label>
-                                    <input type="text" id="middle_initial" name="middle_initial" class="form-control">
+                                    <label class="form-label" for="update_middle_initial">M.I.</label>
+                                    <input type="text" id="update_middle_initial" name="middle_initial" class="form-control">
                                 </div>
                                 <div class="col-lg-5">
-                                    <label class="form-label" for="last_name">Last Name</label>
-                                    <input type="text" id="last_name" name="last_name" class="form-control">
+                                    <label class="form-label" for="update_last_name">Last Name</label>
+                                    <input type="text" id="update_last_name" name="last_name" class="form-control">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
-                                    <label class="form-label" for="status">Status</label>
-                                    <select id="status" name="status" data-placeholder="" class="form-control form-select" tabindex="1">
+                                    <label class="form-label" for="update_status">Status</label>
+                                    <select id="update_status" name="status" data-placeholder="" class="form-control form-select" tabindex="1">
                                         <option value=""></option>
                                         <option value="Regular">Regular</option>
                                         <option value="Contractual">Contractual</option>
@@ -153,36 +169,52 @@
                                     </select>
                                 </div>
                                 <div class="col-lg-6">
-                                    <label class="form-label" for="availability">Availability</label>
-                                    <select id="availability" name="availability" data-placeholder="" class="form-control form-select" tabindex="1">
+                                    <label class="form-label" for="update_availability">Availability</label>
+                                    <select id="update_availability" name="availability" data-placeholder="" class="form-control form-select" tabindex="1">
                                         <option value="1">Available</option>
                                         <option value="0">Not Available</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <label class="form-label" for="rank">Rank</label>
-                                <select id="rank" name="rank" data-placeholder="" class="form-control form-select" tabindex="1">
-                                    <option value=""></option>
-                                    <option value="Instructor 1">Instructor 1</option>
-                                    <option value="Instructor 2">Instructor 2</option>
-                                    <option value="Instructor 3">Instructor 3</option>
-                                    <option value="Assistant Professor 1">Assistant Professor 1</option>
-                                    <option value="Assistant Professor 2">Assistant Professor 2</option>
-                                    <option value="Assistant Professor 3">Assistant Professor 3</option>
-                                    <option value="Assistant Professor 4">Assistant Professor 4</option>
-                                    <option value="Associate Professor 1">Associate Professor 1</option>
-                                    <option value="Associate Professor 2">Associate Professor 2</option>
-                                    <option value="Associate Professor 3">Associate Professor 3</option>
-                                    <option value="Associate Professor 4">Associate Professor 4</option>
-                                    <option value="Associate Professor 5">Associate Professor 5</option>
-                                    <option value="Professor 1">Professor 1</option>
-                                    <option value="Professor 2">Professor 2</option>
-                                    <option value="Professor 3">Professor 3</option>
-                                    <option value="Professor 4">Professor 4</option>
-                                    <option value="Professor 5">Professor 5</option>
-                                    <option value="Professor 6">Professor 6</option>
-                                </select>
+                            <div class="row mb-3">
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="update_rank">Rank</label>
+                                    <select id="update_rank" name="rank" data-placeholder="" class="form-control form-select" tabindex="1">
+                                        <option value=""></option>
+                                        <option value="Instructor 1">Instructor 1</option>
+                                        <option value="Instructor 2">Instructor 2</option>
+                                        <option value="Instructor 3">Instructor 3</option>
+                                        <option value="Assistant Professor 1">Assistant Professor 1</option>
+                                        <option value="Assistant Professor 2">Assistant Professor 2</option>
+                                        <option value="Assistant Professor 3">Assistant Professor 3</option>
+                                        <option value="Assistant Professor 4">Assistant Professor 4</option>
+                                        <option value="Associate Professor 1">Associate Professor 1</option>
+                                        <option value="Associate Professor 2">Associate Professor 2</option>
+                                        <option value="Associate Professor 3">Associate Professor 3</option>
+                                        <option value="Associate Professor 4">Associate Professor 4</option>
+                                        <option value="Associate Professor 5">Associate Professor 5</option>
+                                        <option value="Professor 1">Professor 1</option>
+                                        <option value="Professor 2">Professor 2</option>
+                                        <option value="Professor 3">Professor 3</option>
+                                        <option value="Professor 4">Professor 4</option>
+                                        <option value="Professor 5">Professor 5</option>
+                                        <option value="Professor 6">Professor 6</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="update_years_in_service">Years in Service</label>
+                                    <input type="number" id="update_years_in_service" name="years_in_service" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="update_eligibility">Eligibility</label>
+                                    <input type="text" id="update_eligibility" name="eligibility" class="form-control">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label class="form-label" for="update_educ_qualification">Educational Qualification</label>
+                                    <input type="text" id="update_educ_qualification" name="educ_qualification" class="form-control">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,44 +256,30 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('click', function(event){
-                if(event.target.classList.contains('fa-pen-to-square')||event.target.classList.contains('fa-trash-can')) {
-                    let facultyId  = event.target.getAttribute('data-facultyId');
-                    fetch(`{{ route('show-faculty', ':facultyId') }}`.replace(':facultyId', facultyId), {
-                        method: 'GET', // Use the appropriate HTTP method
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest', // Set the X-Requested-With header
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Set the CSRF token header
-                        }
-                    })
-                        .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json(); // Parse the JSON response
-                            })
-                        .then(data => {
-                            if(event.target.classList.contains('fa-pen-to-square')) {
-                                let updateFacultyForm = document.getElementById('updateFacultyForm');
-                                updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
-                                updateFacultyForm.first_name.value = data.faculty.first_name;
-                                updateFacultyForm.last_name.value = data.faculty.last_name;
-                                updateFacultyForm.middle_initial.value = data.faculty.middle_initial;
-                                updateFacultyForm.rank.value = data.faculty.rank;
-                                updateFacultyForm.status.value = data.faculty.status;
-                                updateFacultyForm.availability.value = data.faculty.availability;
-                            } else {
-                                let deleteFacultyForm = document.getElementById('deleteFacultyForm');
-                                deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
-                                let deleteFacultyMessage = document.getElementById('deleteFacultyMessage');
-                                deleteFacultyMessage.textContent = `Are you sure you want to delete ${data.faculty.first_name} ${data.faculty.last_name} from the record?`;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('There has been a problem with your fetch operation:', error);
-                        });
+            $('#table tbody').on('click', '.fa-pen-to-square', function() {
+
+                if ($(event.target).hasClass('fa-pen-to-square') || $(event.target).hasClass('fa-trash-can')) {
+                    let facultyId = $(this).closest('tr').attr('data-facultyId');
+                    if ($(event.target).hasClass('fa-pen-to-square')) {
+                        let updateFacultyForm = document.getElementById('updateFacultyForm');
+                        updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
+                        $('#update_first_name').val($(this).closest('tr').attr('data-fname'));
+                        $('#update_middle_initial').val($(this).closest('tr').attr('data-mi'));
+                        $('#update_last_name').val($(this).closest('tr').attr('data-lname'));
+                        $('#update_status').val($(this).closest('tr').attr('data-status'));
+                        $('#update_rank').val($(this).closest('tr').attr('data-rank'));
+                        $('#update_years_in_service').val($(this).closest('tr').attr('data-years-in-service'));
+                        $('#update_eligibility').val($(this).closest('tr').attr('data-eligibility'));
+                        $('#update_educ_qualification').val($(this).closest('tr').attr('data-educ-qualification'));
+                    } else {
+                        let deleteFacultyForm = document.getElementById('deleteFacultyForm');
+                        deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
+                        let deleteFacultyMessage = document.getElementById('deleteFacultyMessage');
+                        deleteFacultyMessage.textContent = `Are you sure you want to delete ${data.faculty.first_name} ${data.faculty.last_name} from the record?`;
+                    }
                 }
             });
+            
             function handleFormSubmission(formId, successCallback, actionType) {
                 document.getElementById(formId).addEventListener('submit', function(event){
                     event.preventDefault();

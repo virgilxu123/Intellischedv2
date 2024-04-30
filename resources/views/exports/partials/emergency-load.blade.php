@@ -10,11 +10,11 @@
                 <td>Name:</td>
                 <td>{{ strtoupper($faculty->last_name) }}, {{ strtoupper($faculty->first_name) }}</td>
                 <td>Educational Qualification:</td>
-                <td>DTE</td>
+                <td>{{$faculty->educ_qualification}}</td>
             </tr>
             <tr>
                 <td>Years in Service:</td>
-                <td>15</td>
+                <td>{{$faculty->years_in_service}}</td>
                 <td>Major:</td>
                 <td>0</td>
             </tr>
@@ -22,7 +22,7 @@
                 <td>Status:</td>
                 <td>{{$faculty->status}}</td>
                 <td>Eligibility/PRC:</td>
-                <td>RA</td>
+                <td>{{$faculty->eligibility}}</td>
             </tr>
         </tbody>
     </table>

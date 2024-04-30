@@ -32,13 +32,13 @@
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('dashboard')}}" class="sidebar-link">
-                            <i class="fa fa-dashboard pe-2"></i>
+                            <i class="fa fa-dashboard px-2"></i>
                             Dashboard
                         </a>
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i>
+                            aria-expanded="false"><i class="fa-solid fa-file-lines px-2"></i>
                             Schedules
                         </a>
                         {{-- <a href="{{route('schedule')}}" class="sidebar-link">
@@ -64,26 +64,41 @@
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('manage-faculty')}}" class="sidebar-link">
-                            <i class="fa fa-users pe-2"></i>
+                            <i class="fa fa-users px-2"></i>
                             Faculty Members
                         </a>
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('manage-subjects')}}" class="sidebar-link">
-                            <i class="fa-solid fa-book pe-2"></i>
+                            <i class="fa-solid fa-book px-2"></i>
                             Subjects
                         </a>
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('manage-rooms')}}" class="sidebar-link">
-                            <i class="fa-solid fa-building pe-2"></i>
+                            <i class="fa-solid fa-building px-2"></i>
                             Rooms
                         </a>
                     </li>
                     <li class="sidebar-item">
                         <a href="{{route('manage-designations')}}" class="sidebar-link">
-                            <i class="fa fa-info pe-2"></i>
+                            <i class="fa fa-info px-2"></i>
                             Designation
+                        </a>
+                    </li>
+                    <li class="sidebar-header">
+                        Reports
+                    </li>
+                    <li class="sidebar-ite">
+                        <a href="" class="sidebar-link">
+                            <i class="fa-solid fa-cloud-arrow-down px-2"></i>
+                            Workload Summary
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{route('manage-signatories')}}" class="sidebar-link">
+                            <i class="fa-solid fa-file-signature px-2"></i>
+                            Signatories
                         </a>
                     </li>
                 </ul>

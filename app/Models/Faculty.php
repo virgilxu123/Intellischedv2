@@ -18,6 +18,9 @@ class Faculty extends Model
         'color',
         'availability',
         'image',
+        'educ_qualification',
+        'years_in_service',
+        'eligibility',
     ];
 
     public function designations()

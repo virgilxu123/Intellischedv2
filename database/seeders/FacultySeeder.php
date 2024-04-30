@@ -22,7 +22,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Doctor of Information Technology',
+                'educ_qualification' => 'DIT',
                 'color' => '#FF5733'
             ],
             [
@@ -33,7 +33,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Information Technology',
+                'educ_qualification' => 'MIT',
                 'color' => '#FFC300'
             ],
             [
@@ -44,7 +44,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Information Technology',
+                'educ_qualification' => 'MIT',
                 'color' => '#FFEB3B'
             ],
             [
@@ -55,7 +55,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#4CAF50'
             ],
             [
@@ -66,7 +66,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#388E3C '
             ],
             [
@@ -77,7 +77,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#00ACC1'
             ],
             [
@@ -88,7 +88,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Doctor of Technology Education',
+                'educ_qualification' => 'DTE',
                 'color' => '#039BE5'
             ],
             [
@@ -99,7 +99,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Information Technology',
+                'educ_qualification' => 'MIT',
                 'color' => '#673AB7'
             ],
             [
@@ -110,7 +110,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Doctor of Information Technology',
+                'educ_qualification' => 'DIT',
                 'color' => '#E91E63 '
             ],
             [
@@ -121,7 +121,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#795548'
             ],
             [
@@ -132,7 +132,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Doctor of Philosophy in Education-Major in Technology Management',
+                'educ_qualification' => 'PhEdD-TM',
                 'color' => '#9E9E9E'
             ],
             [
@@ -143,7 +143,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Regular',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#03A9F4'
             ],
             [
@@ -154,7 +154,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Contractual',
                 'image' => '',
                 'availability' => true,
-                'educational_qualification' => 'Master of Science in Computer Science',
+                'educ_qualification' => 'MSCS',
                 'color' => '#00BCD4'
             ],
             // [
@@ -165,7 +165,7 @@ class FacultySeeder extends Seeder
             //     'status' => '',
             //     'image' => '',
             //     'availability' => true,
-            //     'educational_qualification' => '',
+            //     'educ_qualification' => '',
             //     'color' => ''
             // ],
             // [
@@ -176,7 +176,7 @@ class FacultySeeder extends Seeder
             //     'status' => '',
             //     'image' => '',
             //     'availability' => true,
-            //     'educational_qualification' => '',
+            //     'educ_qualification' => '',
             //     'color' => ''
             // ]
         ]);

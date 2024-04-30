@@ -7,6 +7,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ClassScheduleController;
 use App\Http\Controllers\AcademicYearTermController;
@@ -62,6 +63,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('schedule', [AcademicYearTermController::class, 'index'])->name('schedule');
     Route::post('create-academic-year-term', [AcademicYearTermController::class, 'store'])->name('create-academic-year-term');
+
+    Route::get('manage-signatories', [SignatoryController::class, 'index'])->name('manage-signatories');
+    Route::post('add-signatory', [SignatoryController::class, 'store'])->name('add-signatory');
 
     Route::get('create-schedule/{academic_year_term}', [ClassScheduleController::class, 'index'])->name('create-schedule');
     Route::post('create-class-schedule/{academic_year_term}', [ClassScheduleController::class, 'openClasses'])->name('open-classes');

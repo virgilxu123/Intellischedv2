@@ -49,6 +49,9 @@ class FacultyController extends Controller
             'middle_initial' => '',
             'rank' => '',
             'status' => 'required|string|max:255',
+            'educ_qualification' => '',
+            'years_in_service' => '',
+            'eligibility' => '',
         ]);
 
         // Create a new faculty using mass assignment
@@ -115,6 +118,9 @@ class FacultyController extends Controller
             'rank' => '',
             'status' => 'required',
             'availability'  => '',
+            'educ_qualification' => '',
+            'years_in_service' => '',
+            'eligibility' => '',
         ]);
         $faculty->update($validatedData);
 
