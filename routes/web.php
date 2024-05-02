@@ -66,6 +66,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('manage-signatories', [SignatoryController::class, 'index'])->name('manage-signatories');
     Route::post('add-signatory', [SignatoryController::class, 'store'])->name('add-signatory');
+    Route::post('delete-signatory/{signatory}', [SignatoryController::class, 'destroy'])->name('delete-signatory');
+    Route::post('update-signatory/{signatory}', [SignatoryController::class, 'update'])->name('update-signatory');
 
     Route::get('create-schedule/{academic_year_term}', [ClassScheduleController::class, 'index'])->name('create-schedule');
     Route::post('create-class-schedule/{academic_year_term}', [ClassScheduleController::class, 'openClasses'])->name('open-classes');
