@@ -11,6 +11,7 @@ use App\Http\Controllers\SignatoryController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\ClassScheduleController;
 use App\Http\Controllers\AcademicYearTermController;
+use App\Http\Controllers\GenerateScheduleController;
 use App\Http\Controllers\DesignationFacultyController;
 
 /*
@@ -81,4 +82,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('export-plotted-schedule/{academic_year_term}', [ExportController::class, 'exportPlottedSchedule'])->name('export-plotted-schedule');
     Route::post('view-pdf/{faculty}/{academicYearTerm}', [ExportController::class, 'viewPDF'])->name('view-pdf');
+
+    Route::post('generate-schedule/{academicYearTerm}', [GenerateScheduleController::class, 'generateSchedule'])->name('generate-schedule');
 });

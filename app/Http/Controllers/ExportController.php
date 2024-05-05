@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\AcademicYearTerm;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PlottedClassSchedules;
+use App\Models\Signatory;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExportController extends Controller
@@ -29,7 +30,9 @@ class ExportController extends Controller
         $overLoad = $faculty->overLoad($academicYearTerm);
         $emergencyLoad = $faculty->emergencyLoad($academicYearTerm);
         $praiseLoad = $faculty->praiseLoad($academicYearTerm);
-        $pdf = PDF::loadView('exports.faculty-load-view-pdf', ['faculty' => $faculty, 'academicYearTerm' => $academicYearTerm, 'designations' => $designations, 'classes' => $classes, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'emergencyLoad' => $emergencyLoad, 'praiseLoad' => $praiseLoad, 'designationLoad' => $designationLoad]);
+        $campusDirector = Signatory::where('position', 'Campus Director')->first();
+        $VPForAcadAffairs = Signatory::where('position', 'Vice President for Academic Affairs')->first();
+        $pdf = PDF::loadView('exports.faculty-load-view-pdf', ['faculty' => $faculty, 'academicYearTerm' => $academicYearTerm, 'designations' => $designations, 'classes' => $classes, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'emergencyLoad' => $emergencyLoad, 'praiseLoad' => $praiseLoad, 'designationLoad' => $designationLoad, 'campusDirector'=>$campusDirector, 'VPForAcadAffairs'=>$VPForAcadAffairs]);
         return $pdf->stream();
     }
 }

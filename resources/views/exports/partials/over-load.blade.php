@@ -315,7 +315,7 @@
                 <span><i>Dean, CITE</i></span>
             </td>
             <td style="width: 50%; text-align: center; font-size:12px;padding-top: 20px;">
-                <span"><u><b>ABUNDIO C. MIRALLES, EdD</b></u></span><br>
+                <span"><u><b>{{strtoupper($campusDirector->first_name)}} {{strtoupper($campusDirector->middle_initial)}}. {{ strtoupper($campusDirector->last_name) }}, {{$campusDirector->educ_qualification}}</b></u></span><br>
                 <span><i>Campus Director, Nemsu Main</i></span>
             </td>
         </tr>
@@ -327,7 +327,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align: center; font-size:12px;padding-top: 10px;">
-                <span"><u><b>MARIA LADY SOL A. SUAZO, Phd</b></u></span><br>
+                <span"><u><b>{{strtoupper($VPForAcadAffairs->first_name)}} {{strtoupper($VPForAcadAffairs->middle_initial)}}. {{ strtoupper($VPForAcadAffairs->last_name) }}, {{$VPForAcadAffairs->educ_qualification}}</b></u></span><br>
                 <span><i>Vice President for Academic Affairs</i></span>
             </td>
         </tr>

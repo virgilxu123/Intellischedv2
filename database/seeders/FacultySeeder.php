@@ -157,17 +157,17 @@ class FacultySeeder extends Seeder
                 'educ_qualification' => 'MSCS',
                 'color' => '#00BCD4'
             ],
-            // [
-            //     'first_name' => '',
-            //     'middle_initial' => '',
-            //     'last_name' => '',
-            //     'rank' => '',
-            //     'status' => '',
-            //     'image' => '',
-            //     'availability' => true,
-            //     'educ_qualification' => '',
-            //     'color' => ''
-            // ],
+            [
+                'first_name' => 'Kevin',
+                'middle_initial' => 'P',
+                'last_name' => 'Salcedo',
+                'rank' => 'Instructor 2',
+                'status' => 'Regular',
+                'image' => '',
+                'availability' => true,
+                'educ_qualification' => 'MSCS',
+                'color' => '#d6abba'
+            ],
             // [
             //     'first_name' => '',
             //     'middle_initial' => '',

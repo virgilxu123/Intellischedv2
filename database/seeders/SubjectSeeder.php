@@ -472,7 +472,7 @@ class SubjectSeeder extends Seeder
                 'term_id' => '2',
                 'subject_type' => 'Major',
                 'laboratory' => 'Yes',
-                'lab_type' => '1',
+                'lab_type' => '2',
             ],
             [
                 'course_code' => 'CS 327',

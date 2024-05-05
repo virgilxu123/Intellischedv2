@@ -62,7 +62,10 @@
                                 <p data-academic-year-term="{{$academicYearTerm->id}}" class="academic_year_term">S.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}: <em>{{$academicYearTerm->term->term}}</em></p>
                             </div>
                             <div class="col-2">
-                                <button id="automateSchedule" style="visibility: hidden;float: right;" class="btn btn-primary btn-sm"><i class="fa-solid fa-robot"></i> Generate</button>
+                                <form action="{{route('generate-schedule',['academicYearTerm'=>$academicYearTerm->id])}}" method="POST">
+                                    @csrf
+                                    <button type="submit" id="automateSchedule" style="visibility: hidden;float: right;" class="btn btn-primary btn-sm"><i class="fa-solid fa-robot"></i> Generate</button>
+                                </form>
                             </div>
                         </div>
                     </div>
