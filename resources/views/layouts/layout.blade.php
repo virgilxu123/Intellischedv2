@@ -90,7 +90,7 @@
                         Reports
                     </li>
                     <li class="sidebar-ite">
-                        <a href="" class="sidebar-link">
+                        <a href="{{route('work-load-summary')}}" class="sidebar-link">
                             <i class="fa-solid fa-list-check px-2"></i>
                             Workload Summary
                         </a>
