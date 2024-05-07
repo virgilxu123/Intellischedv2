@@ -49,12 +49,17 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative;">
+                <div id="spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none;height:100%;width:100%;z-index:10; background-color:rgba(19, 17, 17, 0.6);">
+                    <div class="spinner-border text-primary" role="status" style="position: relative; top: 50%; left:50%">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div class="table-responsive" style="overflow-x:auto;height:80vh;">
                     <table
-                        id="plotScheduleTable" 
-                        class="table table-bordered" 
-                        style="table-layout:fixed;width:100%;">
+                    id="plotScheduleTable" 
+                    class="table table-bordered" 
+                    style="table-layout:fixed;width:100%;">
                         <thead style="position: sticky;top: 0;z-index: 2;">
                             <tr>
                                 <th scope="col" style="width: 150px;">Time\Room</th>
