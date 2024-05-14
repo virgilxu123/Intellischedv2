@@ -27,11 +27,11 @@ class ClassScheduleController extends Controller
     {
         $designations = Designation::all();
         $subjects = Subject::where('term_id', $academicYearTerm->term_id)->get();
-        $classSchedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->get();
+        $classSchedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->where('units', 3)->get();
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $subjects = $subjects->sortBy('year_level');
         $rooms = Classroom::all();
-        $classSchedulesWithRooms = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->get();
+        $classSchedulesWithRooms = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->whereNotNull('classroom_id')->where('units', 3)->get();
         $classSchedulesWithRooms->load('subject', 'block', 'classroom', 'faculty', 'days');
         if (request()->ajax()) {
             return response()->json([
@@ -173,28 +173,34 @@ class ClassScheduleController extends Controller
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
-        $classSchedule->time_start = $validated['time_start'];
-        $classSchedule->classroom_id = $validated['room_id'];
-        $classSchedule->time_end = $time_end;
-        $classSchedule->save();
-
-        // Attach the day to the class schedule
-        $classSchedule->days()->attach($validated['day_id']);
-        if($validated['day_id']!==4){
-            $classSchedule->days()->attach($validated['day_id'] + 3);
+        $scheduleForLabAndLec = ClassSchedule::selectBothLabAndLecClasses($classSchedule->subject_id, $classSchedule->block_id);
+        foreach ($scheduleForLabAndLec as $schedule){
+            $schedule->time_start = $validated['time_start'];
+            $schedule->classroom_id = $validated['room_id'];
+            $schedule->time_end = $time_end;
+            $schedule->save();
+    
+            // Attach the day to the class schedule
+            $schedule->days()->attach($validated['day_id']);
+            if($validated['day_id']!==4){
+                $schedule->days()->attach($validated['day_id'] + 3);
+            }
         }
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
 
     public function deleteAssignedTimeRoomDay(Request $request, ClassSchedule $classSchedule)
     {
-        $classSchedule->days()->detach();
-
-        // Reset class schedule attributes
-        $classSchedule->time_start = null;
-        $classSchedule->time_end = null;
-        $classSchedule->classroom_id = null;
-        $classSchedule->save();
+        $scheduleForLabAndLec = ClassSchedule::selectBothLabAndLecClasses($classSchedule->subject_id, $classSchedule->block_id);
+        foreach ($scheduleForLabAndLec as $schedule) {
+            $schedule->days()->detach();
+    
+            // Reset class schedule attributes
+            $schedule->time_start = null;
+            $schedule->time_end = null;
+            $schedule->classroom_id = null;
+            $schedule->save();
+        }
         return response()->json(['message' => 'Time and Room have been removed from class schedule.', 'classSchedule' => $classSchedule]);
     }
 

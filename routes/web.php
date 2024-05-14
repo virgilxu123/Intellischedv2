@@ -87,5 +87,5 @@ Route::middleware('auth')->group(function () {
     Route::get('work-load-summary', [WorkLoadSummaryController::class, 'index'])->name('work-load-summary');
     Route::post('view-work-load-summary/{academicYearTerm}', [WorkLoadSummaryController::class, 'viewWorkLoad'])->name('view-work-load-summary');
 
-    Route::post('generate-schedule/{academicYearTerm}', [GenerateScheduleController::class, 'generateSchedule'])->name('generate-schedule');
+    Route::post('generate-schedule/{academicYearTerm}/{day}', [GenerateScheduleController::class, 'generateSchedule'])->name('generate-schedule');
 });

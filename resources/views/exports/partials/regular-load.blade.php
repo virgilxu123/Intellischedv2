@@ -258,8 +258,8 @@
         </tr>
         <tr>
             <td colspan="3"><span style="margin-left: 180px">Mandatory Deloading</span></td>
-            <td></td>
-            <td></td>
+            <td style="text-align: center">{{$mandatoryDeLoading->designation ?? ""}}</td>
+            <td style="text-align: center">{{$mandatoryDeLoading->units ?? ""}}</td>
             <td></td>
             <td></td>
         </tr>

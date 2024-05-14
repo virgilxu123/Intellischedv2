@@ -272,7 +272,7 @@
             </tr>
             <tr>
                 <td colspan="3"><span style="margin-left: 180px">Special Assignments</span></td>
-                <td></td>
+                <td style="text-align: center"></td>
                 <td></td>
                 <td></td>
                 <td></td>

@@ -23,6 +23,7 @@ class ClassSchedule extends Model
         $existingClassSchedules = self::where('academic_year_term_id', $this->academic_year_term_id)
             ->whereNotNull('classroom_id')
             ->where('faculty_id', $this->faculty_id)
+            ->where('units',3)
             ->whereHas('days', function ($query) use ($dayId) {
                 $query->where('day_id', $dayId);
             })
@@ -56,6 +57,7 @@ class ClassSchedule extends Model
                 $query->where('year_level', $yearLvl);
             })
             ->where('block_id', $this->block_id)
+            ->where('units',3)
             ->get();
         foreach ($existtingClassSchedulesWithSameBlockAndYear as $existingClassSchedule) {
             // Convert time strings to Unix timestamp for comparison
@@ -81,6 +83,7 @@ class ClassSchedule extends Model
                                         $query->where('day_id', $dayId);
                                     })
                                     ->where('classroom_id', $roomId)
+                                    ->where('units',3)
                                     ->get();
         foreach ($existingClassScheduleInThisRoom as $existingClassSchedule) {
             if($existingClassSchedule->id !== $this->id){

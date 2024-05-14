@@ -32,12 +32,15 @@ class GenerateScheduleService
             }
             $room = Classroom::where('room_number', $class['room'])->first();
             $roomId = $room->id;
-            $classSchedule->time_start = $class['timeslot'];
-            $classSchedule->classroom_id = $roomId;
-            $classSchedule->time_end = $time_end;
-            $classSchedule->save();
-            $classSchedule->days()->attach($dayId);
-            $classSchedule->days()->attach($dayId  + 3);
+            $scheduleForLabAndLec = ClassSchedule::selectBothLabAndLecClasses($classSchedule->subject_id, $classSchedule->block_id);
+            foreach ($scheduleForLabAndLec as $schedule) {
+                $schedule->time_start = $class['timeslot'];
+                $schedule->classroom_id = $roomId;
+                $schedule->time_end = $time_end;
+                $schedule->save();
+                $schedule->days()->attach($dayId);
+                $schedule->days()->attach($dayId  + 3);
+            }
         }
     }
 }

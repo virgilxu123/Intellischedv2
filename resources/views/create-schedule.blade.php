@@ -62,9 +62,9 @@
                                 <p data-academic-year-term="{{$academicYearTerm->id}}" class="academic_year_term">S.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}: <em>{{$academicYearTerm->term->term}}</em></p>
                             </div>
                             <div class="col-2">
-                                <form action="{{route('generate-schedule',['academicYearTerm'=>$academicYearTerm->id])}}" method="POST" id="generateScheduleForm">
+                                <form action="" method="POST" id="generateScheduleForm">
                                     @csrf
-                                    <button type="submit" id="automateSchedule" style="visibility: hidden;float: right;" class="btn btn-primary btn-sm"><i class="fa-solid fa-robot"></i> Generate</button>
+                                    <button type="submit" id="automateSchedule" style="visibility: hidden;float: right;" class="btn btn-primary btn-sm"><i class="fa-solid fa-robot"></i> Auto-Schedule</button>
                                 </form>
                             </div>
                         </div>
@@ -726,8 +726,7 @@
             $(document).on('submit', '#generateScheduleForm', function(e){
                 e.preventDefault();
                 $('#spinner').show();
-                let url = $('#generateScheduleForm').attr('action');
-                fetch(url, {
+                fetch(`{{ route("generate-schedule", [":academicYearTerm", ":day"]) }}`.replace(':academicYearTerm', academicYearTermId).replace(':day', dayId), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -741,6 +740,7 @@
                     return response.json(); // Parse the JSON response
                 })
                 .then(data => {
+                    console.log(data);
                     fetchClasses(academicYearTermId, dayId);
                     $('#spinner').hide();
                 })
