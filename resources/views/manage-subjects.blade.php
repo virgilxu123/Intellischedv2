@@ -39,6 +39,7 @@
                                 <tr>
                                     <th data-sortable="true" data-field="course_code">Course Code</th>
                                     <th data-sortable="true" data-field="description">Description</th>
+                                    <th data-sortable="true" data-field="prerequisite">Prerequisite</th>
                                     <th data-sortable="true" data-field="units">Units</th>
                                     <th data-sortable="true" data-field="year_level">Year Level</th>
                                     <th data-sortable="true" data-field="term">Term</th>
@@ -50,6 +51,7 @@
                                     <tr data-subject_id="{{$subject->id}}">
                                         <td>{{$subject->course_code}}</td>
                                         <td>{{$subject->description}}</td>
+                                        <td>{{$subject->prerequisite}}</td>
                                         <td>{{$subject->units}}</td>
                                         <td>{{$subject->year_level}}</td>
                                         <td data-term="{{$subject->term->id}}">{{ optional($subject->term)->term ?? '' }}</td>
@@ -78,14 +80,25 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="col-lg-12 mb-3">
-                            <label class="form-label" for="code">Course Code</label>
-                            <input type="text" name="course_code" class="form-control" id="code" >
-                        </div>
                         <div class="row mb-3">
+                            <div class="col-lg-6">
+                                <label class="form-label" for="code">Course Code</label>
+                                <input type="text" name="course_code" class="form-control" id="code" >
+                            </div>
                             <div class="col-lg-6">   
                                 <label class="form-label" for="description">Description</label>
                                 <input type="text" name="description" class="form-control" id="description" >
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label" for="prerequisite">Prererequisite</label>
+                                <select id="prerequisite" name="prerequisite_id" data-placeholder="" class="form-select" tabindex="1">
+                                    <option value=""></option>
+                                    @foreach ($prerequisites as $prerequisite)
+                                        <option value="{{$prerequisite->course_code}}">{{$prerequisite->course_code}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-lg-6">
                                 <label class="form-label" for="units">Units</label>
@@ -152,14 +165,25 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="col-lg-12 mb-3">
-                            <label class="form-label" for="code2">Course Code</label>
-                            <input type="text" name="course_code" class="form-control" id="code2" placeholder="Course Code">
-                        </div>
                         <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label class="form-label" for="code2">Course Code</label>
+                                <input type="text" name="course_code" class="form-control" id="code2" placeholder="Course Code">
+                            </div>
                             <div class="col-lg-6 mb-3">   
                                 <label class="form-label" for="description2">Description</label>
                                 <input type="text" name="description" class="form-control" id="description2" placeholder="Description">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">   
+                                <label class="form-label" for="prerequisite2">Prererequisite</label>
+                                <select id="prerequisite2" name="prerequisite" data-placeholder="" class="form-select" tabindex="1">
+                                    <option value=""></option>
+                                    @foreach ($prerequisites as $prerequisite)
+                                        <option value="{{$prerequisite->course_code}}">{{$prerequisite->course_code}} {{$prerequisite->description}}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-lg-6 mb-3">
                                 <label class="form-label" for="units2">Units</label>
@@ -252,9 +276,10 @@
                 const trElement = $(this).closest('tr');
                 const courseCode = trElement.find('td:eq(0)').text().trim();
                 const description = trElement.find('td:eq(1)').text().trim();
-                const units = trElement.find('td:eq(2)').text().trim();
-                const yearLevel = trElement.find('td:eq(3)').text().trim();
-                const term = trElement.find('td:eq(4)').attr('data-term');
+                const prerequisite = trElement.find('td:eq(2)').text().trim()
+                const units = trElement.find('td:eq(3)').text().trim();
+                const yearLevel = trElement.find('td:eq(4)').text().trim();
+                const term = trElement.find('td:eq(5)').attr('data-term');
                 const subjectType = $(this).attr('data-subject-type');
                 const laboratory = $(this).attr('data-laboratory');
 
@@ -262,6 +287,7 @@
 
                 $('#code2').val(courseCode);
                 $('#description2').val(description);
+                $('#prerequisite2').val(prerequisite);
                 $('#units2').val(units);
                 $('#year_level2').val(yearLevel);
                 $('#term2').val(term);
@@ -369,16 +395,16 @@
 
             // Call the function for update form
             handleFormSubmission('#update', function(data) {
-                console.log(data);
                 let tableRow = document.querySelector(`tr[data-subject_id="${data.updatedData.id}"]`);
                 tableRow.querySelector('td:nth-child(1)').textContent = data.updatedData.course_code;
                 tableRow.querySelector('td:nth-child(2)').textContent = data.updatedData.description;
-                tableRow.querySelector('td:nth-child(3)').textContent = data.updatedData.units;
-                tableRow.querySelector('td:nth-child(4)').textContent = data.updatedData.year_level;
-                tableRow.querySelector('td:nth-child(5)').textContent = data.updatedData.term_name;
-                tableRow.querySelector('td:nth-child(5)').setAttribute('data-term', data.updatedData.term.id);
-                tableRow.querySelector('td:nth-child(6) span').setAttribute('data-subject-type', data.updatedData.subject_type);
-                tableRow.querySelector('td:nth-child(6) span').setAttribute('data-laboratory', data.updatedData.laboratory);
+                tableRow.querySelector('td:nth-child(3)').textContent = data.updatedData.prerequisite;
+                tableRow.querySelector('td:nth-child(4)').textContent = data.updatedData.units;
+                tableRow.querySelector('td:nth-child(5)').textContent = data.updatedData.year_level;
+                tableRow.querySelector('td:nth-child(6)').textContent = data.updatedData.term_name;
+                tableRow.querySelector('td:nth-child(6)').setAttribute('data-term', data.updatedData.term.id);
+                tableRow.querySelector('td:nth-child(7) span').setAttribute('data-subject-type', data.updatedData.subject_type);
+                tableRow.querySelector('td:nth-child(7) span').setAttribute('data-laboratory', data.updatedData.laboratory);
             }, 'update');
 
             // Call the function for delete form

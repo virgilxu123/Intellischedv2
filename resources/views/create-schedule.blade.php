@@ -205,9 +205,9 @@
                                         </div>
                                         <div id="loadedSubjects" class="card-body">
                                         </div>
-                                        <div class="card-footer">
+                                        {{-- <div class="card-footer">
                                             Total Units:
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
@@ -256,13 +256,60 @@
                     $modal.find('input[name="subjectId[]"]').val(selectedSubjectIds);
                     $('#openClassesForm').attr('action', '{{route("open-classes", ":academicYearTerm")}}'.replace(':academicYearTerm', academicYearTerm));
                     $modal.modal('show');
-                console.log(academicYearTerm);
-                console.log(selectedSubjectIds);
-                console.log($('#openClassesForm').attr('action'));
+                    console.log(academicYearTerm);
+                    console.log(selectedSubjectIds);
+                    console.log($('#openClassesForm').attr('action'));
                 }else {
                     alert('Please select a subject');
                 }
             });
+            
+            let intialBlockCount;
+                // Double click event handler for the table row
+            $(document).on('dblclick', '.classCount', function() {
+                $(this).prop('readonly', false);
+                // Get the current value of the input field
+            });
+            $(document).on('focusin', '.classCount', function () {
+                intialBlockCount = $(this).val();
+            });
+            $(document).on('focusout', '.classCount', function(){
+                let value = $(this).val();
+                if(value != intialBlockCount){
+                    let form = $(this).closest('form');
+                    let formData = new FormData(form[0]);
+                    formData.append('subjectId', $(this).data('subject-id'));
+                    formData.append('blocks', value);
+                    // Iterate over FormData entries and log key-value pairs
+                    for (let pair of formData.entries()) {
+                        console.log(pair[0] + ', ' + pair[1]);
+                    }
+                    let url = "{{ route('open-classes', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        console.log(data);
+                        toastr.success(data.message);
+                    })
+                    .catch(error => {
+                        let message = "An error has occured";
+                        toastr.error(message);
+                    });
+                }
+                $(this).prop('readonly', true);
+            })
             $(document).on('click', '.loadBtn', function(e) {
                 if ($(this).hasClass('loadBtn')) {
                     facultyId = $(this).data('faculty-id'); 
@@ -272,6 +319,26 @@
                     $('#loadSubjectForm').attr('action', '{{route("assign-classes", ":facultyId")}}'.replace(':facultyId', facultyId));
                 }
             });
+        // Dropdown to filter the subjects by term
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+        
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function (event) {
+                    event.preventDefault(); // Prevent the default link behavior
+                    const value = this.getAttribute('data-value');
+                    console.log('Selected value:', value);
+                    $('.subject_to_offer').each(function() {
+                        const term = $(this).data('term-id');
+                        if (term == value) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+        // Dropdown to filter the subjects by term
+        
             //ajax POST request for assigning classes to faculty
             $('#loadSubjectForm').on('submit', function(e) {
                 e.preventDefault();
@@ -377,53 +444,6 @@
                 $('.subject-row').removeClass('selected-row'); // Remove
                 $("#filterYear").val("all").trigger('change');
             });
-            
-            let intialBlockCount;
-                // Double click event handler for the table row
-            $(document).on('dblclick', '.classCount', function() {
-                $(this).prop('readonly', false);
-                // Get the current value of the input field
-            });
-            $(document).on('focusin', '.classCount', function () {
-                intialBlockCount = $(this).val();
-            });
-            $(document).on('focusout', '.classCount', function(){
-                let value = $(this).val();
-                if(value != intialBlockCount){
-                    let form = $(this).closest('form');
-                    let formData = new FormData(form[0]);
-                    formData.append('subjectId', $(this).data('subject-id'));
-                    formData.append('blocks', value);
-                    // Iterate over FormData entries and log key-value pairs
-                    for (let pair of formData.entries()) {
-                        console.log(pair[0] + ', ' + pair[1]);
-                    }
-                    let url = "{{ route('open-classes', ['academic_year_term' => ':academicYearTerm']) }}".replace(':academicYearTerm', academicYearTerm);
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: formData
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json(); // Parse the JSON response
-                    })
-                    .then(data => {
-                        console.log(data);
-                        toastr.success(data.message);
-                    })
-                    .catch(error => {
-                        let message = "An error has occured";
-                        toastr.error(message);
-                    });
-                }
-                $(this).prop('readonly', true);
-            })
         
             //script for loading subject modal
             //script for tab 2
@@ -552,6 +572,7 @@
                 })
                 .then(data => {
                     // Clear existing designations
+                    console.log(data);
                     $('#designation-body').empty();
                     // Loop through designations and append HTML to the tbody
                     $('#totalUnits').text(data.totalLoad);
@@ -563,6 +584,7 @@
                         data.designations.forEach(designation => {
                             let html = `<tr class=" animate fadeIn" data-faculty-id="${designation.faculty_id}">
                                             <td>${designation.designation}</td>
+                                            <td>${designation.units}</td>
                                             <td class="text-center"><button class="btn btn-danger py-0 px-2 rounded" data-designation-id="${designation.id}" data-toggle="tooltip" title="Delete Designation"><i class="fa-regular fa-trash-can"></i></button></td>
                                         </tr>`;
                             $('#designation-body').append(html);

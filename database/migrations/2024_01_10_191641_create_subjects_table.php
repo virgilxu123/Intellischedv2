@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('course_code');
             $table->string('description');
+            $table->string('prerequisite')->nullable();
             $table->string('units');
             $table->string('year_level');
             $table->unsignedBigInteger('term_id')->nullable();

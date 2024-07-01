@@ -107,6 +107,7 @@
                 <thead>
                     <tr>
                         <th>Designation</th>
+                        <th>Units</th>
                         <th class="text-center">Action</th>
                     </tr>
                 </thead>

@@ -23,18 +23,8 @@ class DesignationFacultyController extends Controller
     {
         $designations = $faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get();
         $totalLoad = $faculty->totalLoad($academicYearTerm);
-        $allFacultiesDesignations = array();
         $faculties = Faculty::all();
-        foreach ($faculties as $faculty) {
-            foreach ($faculty->designations()->wherePivot('academic_year_term_id', $academicYearTerm->id)->get() as $designation) {
-                array_push($allFacultiesDesignations, $designation);
-            }
-        }
-        $designationsWhereUniqueIsOne = collect($allFacultiesDesignations)->filter(function ($designation) {
-            return $designation->unique == 1;
-        });
-        $designationIdsWithUniqueOne = $designationsWhereUniqueIsOne->pluck('id')->toArray();
-        $designationsToDisplayInOptions = Designation::whereNotIn('id', $designationIdsWithUniqueOne)->get();
+        $designationsToDisplayInOptions = Designation::designationOptions($academicYearTerm->id, $faculties);
         return response()->json(['designations' => $designations, 'designationsToDisplayInOptions' => $designationsToDisplayInOptions, 'totalLoad' => $totalLoad]);
     }
 

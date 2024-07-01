@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\ClassSchedule;
 use App\Models\AcademicYearTerm;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use App\Services\ClassScheduleService;
 
 class ClassScheduleController extends Controller
@@ -26,8 +27,15 @@ class ClassScheduleController extends Controller
     public function index(AcademicYearTerm $academicYearTerm)
     {
         $designations = Designation::all();
-        $subjects = Subject::where('term_id', $academicYearTerm->term_id)->get();
+        // $subjects = Subject::where('term_id', $academicYearTerm->term_id)->get();
+        $subjects = Subject::all();
         $classSchedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->where('units', 3)->get();
+        $classSchedules2 = ClassSchedule::select('subject_id', DB::raw('count(*) as sections_count'))
+            ->where('academic_year_term_id', $academicYearTerm->id)
+            ->where('units', 3)
+            ->groupBy('subject_id')
+            ->get();
+        $classSchedules2->load('subject', 'block', 'classroom', 'faculty', 'days');
         $classSchedules->load('subject', 'block', 'classroom', 'faculty', 'days');
         $subjects = $subjects->sortBy('year_level');
         $rooms = Classroom::all();
@@ -38,12 +46,13 @@ class ClassScheduleController extends Controller
                 'designations' => $designations,
                 'classSchedulesWithRooms' => $classSchedulesWithRooms,
                 'classSchedules' => $classSchedules,
+                'classSchedules2' => $classSchedules2,
                 'subjects' => $subjects,
                 'academicYearTerm' => $academicYearTerm,
                 'rooms' => $rooms,
             ]);
         }
-        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms', 'designations'));
+        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms', 'designations', 'classSchedules2'));
     }
 
     /**

@@ -168,17 +168,17 @@ class FacultySeeder extends Seeder
                 'educ_qualification' => 'MSCS',
                 'color' => '#d6abba'
             ],
-            // [
-            //     'first_name' => '',
-            //     'middle_initial' => '',
-            //     'last_name' => '',
-            //     'rank' => '',
-            //     'status' => '',
-            //     'image' => '',
-            //     'availability' => true,
-            //     'educ_qualification' => '',
-            //     'color' => ''
-            // ]
+            [
+                'first_name' => 'Grace Love',
+                'middle_initial' => '',
+                'last_name' => 'Tidalgo',
+                'rank' => 'Instructor 1',
+                'status' => 'Contractual',
+                'image' => '',
+                'availability' => true,
+                'educ_qualification' => 'MSCS',
+                'color' => '#5dcaf5'
+            ]
         ]);
     }
 }

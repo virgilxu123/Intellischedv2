@@ -24,15 +24,24 @@
                             <thead>
                                 <th data-sortable="true" data-field="name">Name</th>
                                 <th data-sortable="true" data-field="rank">Rank</th>
+                                <th data-sortable="true" data-field="designation">Designation</th>
                                 <th data-sortable="true" data-field="status">Status</th>
                                 <th data-sortable="true" data-field="availability">Availability</th>
                                 <th>Action</th>
                             </thead>
                             <tbody>
                                 @foreach ($faculties as $faculty)
-                                    <tr data-facultyId="{{$faculty->id}}" data-fname="{{$faculty->first_name}}" data-lname="{{$faculty->last_name}}" data-mi="{{$faculty->middle_initial}}" data-status="{{$faculty->status}}" data-rank="{{$faculty->rank}}" data-years-in-service="{{$faculty->years_in_service}}" data-eligibility="{{$faculty->eligibility}}" data-educ-qualification="{{$faculty->educ_qualification}}">
-                                        <td>{{$faculty->first_name}} {{$faculty->middle_initial}}. {{$faculty->last_name}}</td>
+                                    @php
+                                        $designation = $faculty->designations->first();
+                                    @endphp
+                                    <tr data-designation="{{$designation->designation ?? ''}}" data-facultyId="{{$faculty->id}}" data-fname="{{$faculty->first_name}}" data-lname="{{$faculty->last_name}}" data-mi="{{$faculty->middle_initial}}" data-status="{{$faculty->status}}" data-rank="{{$faculty->rank}}" data-years-in-service="{{$faculty->years_in_service}}" data-eligibility="{{$faculty->eligibility}}" data-educ-qualification="{{$faculty->educ_qualification}}">
+                                        <td>{{$faculty->last_name}}, {{$faculty->first_name}} {{$faculty->middle_initial}}. </td>
                                         <td>{{$faculty->rank}}</td>
+                                        <td> 
+                                            @foreach ($faculty->designations as $designation)
+                                                {{ $designation->designation }}
+                                            @endforeach
+                                        </td>
                                         <td>{{$faculty->status}}</td>
                                         <td><span class="badge {{$faculty->availability == 1 ? 'text-bg-success' : 'text-bg-danger'}}">{{$faculty->availability==1?"Available":"Unavailable"}}</span></td>
                                         <td class="text-center">
@@ -206,7 +215,7 @@
                                     <input type="number" id="update_years_in_service" name="years_in_service" class="form-control">
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label class="form-label" for="update_eligibility">Eligibility</label>
                                     <input type="text" id="update_eligibility" name="eligibility" class="form-control">
@@ -214,6 +223,16 @@
                                 <div class="col-lg-6">
                                     <label class="form-label" for="update_educ_qualification">Educational Qualification</label>
                                     <input type="text" id="update_educ_qualification" name="educ_qualification" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-label" for="update_designation">Designation</label>
+                                    <select id="update_designation" name="designation" data-placeholder="" class="form-control form-select" tabindex="1">
+                                        @foreach ($designationOptions as $designationOption)
+                                            <option value="{{$designationOption->id}}">{{$designationOption->designation}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -256,28 +275,39 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let $select = $('#update_designation');
             $('#table tbody').on('click', '.fa-pen-to-square', function() {
-
-                if ($(event.target).hasClass('fa-pen-to-square') || $(event.target).hasClass('fa-trash-can')) {
-                    let facultyId = $(this).closest('tr').attr('data-facultyId');
-                    if ($(event.target).hasClass('fa-pen-to-square')) {
-                        let updateFacultyForm = document.getElementById('updateFacultyForm');
-                        updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
-                        $('#update_first_name').val($(this).closest('tr').attr('data-fname'));
-                        $('#update_middle_initial').val($(this).closest('tr').attr('data-mi'));
-                        $('#update_last_name').val($(this).closest('tr').attr('data-lname'));
-                        $('#update_status').val($(this).closest('tr').attr('data-status'));
-                        $('#update_rank').val($(this).closest('tr').attr('data-rank'));
-                        $('#update_years_in_service').val($(this).closest('tr').attr('data-years-in-service'));
-                        $('#update_eligibility').val($(this).closest('tr').attr('data-eligibility'));
-                        $('#update_educ_qualification').val($(this).closest('tr').attr('data-educ-qualification'));
-                    } else {
-                        let deleteFacultyForm = document.getElementById('deleteFacultyForm');
-                        deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
-                        let deleteFacultyMessage = document.getElementById('deleteFacultyMessage');
-                        deleteFacultyMessage.textContent = `Are you sure you want to delete ${data.faculty.first_name} ${data.faculty.last_name} from the record?`;
-                    }
+                let facultyId = $(this).closest('tr').attr('data-facultyId');
+                let updateFacultyForm = document.getElementById('updateFacultyForm');
+                updateFacultyForm.action = `{{ route('update-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
+                $('#update_first_name').val($(this).closest('tr').attr('data-fname'));
+                $('#update_middle_initial').val($(this).closest('tr').attr('data-mi'));
+                $('#update_last_name').val($(this).closest('tr').attr('data-lname'));
+                $('#update_status').val($(this).closest('tr').attr('data-status'));
+                $('#update_rank').val($(this).closest('tr').attr('data-rank'));
+                $('#update_years_in_service').val($(this).closest('tr').attr('data-years-in-service'));
+                $('#update_eligibility').val($(this).closest('tr').attr('data-eligibility'));
+                $('#update_educ_qualification').val($(this).closest('tr').attr('data-educ-qualification'));
+                let designationValue = $(this).closest('tr').attr('data-designation');
+                if ($select.find("option[value='" + designationValue + "']").length) {
+                    $select.val(designationValue);
+                } else {
+                    // If the value does not exist, add it as a new option and select it
+                    let newOption = new Option(designationValue, designationValue, true, true);
+                    $select.prepend(newOption).val(designationValue);
+                    $(newOption).attr('data-temporary', 'true');
                 }
+            });
+            $('#table tbody').on('click', '.fa-trash-can', function() {
+                let facultyId = $(this).closest('tr').attr('data-facultyId');
+                let deleteFacultyForm = document.getElementById('deleteFacultyForm');
+                deleteFacultyForm.action = `{{ route('delete-faculty', ':facultyId') }}`.replace(':facultyId', facultyId);
+                let deleteFacultyMessage = document.getElementById('deleteFacultyMessage');
+                deleteFacultyMessage.textContent = `Are you sure you want to delete ${$(this).closest('tr').data('fname')} ${$(this).closest('tr').data('lname')} from the record?`;
+            });
+            $('#updateFacultyModal').on('hidden.bs.modal', function() {
+                // Remove the temporary option if it exists
+                $select.find('option[data-temporary="true"]').remove();
             });
             
             function handleFormSubmission(formId, successCallback, actionType) {

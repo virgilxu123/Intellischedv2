@@ -14,8 +14,24 @@ class SubjectController extends Controller
     public function index()
     {
         $subjects = Subject::with('term')->get();
+        $prerequisites = '';
+        $customOrder = [
+            'First Year' => 1,
+            'Second Year' => 2,
+            'Third Year' => 3,
+            'Fourth Year' => 4,
+        ];
+        // Generate the CASE SQL
+        $orderByClause = 'CASE year_level';
+        foreach ($customOrder as $level => $order) {
+            $orderByClause .= " WHEN '{$level}' THEN {$order}";
+        }
+        $orderByClause .= ' END';
 
-        return view('manage-subjects', compact('subjects'));
+        $prerequisites = Subject::where('subject_type', 'major')
+            ->orderByRaw($orderByClause)
+            ->get();
+        return view('manage-subjects', compact('subjects', 'prerequisites'));
     }
 
     /**
@@ -82,6 +98,7 @@ class SubjectController extends Controller
         $validatedData = $request->validate([
             'course_code' => 'required|unique:subjects,course_code,'. $subject->id,
             'description' => 'required',
+            'prerequisite' => 'nullable|string',
             'units' => 'required',
             'year_level' => 'required',
             'term_id' => 'required',
@@ -89,7 +106,6 @@ class SubjectController extends Controller
             'laboratory' => 'required',
         ]);
         $subject->update($validatedData);
-
         // Include the term data in the response
         $subject->load('term'); // Load the term relationship
         $subject->term_name = $subject->term->term; // Add the term name to the subject object

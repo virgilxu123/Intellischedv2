@@ -33,6 +33,12 @@ class Faculty extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
+    public function designationsForAcademicYearTerm($AcademicYearTermId)
+    {
+        return $this->belongsToMany(Designation::class)
+                    ->wherePivot('academic_year_term_id', $AcademicYearTermId);
+    }
+
     public function totalLoad($academicYearTerm)
     {
         $totalSubjectUnits = $this->class_schedules()

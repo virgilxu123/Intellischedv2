@@ -26,9 +26,7 @@ use App\Http\Controllers\DesignationFacultyController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::view('/', 'welcome')->name('home');
 Route::post('login', [UserController::class, 'login'])->name('login');
 Route::post('logout', [UserController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {

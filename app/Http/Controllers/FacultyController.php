@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Faculty;
 use App\Models\LoadType;
 use App\Models\Classroom;
+use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\AcademicYearTerm;
@@ -17,12 +18,22 @@ class FacultyController extends Controller
     public function index()
     {
         $faculties = Faculty::all()
-            ->sortBy('first_name');
+            ->sortBy('last_name');
+        $latestAcademicYearTerm = AcademicYearTerm::latest()->first();
+        $designationOptions = Designation::where('unique', 1)->get();
+        if ($latestAcademicYearTerm) {
+            $designationOptions = Designation::designationOptions($latestAcademicYearTerm->id, $faculties)->where('unique', 1);
+            $faculties->load(['designations' => function ($query) use ($latestAcademicYearTerm) {
+                $query->where('unique', 1)
+                ->wherePivot('academic_year_term_id', $latestAcademicYearTerm->id);
+            }]);
+        }
+        
         if (request()->ajax()) {
-            return response()->jason(['faculties' => $faculties]);
+            return response()->jason(['faculties' => $faculties, 'designationOptions' => $designationOptions]);
         }
 
-        return view('manage-faculty', compact('faculties'));
+        return view('manage-faculty', compact('faculties', 'designationOptions'));
     }
 
     /**
