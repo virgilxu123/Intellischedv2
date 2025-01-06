@@ -1,9 +1,12 @@
-<img src="{{public_path('admin-assets/image/nemsuheaderfinal.png')}}" alt="" style="width: 100%">
-<hr>
-<h4 class="header">College of Information Technology Education</h4>
-<h4 class="header">Department of Computer Studies</h4>
-<h4 style="text-align: center;margin:10px 0 2px 0;">{{$academicYearTerm->term->term}}, A.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}</h4>
-<h4 style="text-align: center; background-color:rgb(172, 255, 172); color:rgb(0, 114, 0);margin:5px;">REGULAR LOAD</h4>
+<div style="text-align: center;">
+    <img src="{{public_path('admin-assets/image/nemsu-logo.png')}}" alt="" style="width: 60px;">
+</div>
+<p style="text-align: center; font-size: 12px; margin:0;">Republic of the Philippines</p>
+<h5 style="text-align: center;margin:0; font-size:14px;">North Eastern Mindanao State University</h5>
+<p class="header" style="font-size: 12px; margin-top:10px">College of Information Technology Education</p>
+<p class="header" style="font-size: 12px">Department of Computer Studies</p>
+<h6 style="text-align: center;margin:10px 0 2px 0;">{{$academicYearTerm->term->term}}, A.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}</h6>
+<h5 style="text-align: center; background-color:rgb(172, 255, 172); color:rgb(0, 114, 0);margin:5px;">REGULAR LOAD</h5>
 <table style="width: 100%; border-collapse: collapse; font-size:12px">
     <tbody>
         <tr>
@@ -129,7 +132,101 @@
                 $time = strtotime('+90 minutes', $time);
             @endphp
         @endfor
-        
+
+        <tr>
+            <td style="text-align: center;background-color:rgb(175, 175, 175)">Wednesday-Morning</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        @php
+            $time = strtotime('06:00');
+        @endphp
+        @for ($i=1; $i<3; $i++)
+            @php
+                $current_time = date('h:i', $time);
+                $curTime = date('h:i A', $time);
+            @endphp
+            <tr>
+                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+180 minutes', $time)) }}</td>
+                @php
+                    $dayName = 'Monday'; // The name of the day you want to filter
+
+                    $classesForMonday = $classes->filter(function ($class) use ($dayName) {
+                        return $class->days->contains('day', $dayName)&&$class->load_type_id == 1;
+                    });
+                    $class = $classesForMonday->where('time_start', $curTime)->first();
+                @endphp
+                @if ($class)
+                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
+                    <td style="text-align: center">{{$class->subject->description}}</td>
+                    <td style="text-align: center">{{$class->units}}</td>
+                    <td style="text-align: center">{{$class->student_count}}</td>
+                    <td style="text-align: center">{{$class->classroom->room_number}}</td>
+                @else
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                @endif
+            </tr>
+            @php
+                $time = strtotime('+180 minutes', $time);
+            @endphp
+        @endfor
+        <tr>
+            <td style="text-align: center;background-color:rgb(175, 175, 175)">Wednesday-Afternoon</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        @php
+            $time = strtotime('13:00');
+        @endphp
+        @for ($i=1; $i<3; $i++)
+            @php
+                $current_time = date('h:i', $time);
+                $curTime = date('h:i A', $time);
+            @endphp
+            <tr>
+                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+180 minutes', $time)) }}</td>
+                @php
+                    $dayName = 'Monday'; // The name of the day you want to filter
+
+                    $classesForMonday = $classes->filter(function ($class) use ($dayName) {
+                        return $class->days->contains('day', $dayName)&&$class->load_type_id == 1;
+                    });
+                    $class = $classesForMonday->where('time_start', $curTime)->first();
+                @endphp
+                @if ($class)
+                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
+                    <td style="text-align: center">{{$class->subject->description}}</td>
+                    <td style="text-align: center">{{$class->units}}</td>
+                    <td style="text-align: center">{{$class->student_count}}</td>
+                    <td style="text-align: center">{{$class->classroom->room_number}}</td>
+                @else
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                @endif
+            </tr>
+            @php
+                $time = strtotime('+180 minutes', $time);
+            @endphp
+        @endfor
         <tr>
             <td style="text-align: center;background-color:rgb(175, 175, 175)">Tuesday/Friday-Morning</td>
             <td></td>
@@ -148,10 +245,9 @@
                 $curTime = date('h:i A', $time);
             @endphp
             <tr>
-                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+90 minutes', $time)) }}</td>
+                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+180 minutes', $time)) }}</td>
                 @php
                     $dayName = 'Tuesday'; // The name of the day you want to filter
-
                     $classesForTuesday = $classes->filter(function ($class) use ($dayName) {
                         return $class->days->contains('day', $dayName)&&$class->load_type_id == 1;
                     });
@@ -174,7 +270,7 @@
                 @endif
             </tr>
             @php
-                $time = strtotime('+90 minutes', $time);
+                $time = strtotime('240 minutes', $time);
             @endphp
         @endfor
         <tr>
@@ -301,11 +397,11 @@
         </td>
     </tr>
     <tr>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 20px;">
+        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 5px;">
             <span"><u><b>ESMAEL V. MALIBERAN, DIT</b></u></span><br>
             <span><i>Department Chairperson</i></span>
         </td>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 20px;">
+        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 5px;">
             <span><u><b>{{ strtoupper($faculty->first_name) }} {{ strtoupper($faculty->last_name) }}</b></u></span><br>
             <span><i>{{$faculty->rank}}</i></span>
         </td>
@@ -314,11 +410,11 @@
         <td colspan="2" style="padding-top: 20px; font-size: 12px;">Recommending Approval:</td>
     </tr>
     <tr>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 20px;">
+        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 10px;">
             <span"><u><b>BORN CHRISTIAN ISIP, DTE</b></u></span><br>
             <span><i>Dean, CITE</i></span>
         </td>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 20px;">
+        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 10px;">
             <span"><u><b>{{strtoupper($campusDirector->first_name)}} {{strtoupper($campusDirector->middle_initial)}}. {{ strtoupper($campusDirector->last_name) }}, {{$campusDirector->educ_qualification}}</b></u></span><br>
             <span><i>Campus Director, Nemsu Main</i></span>
         </td>
@@ -336,3 +432,6 @@
         </td>
     </tr>
 </table>
+<div style="text-align: center;margin-top: 20px;">
+    <img src="{{public_path('admin-assets/image/alpas-logo.png')}}" alt="" style="width: 70%;">
+</div>

@@ -601,7 +601,7 @@
                     data.designationsToDisplayInOptions.forEach(designationsToDisplayInOption => {
                         let option = document.createElement('option');
                         option.value = designationsToDisplayInOption.id;
-                        option.innerText = designationsToDisplayInOption.designation=='Research & Extension'?`${designationsToDisplayInOption.designation} (${designationsToDisplayInOption.units})`:designationsToDisplayInOption.designation;
+                        option.innerText = `${designationsToDisplayInOption.designation} (${designationsToDisplayInOption.units})`;
                         document.getElementById('assignDesignationForm').querySelector('.form-select').appendChild(option);
                     });
                 });

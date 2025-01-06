@@ -14,13 +14,19 @@
         .table-schedule {
             font-size: 10px;
         }
+        .page-break {
+            page-break-before: always; /* Ensures a new page starts before the section */
+        }
     </style>
 </head>
 <body>
     
     @include('exports.partials.regular-load')
+    <div class="page-break"></div>
     @include('exports.partials.over-load')
+    <div class="page-break"></div>
     @include('exports.partials.emergency-load')
+    <div class="page-break"></div>
     @include('exports.partials.praise-load')
 </body>
 </html>
