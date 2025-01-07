@@ -182,19 +182,18 @@ class ClassScheduleController extends Controller
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
-        $scheduleForLabAndLec = ClassSchedule::selectBothLabAndLecClasses($classSchedule->subject_id, $classSchedule->block_id);
-        foreach ($scheduleForLabAndLec as $schedule){
-            $schedule->time_start = $validated['time_start'];
-            $schedule->classroom_id = $validated['room_id'];
-            $schedule->time_end = $time_end;
-            $schedule->save();
+
+            $classSchedule->time_start = $validated['time_start'];
+            $classSchedule->classroom_id = $validated['room_id'];
+            $classSchedule->time_end = $time_end;
+            $classSchedule->save();
     
-            // Attach the day to the class schedule
-            $schedule->days()->attach($validated['day_id']);
+            // Attach the day to the class classSchedule
+            $classSchedule->days()->attach($validated['day_id']);
             if($validated['day_id']!==4){
-                $schedule->days()->attach($validated['day_id'] + 3);
+                $classSchedule->days()->attach($validated['day_id'] + 3);
             }
-        }
+        
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
 
