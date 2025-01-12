@@ -78,6 +78,8 @@ Route::middleware('auth')->group(function () {
     Route::post('update-load-type/{classSchedule}', [ClassScheduleController::class, 'updateLoadType'])->name('update-load-type');
     Route::post('delete-time-room-day/{classSchedule}', [ClassScheduleController::class, 'deleteAssignedTimeRoomDay'])->name('delete-time-room-day');
     Route::post('update-student-count/{classSchedule}', [ClassScheduleController::class, 'updateNumberOfStudents'])->name('update-student-count');
+    Route::get('get-subjects/{academicYearTerm}/{year}/{block}', [ClassScheduleController::class, 'getSubjects'])->name('get-subjects');
+    Route::post('assign-day-time/{classSchedule}', [ClassScheduleController::class, 'assignDayAndTime'])->name('assign-day-time');
 
     Route::post('export-plotted-schedule/{academic_year_term}', [ExportController::class, 'exportPlottedSchedule'])->name('export-plotted-schedule');
     Route::post('view-pdf/{faculty}/{academicYearTerm}', [ExportController::class, 'viewPDF'])->name('view-pdf');

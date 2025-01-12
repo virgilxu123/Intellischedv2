@@ -11,6 +11,7 @@ use App\Models\AcademicYear;
 use Illuminate\Http\Request;
 use App\Models\ClassSchedule;
 use App\Models\AcademicYearTerm;
+use App\Models\Block;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Services\ClassScheduleService;
@@ -26,9 +27,22 @@ class ClassScheduleController extends Controller
 
     public function index(AcademicYearTerm $academicYearTerm)
     {
+        $blocks = Block::all();
         $designations = Designation::all();
         // $subjects = Subject::where('term_id', $academicYearTerm->term_id)->get();
         $subjects = Subject::all();
+        $yearLevels = ['First Year', 'Second Year', 'Third Year', 'Fourth Year']; // Define the year levels
+        $blockCounts = []; // Store the count for each year level
+
+        foreach ($yearLevels as $year) {
+            $yearSubjects = $subjects
+                ->where('year_level', $year)
+                ->where('term_id', $academicYearTerm->term_id)
+                ->pluck('id');
+
+            $blockCounts[$year] = $this->classScheduleService->numberOfBlocks($yearSubjects, $academicYearTerm->id);
+        }
+
         $classSchedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)->where('units', 3)->get();
         $classSchedules2 = ClassSchedule::select('subject_id', DB::raw('count(*) as sections_count'))
             ->where('academic_year_term_id', $academicYearTerm->id)
@@ -52,7 +66,7 @@ class ClassScheduleController extends Controller
                 'rooms' => $rooms,
             ]);
         }
-        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms', 'designations', 'classSchedules2'));
+        return view('create-schedule', compact('classSchedules', 'subjects', 'academicYearTerm', 'rooms', 'designations', 'classSchedules2', 'blockCounts', 'blocks'));
     }
 
     /**
@@ -173,7 +187,7 @@ class ClassScheduleController extends Controller
     {
         $validated = $request->validate([
             'time_start' => 'required',
-            'room_id' => 'required',
+            'room_id' => 'nullable',
             'day_id' => 'required',
         ]);
         // Check for time conflicts
@@ -182,16 +196,17 @@ class ClassScheduleController extends Controller
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
-
             $classSchedule->time_start = $validated['time_start'];
             $classSchedule->classroom_id = $validated['room_id'];
             $classSchedule->time_end = $time_end;
             $classSchedule->save();
     
-            // Attach the day to the class classSchedule
-            $classSchedule->days()->attach($validated['day_id']);
-            if($validated['day_id']!==4){
-                $classSchedule->days()->attach($validated['day_id'] + 3);
+            // Attach the day only if it does not exist
+            $classSchedule->days()->syncWithoutDetaching([$validated['day_id']]);
+            // Attach the second day only if it does not exist
+            $alternateDay = $validated['day_id'] + 3;
+            if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
+                $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
             }
         
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
@@ -246,5 +261,47 @@ class ClassScheduleController extends Controller
         $classSchedule->student_count = $validated['student_count'];
         $classSchedule->save();
         return response()->json(['message' => 'Number of students updated successfully', 'labSchedule' => $labSchedule]);
+    }
+    public function getSubjects(AcademicYearTerm $academicYearTerm, $year, Block $block)
+    {
+        $subjects = Subject::where('year_level', $year)
+                            ->where('term_id', $academicYearTerm->term_id)
+                            ->pluck('id');
+        $schedules = ClassSchedule::where('academic_year_term_id', $academicYearTerm->id)
+                                ->where('units', 3)
+                                ->where('block_id', $block->id)
+                                ->whereIn('subject_id', $subjects)
+                                ->get();
+        $schedules->load('subject', 'block', 'classroom', 'faculty', 'days');
+        return response()->json(['subjects' => $schedules]);
+    }
+    public function assignDayAndTime(Request $request, ClassSchedule $classSchedule) 
+    {
+        $validated = $request->validate([
+            'day_id' => 'required',
+            'time_start' => 'required',
+        ]);
+         // Check for time conflicts
+        if($classSchedule->subject->units === "2") {
+            $time_end = date('h:i A', strtotime($validated['time_start'] . ' +60 minutes'));
+        } else {
+            $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
+        }
+        $conflicts = $classSchedule->checkForBlockTimeConflict($validated['time_start'], $time_end, $validated['day_id']);
+        if ($conflicts) {
+            return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
+        }
+        $classSchedule->time_start = $validated['time_start'];
+        $classSchedule->time_end = $time_end;
+        $classSchedule->save();
+    
+        // Attach day if not already assigned
+        $classSchedule->days()->syncWithoutDetaching([$validated['day_id']]);
+        $alternateDay = $validated['day_id'] + 3;
+        if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
+            $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
+        }
+    
+        return response()->json(['message' => 'Day and Time assigned successfully!']);
     }
 }

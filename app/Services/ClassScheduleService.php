@@ -67,4 +67,14 @@ class ClassScheduleService
             }
         }
     }
+    public function numberOfBlocks($subject_id, $academicYearTerm)
+    {
+        $blocks = ClassSchedule::where('academic_year_term_id', $academicYearTerm)
+                            ->where('units', 3)
+                            ->whereIn('subject_id', $subject_id)
+                            ->selectRaw('subject_id, COUNT(*) as block_count')
+                            ->groupBy('subject_id')
+                            ->pluck('block_count', 'subject_id');
+        return $blocks->max();
+    }
 }

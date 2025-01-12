@@ -49,7 +49,6 @@ class ClassSchedule extends Model
         }
         $yearLvl = $this->subject->year_level;
         $existtingClassSchedulesWithSameBlockAndYear = self::where('academic_year_term_id', $this->academic_year_term_id)
-            ->whereNotNull('classroom_id')
             ->whereHas('days', function ($query) use ($dayId) {
                 $query->where('day_id', $dayId);
             })
@@ -102,6 +101,38 @@ class ClassSchedule extends Model
         }
         // No conflicts found, return false
         return false;
+    }
+    public function checkForBlockTimeConflict($newTimeStart, $newTimeEnd, $dayId)
+    {
+        $yearLvl = $this->subject->year_level;
+        $existtingClassSchedulesWithSameBlockAndYear = self::where('academic_year_term_id', $this->academic_year_term_id)
+            ->whereHas('days', function ($query) use ($dayId) {
+                $query->where('day_id', $dayId);
+            })
+            ->whereHas('subject', function ($query) use ($yearLvl) {
+                $query->where('year_level', $yearLvl);
+            })
+            ->where('block_id', $this->block_id)
+            ->where('units',3)
+            ->get();
+        foreach ($existtingClassSchedulesWithSameBlockAndYear as $existingClassSchedule) {
+            // Convert time strings to Unix timestamp for comparison
+            if($existingClassSchedule->id !== $this->id){
+
+                $classStartTime = strtotime($existingClassSchedule->time_start);
+                $classEndTime = strtotime($existingClassSchedule->time_end);
+                $newStartTime = strtotime($newTimeStart);
+                $newEndTime = strtotime($newTimeEnd);
+    
+               // Check if the new time range overlaps with the existing class schedule
+                if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
+                    ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+                ) {
+                    return true; // Conflict found, return true
+                }
+            }
+        }
     }
 
     public function assignLoadType($loadType)

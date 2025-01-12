@@ -70,7 +70,7 @@
                         <tbody id="courseOfferings">
                             @foreach (['First Year', 'Second Year', 'Third Year', 'Fourth Year'] as $yearLevel)
                                 <tr>
-                                    <td colspan="3"><strong>{{ $yearLevel }}</strong></td>
+                                    <td colspan="3" class="bg-success"><strong>{{ $yearLevel }}</strong></td>
                                 </tr>
                                 @foreach ($classSchedules2->filter(fn($cs) => $cs->subject->year_level === $yearLevel) as $classSchedule)
                                     <tr class="courseOffering" data-subject-id="{{ $classSchedule->subject_id }}">

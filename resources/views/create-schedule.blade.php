@@ -53,7 +53,7 @@
 @endsection
 @section('content')
     <div class="container-fluid">
-        <div class="row animate__animated animate__bounceInRight">
+        <div class="row animated fadeIn">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -80,6 +80,9 @@
                             <li class="nav-item" role="presentation">
                               <button class="nav-link" id="pills-plot-schedule-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Plot Schedule</button>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pills-view-schedule-tab" data-bs-toggle="pill" data-bs-target="#pills-view" type="button" role="tab" aria-controls="pills-view" aria-selected="false">View Schedule</button>
+                            </li>
                         </ul>
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="pills-classes" role="tabpanel" aria-labelledby="pills-classes-tab" tabindex="0">
@@ -92,6 +95,9 @@
                             </div>
                             <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-plot-schedule-tab" tabindex="0">
                                 @include('partials.schedule-plotting')
+                            </div>
+                            <div class="tab-pane fade" id="pills-view" role="tabpanel" aria-labelledby="pills-view-schedule-tab" tabindex="0">
+                                @include('partials.view-schedule')
                             </div>
                         </div>
                     </div>
