@@ -64,12 +64,13 @@ class FacultyController extends Controller
             'years_in_service' => '',
             'eligibility' => '',
         ]);
-
+        $colors = ['#FF5733', '#33FF57', '#3357FF', '#F39C12', '#9B59B6', '#1ABC9C', '#E74C3C', '#2ECC71', '#3498DB'];
+        $randomColor = $colors[array_rand($colors)];
+        $validatedData['color'] = $randomColor;
         // Create a new faculty using mass assignment
         $faculty = Faculty::create($validatedData);
 
         if ($faculty) {
-
             return redirect()->route('manage-faculty')->with('success', 'Faculty created successfully!');
         }
     }
