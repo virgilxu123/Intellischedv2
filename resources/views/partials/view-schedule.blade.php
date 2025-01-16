@@ -1,5 +1,5 @@
 <div class="row animated fadeIn">
-    <div class="col-3">
+    <div class="col-2">
         <div class="card " style="max-height: 90vh;overflow:auto;">
             <div class="card-header bg-dark text-light">
                 <h5 class="card-title">Classes</h5>
@@ -46,7 +46,7 @@
             </div>
         </div>
     </div>
-    <div class="col-9">
+    <div class="col-10">
         <div class="card">
             <div class="card-header bg-success text-light">
                 <h5 id="card-header"> </h5>
@@ -77,7 +77,6 @@
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector("#scheduleByBlock tbody").addEventListener("change", function (event) {
                 let target = event.target;
-
                 // Check if the changed element is either the day or time dropdown
                 if (target.classList.contains("day-select") || target.classList.contains("time-select")) {
                     let row = target.closest("tr"); // Get the parent row of the changed dropdown

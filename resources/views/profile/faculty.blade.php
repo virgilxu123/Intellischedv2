@@ -139,7 +139,7 @@
                                     @foreach ($classes as $class)
                                         @php
                                             if($class->time_start){
-                                                $day = $class->days[0]->day== "Monday"&&$class->days[1]->day=="Thursday"?"MTh":"TF";
+                                                $day = $class->days[0]->day == "Monday" ? "MTh" : ($class->days[0]->day == "Wednesday" ? "W" : "TF");
                                                 $schedule = $day." ".$class->time_start."-".$class->time_end;
                                                 $room = $class->classroom->room_number;
                                             }else {
@@ -148,11 +148,47 @@
                                             }
                                         @endphp
                                         <tr>
-                                            <td class="col-2">{{$schedule}}</td>
+                                            <td class="col-2 ">
+                                                @if ($class->units == '3')
+                                                    {{ $schedule }}
+                                                @else
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="me-2">{{ $day }}</span>
+                                                        <form action="" method="POST">
+                                                        @csrf
+                                                        <select class="form-select w-auto time-select" data-classId="{{$class->id}}" data-day="{{ optional($class->days->first())->day ?? '' }}">
+                                                            <option value="">Select Time</option>
+                                                            <option value="7:30 AM">7:30 AM - 9:00 AM</option>
+                                                            <option value="8:30 AM">9:00 AM - 10:30 AM</option>
+                                                            <option value="9:30 AM">10:30 AM - 12:00 AM</option>
+                                                            <option value="10:30 AM">1:00 PM - 2:30 PM</option>
+                                                            <option value="1:00 PM">2:30 PM - 4:00 PM</option>
+                                                            <option value="2:00 PM">4:00 PM - 5:30 PM</option>
+                                                            <option value="3:00 PM">5:30 PM - 7:00 PM</option>
+                                                            <option value="4:00 PM">7:00 PM - 8:30 PM</option>
+                                                        </select>
+                                                        </form>
+                                                    </div>
+                                                @endif
+                                            </td>
                                             <td class="col-1">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                                             <td class="col-4">{{$class->subject->description}} <em>({{$class->class_type=='lecture'?'Lec.':'Lab.'}})</em></td>
                                             <td class="col-1">{{$class->units}}</td>
-                                            <td class="col-1">{{$room}}</td>
+                                            <td class="col-1">
+                                                @if ($class->units == '3')
+                                                    {{$room}}
+                                                @else
+                                                    <form action="" method="POST">
+                                                        @csrf
+                                                        <select class="form-select room-select w-auto room-select">
+                                                            <option value="">Select Room</option>
+                                                            @foreach ($rooms as $room)
+                                                                <option value="{{ $room->id }}">{{ $room->room_number }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </form>
+                                                @endif
+                                            </td>
                                             <td class="col-1">
                                                 <form action="{{route('update-student-count', ['classSchedule'=>$class->id])}}" method="POST" id="studentCountForm">
                                                     @csrf
@@ -199,10 +235,31 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>  
     <script>
         $(document).ready(function() {
+            let tableBody = document.querySelector("#table tbody");
+            if (tableBody) {
+                tableBody.addEventListener("change", function (event) {
+                    let target = event.target;
+                    if (target.classList.contains("time-select") || target.classList.contains("room-select")) {
+                        let row = target.closest("tr"); // Get the parent row of the changed dropdown
+                        let roomSelect = row.querySelector(".room-select"); // Find the day dropdown in the same row
+                        let timeSelect = row.querySelector(".time-select"); // Find the time dropdown in the same row
+
+                        let selectedRoom = roomSelect.value;
+                        let selectedTime = timeSelect.value;
+                        let classId = timeSelect.dataset.classid;
+                        let day = timeSelect.dataset.day;
+                        console.log(day);
+                        if (selectedRoom && selectedTime) {
+                            console.log(classId, selectedRoom, selectedTime, day, row);
+                        }
+                    }
+                });
+            } else {
+                console.warn("⚠️ Table body #facultyLoadTable tbody not found!");
+            }
             let initialStudCount;
             $('#updateFacultyForm').on('submit', function(e) {
                 e.preventDefault();
-                
             })
             let prevValue;
             $(document).on('focus', '.loadTypeSelect', function() {
@@ -247,7 +304,7 @@
 
                 });
             });
-    //fetch when focus is lost        
+            //fetch when focus is lost        
             $('.studentCount').on('focusout', function(e){
                 e.preventDefault();
                 let value = $(this).val();
@@ -288,6 +345,11 @@
                 initialStudCount = $(this).val();
             });
         });
+        function assignTimeRoom(classId, selectedRoom, selectedTime, day, row) {
+            let url = `/assign-day-time-room/${classId}`;
+            let roomSelect = row.querySelector(".room-select");
+            let timeSelect = row.querySelector(".time-select");
+        }
     </script>
     @if (Session::has('success'))
         <script>

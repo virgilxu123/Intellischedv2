@@ -134,7 +134,36 @@ class ClassSchedule extends Model
             }
         }
     }
-
+    public function checkForSameFacultyTimeConflict($newTimeStart, $newTimeEnd, $dayId)
+    {
+        // Retrieve all class schedules for the given faculty and day
+        $existingClassSchedules = self::where('academic_year_term_id', $this->academic_year_term_id)
+            ->whereNotNull('classroom_id')
+            ->where('faculty_id', $this->faculty_id)
+            ->whereHas('days', function ($query) use ($dayId) {
+                $query->where('day_id', $dayId);
+            })
+            ->get();
+        // Check for conflicts with each class schedule
+        foreach ($existingClassSchedules as $existingClassSchedule) {
+            if($existingClassSchedule->id !== $this->id){
+                
+                // Convert time strings to Unix timestamp for comparison
+                $classStartTime = strtotime($existingClassSchedule->time_start);
+                $classEndTime = strtotime($existingClassSchedule->time_end);
+                $newStartTime = strtotime($newTimeStart);
+                $newEndTime = strtotime($newTimeEnd);
+    
+                // Check if the new time range overlaps with the existing class schedule
+                if (($newStartTime >= $classStartTime && $newStartTime < $classEndTime) ||
+                    ($newEndTime > $classStartTime && $newEndTime <= $classEndTime) ||
+                    ($newStartTime <= $classStartTime && $newEndTime >= $classEndTime)
+                ) {
+                    return true; // Conflict found, return true
+                }
+            }
+        }
+    }
     public function assignLoadType($loadType)
     {
         

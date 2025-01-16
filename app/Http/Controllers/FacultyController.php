@@ -89,7 +89,6 @@ class FacultyController extends Controller
         $classes = $faculty->class_schedules()->where('academic_year_term_id', $academicYearTerm->id)
             ->with('subject', 'block', 'classroom', 'load_type', 'days')
             ->get();
-        
         $regularLoad = $faculty->regularLoad($academicYearTerm);
         $overLoad = $faculty->overLoad($academicYearTerm);
         $emergencyLoad = $faculty->emergencyLoad($academicYearTerm);

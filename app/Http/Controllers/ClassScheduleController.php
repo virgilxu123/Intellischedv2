@@ -191,7 +191,11 @@ class ClassScheduleController extends Controller
             'day_id' => 'required',
         ]);
         // Check for time conflicts
-        $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
+        if($validated['day_id'] === 4) {
+            $time_end = date('h:i A', strtotime($validated['time_start'] . ' +180 minutes'));
+        } else {
+            $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
+        }
         $conflicts = $classSchedule->checkForFacultyBlockTimeConflicts($validated['time_start'], $time_end, $validated['day_id'], $validated['room_id']);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
@@ -288,6 +292,31 @@ class ClassScheduleController extends Controller
             $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
         }
         $conflicts = $classSchedule->checkForBlockTimeConflict($validated['time_start'], $time_end, $validated['day_id']);
+        if ($conflicts) {
+            return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
+        }
+        $classSchedule->time_start = $validated['time_start'];
+        $classSchedule->time_end = $time_end;
+        $classSchedule->save();
+    
+        // Attach day if not already assigned
+        $classSchedule->days()->syncWithoutDetaching([$validated['day_id']]);
+        $alternateDay = $validated['day_id'] + 3;
+        if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
+            $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
+        }
+    
+        return response()->json(['message' => 'Day and Time assigned successfully!']);
+    }
+    public function assignDayTimeRoomForLab(Request $request, ClassSchedule $classSchedule) 
+    {
+        $validated = $request->validate([
+            'day_id' => 'required',
+            'time_start' => 'required',
+            'room_id' => 'required',
+        ]);
+        $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
+        $conflicts = $classSchedule->checkForSameFacultyTimeConflict($validated['time_start'], $time_end, $validated['day_id']);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
