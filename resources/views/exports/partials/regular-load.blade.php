@@ -153,12 +153,12 @@
             <tr>
                 <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+180 minutes', $time)) }}</td>
                 @php
-                    $dayName = 'Monday'; // The name of the day you want to filter
+                    $dayName = 'Wednesday'; // The name of the day you want to filter
 
-                    $classesForMonday = $classes->filter(function ($class) use ($dayName) {
+                    $classesForWednesday = $classes->filter(function ($class) use ($dayName) {
                         return $class->days->contains('day', $dayName)&&$class->load_type_id == 1;
                     });
-                    $class = $classesForMonday->where('time_start', $curTime)->first();
+                    $class = $classesForWednesday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
                     <td style="text-align: center"></td>

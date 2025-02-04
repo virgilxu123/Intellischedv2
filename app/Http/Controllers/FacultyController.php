@@ -6,6 +6,7 @@ use App\Models\Faculty;
 use App\Models\LoadType;
 use App\Models\Classroom;
 use App\Models\Designation;
+use App\Models\Day;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\AcademicYearTerm;
@@ -83,6 +84,7 @@ class FacultyController extends Controller
     {
         $loadTypes = LoadType::all();
         $rooms = Classroom::all();
+        $days = Day::all();
         if ($academicYearTerm == null)  {
             $academicYearTerm = AcademicYearTerm::latest()->first();
         }
@@ -99,7 +101,7 @@ class FacultyController extends Controller
         if (request()->ajax()) {
             return response()->json(['faculty' => $faculty, 'classes' => $classes, 'loadTypes' => $loadTypes, 'rooms' => $rooms, 'regularLoad' => $regularLoad, 'overLoad' => $overLoad, 'academicYearTerm' => $academicYearTerm, 'emergencyLoad' => $emergencyLoad, 'praiseLoad' => $praiseLoad]);
         }
-        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm', 'emergencyLoad', 'praiseLoad'));
+        return view('profile.faculty', compact('faculty', 'classes', 'loadTypes', 'totalLoad', 'designations', 'rooms', 'regularLoad', 'overLoad', 'academicYearTerm', 'emergencyLoad', 'praiseLoad', 'days'));
     }
 
     /**

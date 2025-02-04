@@ -15,6 +15,7 @@ use App\Models\Block;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Services\ClassScheduleService;
+use App\Models\Day;
 
 class ClassScheduleController extends Controller
 {
@@ -332,5 +333,15 @@ class ClassScheduleController extends Controller
         }
     
         return response()->json(['message' => 'Day and Time assigned successfully!']);
+    }
+    public function getAvailableTimeRoom(Day $day, Faculty $faculty)
+    {
+        $classSchedules = $faculty->class_schedules()
+                            ->whereHas('days', function ($query) use ($day) {
+                                $query->where('day_id', $day->id);
+                            })
+                            ->select('time_start', 'time_end')
+                            ->get();
+        return response()->json(['classSchedules' => $classSchedules]);
     }
 }

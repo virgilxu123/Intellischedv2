@@ -71,9 +71,9 @@
                         <tbody id="timeTable">
                             @php
                                 $numberOfRooms = count($rooms);
-                                $time = strtotime('07:00');
+                                $time = strtotime('06:00');
                             @endphp
-                            @for ($i = 0; $i < 25; $i++)
+                            @for ($i = 0; $i < 30; $i++)
                                 @php
                                     $current_time = date('h:i', $time);
                                 @endphp

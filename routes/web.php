@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::get('get-subjects/{academicYearTerm}/{year}/{block}', [ClassScheduleController::class, 'getSubjects'])->name('get-subjects');
     Route::post('assign-day-time/{classSchedule}', [ClassScheduleController::class, 'assignDayAndTime'])->name('assign-day-time');
     Route::post('assign-day-time-room/{classSchedule}', [ClassScheduleController::class, 'assignDayTimeRoom'])->name('assign-day-time-room');
+    Route::get('get-available-time/{day}/{faculty}', [ClassScheduleController::class, 'getAvailableTimeRoom'])->name('get-available-time');
 
     Route::post('export-plotted-schedule/{academic_year_term}', [ExportController::class, 'exportPlottedSchedule'])->name('export-plotted-schedule');
     Route::post('view-pdf/{faculty}/{academicYearTerm}', [ExportController::class, 'viewPDF'])->name('view-pdf');

@@ -953,8 +953,9 @@
                     const description = classSchedule.subject.description;
                     const facultyName = classSchedule.faculty.first_name + ' ' + classSchedule.faculty.last_name;
                     const facultyColor = classSchedule.faculty.color;
-                    const rowsToSpan = 3;
-                    const html = `<div class="rounded fill p-1 text-dark" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:120px;position:relative;" data-class-schedule-id="${classSchedule.id}"><span class="delete-sched"><i class="fa-solid fa-xmark"></i></span>${courseCode} <em>${description}</em>-${block} <br><b>${facultyName}</b></div>`;
+                    const rowsToSpan = classSchedule.days[0].id==4 ? 6 : 3;
+                    const height = classSchedule.days[0].id==4 ? 240 : 120;
+                    const html = `<div class="rounded fill p-1 text-dark" draggable="true" style="display: block;font-size: small;background-color: ${facultyColor};height:${height}px;position:relative;" data-class-schedule-id="${classSchedule.id}"><span class="delete-sched"><i class="fa-solid fa-xmark"></i></span>${courseCode} <em>${description}</em>-${block} <br><b>${facultyName}</b></div>`;
 
                     // Find the first empty cell for the given room and time
                     const timeCell = document.querySelector(`.empty[data-room="${roomId}"][data-time="${time}"]`);

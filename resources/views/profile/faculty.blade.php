@@ -126,7 +126,8 @@
                                 class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th data-field="date" data-sortable="true" scope="col">Day/Time</th>
+                                        <th data-field="day" data-sortable="true" scope="col">Day</th>
+                                        <th data-field="time" data-sortable="true" scope="col">Time</th>
                                         <th data-field="code" data-sortable="true" scope="col">Code</th>
                                         <th data-field="desc" data-sortable="true" scope="col">Description</th>
                                         <th data-field="units" data-sortable="true" scope="col">Units</th>
@@ -148,31 +149,34 @@
                                             }
                                         @endphp
                                         <tr>
-                                            <td class="col-2 ">
+                                            <form action="" method="POST">
+                                            <td class="col-1">
                                                 @if ($class->units == '3')
-                                                    {{ $schedule }}
+                                                    {{ count($class->days) > 0 ? $class->days[0]->day : 'TBD' }}
                                                 @else
                                                     <div class="d-flex align-items-center">
-                                                        <span class="me-2">{{ $day }}</span>
-                                                        <form action="" method="POST">
                                                         @csrf
-                                                        <select class="form-select w-auto time-select" data-classId="{{$class->id}}" data-day="{{ optional($class->days->first())->day ?? '' }}">
-                                                            <option value="">Select Time</option>
-                                                            <option value="7:30 AM">7:30 AM - 9:00 AM</option>
-                                                            <option value="8:30 AM">9:00 AM - 10:30 AM</option>
-                                                            <option value="9:30 AM">10:30 AM - 12:00 AM</option>
-                                                            <option value="10:30 AM">1:00 PM - 2:30 PM</option>
-                                                            <option value="1:00 PM">2:30 PM - 4:00 PM</option>
-                                                            <option value="2:00 PM">4:00 PM - 5:30 PM</option>
-                                                            <option value="3:00 PM">5:30 PM - 7:00 PM</option>
-                                                            <option value="4:00 PM">7:00 PM - 8:30 PM</option>
+                                                        <select name="day_id" id="day" class="form-select w-auto">
+                                                            <option value="">Select Day</option>
+                                                            @foreach ($days as $day)
+                                                                <option value="{{ $day->id }}">{{ $day->day }}</option>
+                                                            @endforeach
                                                         </select>
-                                                        </form>
                                                     </div>
                                                 @endif
                                             </td>
+                                            <td class="col-1">
+                                                @if ($class->units == '3')
+                                                    {{$class->time_start ."-". $class->time_end}}
+                                                @else
+                                                    <select name="time_start" id="time" class="form-select w-auto time-select" data-classId="{{$class->id}}" data-day="{{ count($class->days) > 0 ? $class->days[0]->day : 'N/A' }}">
+                                                        <option value="">Select Time</option>
+                                                    </select>
+                                                @endif
+                                            </form>
+                                            </td>
                                             <td class="col-1">{{$class->subject->course_code}}-{{$class->block->block}}</td>
-                                            <td class="col-4">{{$class->subject->description}} <em>({{$class->class_type=='lecture'?'Lec.':'Lab.'}})</em></td>
+                                            <td class="col-3">{{$class->subject->description}} <em>({{$class->class_type=='lecture'?'Lec.':'Lab.'}})</em></td>
                                             <td class="col-1">{{$class->units}}</td>
                                             <td class="col-1">
                                                 @if ($class->units == '3')
@@ -234,6 +238,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@1.28.0/libs/jsPDF/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.22.3/dist/extensions/export/bootstrap-table-export.min.js"></script>  
     <script>
+        faculty = @json($faculty);
         $(document).ready(function() {
             let tableBody = document.querySelector("#table tbody");
             if (tableBody) {
@@ -343,6 +348,36 @@
             });
             $('.studentCount').on('focusin', function () {
                 initialStudCount = $(this).val();
+            });
+            $('#day').on('change', function(e){
+                let day = $(this).val();
+                let facultyId = faculty.id;
+                let url = `{{route('get-available-time', ['day','faculty'])}}`.replace('day', day).replace('faculty', facultyId);
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then(data => {
+                    let timeSelect = $(this).closest('tr').find('.time-select');
+                    timeSelect.empty();
+                    timeSelect.append(`<option value="">Select Time</option>`);
+                    // data.forEach(time => {
+                    //     timeSelect.append(`<option value="${time.id}">${time.time_start}-${time.time_end}</option>`);
+                    // });
+                })
+                .catch(error => {
+                    let message = "An error has occured";
+                    toastr.error(message);
+                });
             });
         });
         function assignTimeRoom(classId, selectedRoom, selectedTime, day, row) {
