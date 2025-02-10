@@ -344,4 +344,37 @@ class ClassScheduleController extends Controller
                             ->get();
         return response()->json(['classSchedules' => $classSchedules]);
     }
+    public function addEditScheduleId(Request $request, $subjectId, $academicYearTerm)
+    {
+            // Get the request data
+        $data = $request->all();
+
+        // Query class schedules based on subject ID and academic year term
+        $classSchedules = ClassSchedule::where('subject_id', $subjectId)
+            ->where('academic_year_term_id', $academicYearTerm)
+            ->get();
+
+        // Iterate over each class schedule and update the schedule_id if conditions are met
+        $classSchedules->each(function ($classSchedule) use ($data) {
+            // Extract the last digit of the block_id
+            $blockIdLastDigit = $classSchedule->block_id % 10;
+
+            // Find the corresponding schedule_id in the request
+            foreach ($data as $key => $scheduleId) {
+                if (preg_match('/schedule_id_(\d+)/', $key, $matches)) {
+                    $requestBlockId = intval($matches[1]);  // The block ID from the request key
+
+                    // Check if the last digit matches the block ID
+                    if ($requestBlockId === $blockIdLastDigit) {
+                        // Update the schedule_id and save the class schedule
+                        $classSchedule->schedule_id = $scheduleId;
+                        $classSchedule->save();
+                        break;
+                    }
+                }
+            }
+        });
+
+        return back()->with('success', 'Schedules updated successfully.');
+    }
 }

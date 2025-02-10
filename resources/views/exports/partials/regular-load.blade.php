@@ -71,7 +71,7 @@
                     $class = $classesForMonday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>
@@ -113,7 +113,7 @@
                     $class = $classesForMonday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>
@@ -161,7 +161,7 @@
                     $class = $classesForWednesday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>
@@ -208,7 +208,7 @@
                     $class = $classesForMonday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>
@@ -254,7 +254,7 @@
                     $class = $classesForTuesday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>
@@ -301,7 +301,7 @@
                     $class = $classesForTuesday->where('time_start', $curTime)->first();
                 @endphp
                 @if ($class)
-                    <td style="text-align: center"></td>
+                    <td style="text-align: center">{{$class->schedule_id}}</td>
                     <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                     <td style="text-align: center">{{$class->subject->description}}</td>
                     <td style="text-align: center">{{$class->units}}</td>

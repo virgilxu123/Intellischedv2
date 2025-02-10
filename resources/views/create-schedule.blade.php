@@ -1006,4 +1006,33 @@
             toastr.success("{{Session::get('success')}}");
         </script>
     @endif
+    <script>
+        $(document).ready(function(){
+            classSchedules = @json($classSchedules);
+        });
+        function populateScheduleId(element) {
+            academicYearTerm = @json($academicYearTerm);
+            console.log(academicYearTerm.id);
+            let subjectId = element.dataset.subjectId;
+            let route = '{{ route("add-edit-schedule-id", [":subjectId", ":academicYearTerm"]) }}'
+                        .replace(':subjectId', subjectId)
+                        .replace(':academicYearTerm', academicYearTerm.id);
+            console.log(route);
+            document.querySelector('#addEditScheduleIdForm').setAttribute('action', route);
+            let blocksForSubject = classSchedules.filter(schedule => schedule.subject_id == subjectId);
+            let modalBody = document.querySelector('#addEditSchedId .modal-body');
+            modalBody.innerHTML = '';
+            blocksForSubject.forEach((schedule, index) => {
+                console.log(schedule);
+                let inputGroup = document.createElement('div');
+                inputGroup.classList.add('mb-3');
+                inputGroup.innerHTML = `
+                    <label for="schedule_id_${schedule.block.block}" class="form-label">Schedule ID (block ${schedule.block.block}):</label>
+                    <input type="number" class="form-control" id="schedule_id_${schedule.block.block}" name="schedule_id_${schedule.block_id}" value="${schedule.schedule_id??''}" />
+                `;
+
+                modalBody.appendChild(inputGroup);
+            });
+        }
+        </script>
 @endsection

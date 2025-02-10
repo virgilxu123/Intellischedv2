@@ -14,6 +14,7 @@ class ClassSchedule extends Model
         'class_type',
         'time_start',
         'time_end',
+        'schedule_id',
     ];
 
     public function checkForFacultyBlockTimeConflicts($newTimeStart, $newTimeEnd, $dayId, $roomId)

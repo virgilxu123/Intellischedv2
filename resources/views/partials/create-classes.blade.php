@@ -65,23 +65,25 @@
                                 <th>Course Code</th>
                                 <th>Description</th>
                                 <th>Blocks</th>
+                                <th>Sched_Id</th>
                             </tr>
                         </thead>
                         <tbody id="courseOfferings">
                             @foreach (['First Year', 'Second Year', 'Third Year', 'Fourth Year'] as $yearLevel)
                                 <tr>
-                                    <td colspan="3" class="bg-success"><strong>{{ $yearLevel }}</strong></td>
+                                    <td colspan="4" class="bg-success"><strong>{{ $yearLevel }}</strong></td>
                                 </tr>
                                 @foreach ($classSchedules2->filter(fn($cs) => $cs->subject->year_level === $yearLevel) as $classSchedule)
                                     <tr class="courseOffering" data-subject-id="{{ $classSchedule->subject_id }}">
-                                        <td>{{ $classSchedule->subject->course_code }}</td>
-                                        <td>{{ $classSchedule->subject->description }}</td>
-                                        <td class="text-center col-1">
+                                        <td class="col-3">{{ $classSchedule->subject->course_code }}</td>
+                                        <td class="col-6">{{ $classSchedule->subject->description }}</td>
+                                        <td class="text-center col-2">
                                             <form action="" method="POST">
                                                 @csrf
                                                 <input name="blocks" class="form-control form-control-sm text-center classCount" readonly="true" type="number" min="0" max="21" data-subject-id="{{ $classSchedule->subject_id }}" value="{{ $classSchedule->sections_count }}">
                                             </form>
                                         </td>
+                                        <td class="text-center col-1"><button class="rounded px-2 py-0" data-bs-toggle="modal" data-bs-target="#addEditSchedId" data-toggle="tooltip" title="Add/Edit Load" data-subject-id="{{ $classSchedule->subject_id }}" onclick="populateScheduleId(this)"><i class="fa fa-edit"></button></i></td>
                                     </tr>
                                 @endforeach
                             @endforeach
@@ -90,5 +92,27 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="addEditSchedId" class="modal fade fadeIn" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="" method="POST" id="addEditScheduleIdForm">
+        @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Edit Schedule Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary rounded">Save</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
