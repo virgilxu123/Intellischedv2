@@ -380,7 +380,7 @@
         <tr>
             <td colspan="3"></td>
             <td style="text-align: center;"><strong>Total No.of Units</strong></td>
-            <td style="text-align: center">{{$regularLoad + $designationLoad}}</td>
+            <td style="text-align: center">{{$regularLoad}}</td>
             <td></td>
             <td></td>
         </tr>
