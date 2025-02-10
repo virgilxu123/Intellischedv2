@@ -245,7 +245,7 @@
                 $curTime = date('h:i A', $time);
             @endphp
             <tr>
-                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+180 minutes', $time)) }}</td>
+                <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+90 minutes', $time)) }}</td>
                 @php
                     $dayName = 'Tuesday'; // The name of the day you want to filter
                     $classesForTuesday = $classes->filter(function ($class) use ($dayName) {
@@ -270,7 +270,7 @@
                 @endif
             </tr>
             @php
-                $time = strtotime('240 minutes', $time);
+                $time = strtotime('90 minutes', $time);
             @endphp
         @endfor
         <tr>
