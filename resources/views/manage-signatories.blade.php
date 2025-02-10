@@ -131,7 +131,6 @@
     <script>
         $(document).ready(function() {
             $('#table tbody').on('click', '.fa-pen-to-square', function(e) {
-
                 var tr = $(this).closest('tr');
                 var id = tr.data('signatory-id');
                 var firstName = tr.data('first-name');
@@ -139,13 +138,16 @@
                 var middleInitial = tr.data('middle-initial');
                 var educQualification = tr.data('educ-qualification');
                 var position = tr.data('position');
+                let route = "{{route('update-signatory', ':id')}}";
+                route = route.replace(':id', id);
 
-                $('#updateSignatoryForm').attr('action', '/update-signatory/' + id);
+                $('#updateSignatoryForm').attr('action', route);
                 $('#updateFirstName').val(firstName);
                 $('#updateMiddleInitial').val(middleInitial);
                 $('#updateLastName').val(lastName);
                 $('#updateEducQualification').val(educQualification);
                 $('#updatePosition').val(position);
+                $('#updateSignatory').modal('show');
             });
         });
     </script>

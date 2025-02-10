@@ -61,7 +61,16 @@ class SignatoryController extends Controller
      */
     public function update(Request $request, Signatory $signatory)
     {
-        //
+        $validatedData = $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'middle_initial' => 'required',
+            'educ_qualification' => '',
+            'position' => 'required',
+        ]);
+        $signatory->update($validatedData);
+
+        return redirect()->route('manage-signatories');
     }
 
     /**
