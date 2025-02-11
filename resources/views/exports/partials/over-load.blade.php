@@ -68,10 +68,12 @@
                         $classesForMonday = $classes->filter(function ($class) use ($dayName) {
                             return $class->days->contains('day', $dayName)&&$class->load_type_id == 2;
                         });
-                        $class = $classesForMonday->where('time_start', $curTime)->first();
+                        $class = $classesForMonday->first(function ($class) use ($curTime) {
+                            return date('h:i A', strtotime($class->time_start)) === $curTime;
+                        });
                     @endphp
                     @if ($class)
-                        <td style="text-align: center"></td>
+                        <td style="text-align: center">{{$class->schedule_id}}</td>
                         <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                         <td style="text-align: center">{{$class->subject->description}}</td>
                         <td style="text-align: center">{{$class->units}}</td>
@@ -110,10 +112,12 @@
                 <tr>
                     <td style="text-align: center">{{ $current_time }} - {{ date('h:i', strtotime('+90 minutes', $time)) }}</td>
                     @php
-                        $class = $classesForMonday->where('time_start', $curTime)->first();
+                        $class = $classesForMonday->first(function ($class) use ($curTime) {
+                            return date('h:i A', strtotime($class->time_start)) === $curTime;
+                        });
                     @endphp
                     @if ($class)
-                        <td style="text-align: center"></td>
+                        <td style="text-align: center">{{$class->schedule_id}}</td>
                         <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                         <td style="text-align: center">{{$class->subject->description}}</td>
                         <td style="text-align: center">{{$class->units}}</td>
@@ -158,10 +162,12 @@
                         $classesForWednesday = $classes->filter(function ($class) use ($dayName) {
                             return $class->days->contains('day', $dayName)&&$class->load_type_id == 2;
                         });
-                        $class = $classesForWednesday->where('time_start', $curTime)->first();
+                        $class = $classesForWednesday->first(function ($class) use ($curTime) {
+                            return date('h:i A', strtotime($class->time_start)) === $curTime;
+                        });
                     @endphp
                     @if ($class)
-                        <td style="text-align: center"></td>
+                        <td style="text-align: center">{{$class->schedule_id}}</td>
                         <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                         <td style="text-align: center">{{$class->subject->description}}</td>
                         <td style="text-align: center">{{$class->units}}</td>
@@ -205,10 +211,12 @@
                         $classesForWednesday = $classes->filter(function ($class) use ($dayName) {
                             return $class->days->contains('day', $dayName)&&$class->load_type_id == 2;
                         });
-                        $class = $classesForWednesday->where('time_start', $curTime)->first();
+                        $class = $classesForWednesday->first(function ($class) use ($curTime) {
+                            return date('h:i A', strtotime($class->time_start)) === $curTime;
+                        });
                     @endphp
                     @if ($class)
-                        <td style="text-align: center"></td>
+                        <td style="text-align: center">{{$class->schedule_id}}</td>
                         <td style="text-align: center">{{$class->subject->course_code}}-{{$class->block->block}}</td>
                         <td style="text-align: center">{{$class->subject->description}}</td>
                         <td style="text-align: center">{{$class->units}}</td>
