@@ -1012,18 +1012,16 @@
         });
         function populateScheduleId(element) {
             academicYearTerm = @json($academicYearTerm);
-            console.log(academicYearTerm.id);
             let subjectId = element.dataset.subjectId;
             let route = '{{ route("add-edit-schedule-id", [":subjectId", ":academicYearTerm"]) }}'
                         .replace(':subjectId', subjectId)
                         .replace(':academicYearTerm', academicYearTerm.id);
-            console.log(route);
             document.querySelector('#addEditScheduleIdForm').setAttribute('action', route);
             let blocksForSubject = classSchedules.filter(schedule => schedule.subject_id == subjectId);
+            $('#subject_code').text(blocksForSubject[0].subject.course_code);
             let modalBody = document.querySelector('#addEditSchedId .modal-body');
             modalBody.innerHTML = '';
             blocksForSubject.forEach((schedule, index) => {
-                console.log(schedule);
                 let inputGroup = document.createElement('div');
                 inputGroup.classList.add('mb-3');
                 inputGroup.innerHTML = `

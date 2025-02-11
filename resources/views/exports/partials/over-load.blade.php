@@ -287,7 +287,7 @@
             @php
                 $time = strtotime('13:00');
             @endphp
-            @for ($i=1; $i<4; $i++)
+            @for ($i=1; $i<6; $i++)
                 @php
                     $current_time = date('h:i', $time);
                     $curTime = date('h:i A', $time);
@@ -322,24 +322,6 @@
                     $time = strtotime('+90 minutes', $time);
                 @endphp
             @endfor
-            <tr>
-                <td style="color:white;">0</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td style="color:white;">0</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
             <tr>
                 <td colspan="3"><span style="margin-left: 180px">No. of Units</span></td>
                 <td></td>
