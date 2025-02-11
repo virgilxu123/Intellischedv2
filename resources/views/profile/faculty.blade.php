@@ -148,29 +148,44 @@
                                                 $room = "TBD";
                                             }
                                         @endphp
-                                        <tr>
+                                        <tr data-class-id="{{$class->id}}">
                                             <form action="" method="POST">
-                                            <td class="col-1">
-                                                @if ($class->units == '3')
-                                                    {{ count($class->days) > 0 ? $class->days[0]->day : 'TBD' }}
-                                                @else
-                                                    <div class="d-flex align-items-center">
-                                                        @csrf
-                                                        <select name="day_id" id="day" class="form-select w-auto">
-                                                            <option value="">Select Day</option>
-                                                            @foreach ($days as $day)
-                                                                <option value="{{ $day->id }}">{{ $day->day }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                @endif
-                                            </td>
-                                            <td class="col-1">
+                                                <td class="col-1">
+                                                    @if ($class->units == '3')
+                                                        {{ count($class->days) > 0 ? $class->days[0]->day : 'TBD' }}
+                                                    @else
+                                                        <div class="d-flex align-items-center">
+                                                            @csrf
+                                                            <select name="day_id" id="day" class="form-select w-auto">
+                                                                <option value="">Select Day</option>
+                                                                @foreach ($days as $day)
+                                                                <option value="{{ $day->id }}" {{ isset($class->days[0]) && $class->days[0]->id == $day->id ? 'selected' : '' }}>
+                                                                    {{ $day->day }}
+                                                                </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    @endif
+                                                </td>
+                                                <td class="col-1">
                                                 @if ($class->units == '3')
                                                     {{$class->time_start ."-". $class->time_end}}
                                                 @else
+                                                    @php
+                                                        $mthtfTime = ['7:30AM','9:00AM','10:30AM','1:00PM','2:30PM','4:00PM','5:30PM', '7:00PM'];
+                                                    @endphp
                                                     <select name="time_start" id="time" class="form-select w-auto time-select" data-classId="{{$class->id}}" data-day="{{ count($class->days) > 0 ? $class->days[0]->day : 'N/A' }}">
                                                         <option value="">Select Time</option>
+                                                        @foreach ($mthtfTime as $time)
+                                                        @php
+                                                            // Convert time to DateTime and add 90 minutes
+                                                            $originalTime = DateTime::createFromFormat('g:iA', $time);
+                                                            $endTime = (clone $originalTime)->modify('+90 minutes');
+                                                        @endphp
+                                                             <option value="{{ $time }}" {{ $class->time_start == $time ? 'selected' : '' }}>
+                                                                {{ $time }} - {{ $endTime->format('g:iA') }}
+                                                            </option>
+                                                        @endforeach
                                                     </select>
                                                 @endif
                                             </form>
@@ -184,10 +199,12 @@
                                                 @else
                                                     <form action="" method="POST">
                                                         @csrf
-                                                        <select class="form-select room-select w-auto room-select">
+                                                        <select class="form-select room-select w-auto room-select" id="room" name="room_id">
                                                             <option value="">Select Room</option>
                                                             @foreach ($rooms as $room)
-                                                                <option value="{{ $room->id }}">{{ $room->room_number }}</option>
+                                                            <option value="{{ $room->id }}" {{ isset($class->classroom) && $class->classroom->id == $room->id ? 'selected' : '' }}>
+                                                                {{ $room->room_number }}
+                                                            </option>
                                                             @endforeach
                                                         </select>
                                                     </form>
@@ -240,28 +257,28 @@
     <script>
         faculty = @json($faculty);
         $(document).ready(function() {
-            let tableBody = document.querySelector("#table tbody");
-            if (tableBody) {
-                tableBody.addEventListener("change", function (event) {
-                    let target = event.target;
-                    if (target.classList.contains("time-select") || target.classList.contains("room-select")) {
-                        let row = target.closest("tr"); // Get the parent row of the changed dropdown
-                        let roomSelect = row.querySelector(".room-select"); // Find the day dropdown in the same row
-                        let timeSelect = row.querySelector(".time-select"); // Find the time dropdown in the same row
+            // let tableBody = document.querySelector("#table tbody");
+            // if (tableBody) {
+            //     tableBody.addEventListener("change", function (event) {
+            //         let target = event.target;
+            //         if (target.classList.contains("time-select") || target.classList.contains("room-select")) {
+            //             let row = target.closest("tr"); // Get the parent row of the changed dropdown
+            //             let roomSelect = row.querySelector(".room-select"); // Find the day dropdown in the same row
+            //             let timeSelect = row.querySelector(".time-select"); // Find the time dropdown in the same row
 
-                        let selectedRoom = roomSelect.value;
-                        let selectedTime = timeSelect.value;
-                        let classId = timeSelect.dataset.classid;
-                        let day = timeSelect.dataset.day;
-                        console.log(day);
-                        if (selectedRoom && selectedTime) {
-                            console.log(classId, selectedRoom, selectedTime, day, row);
-                        }
-                    }
-                });
-            } else {
-                console.warn("⚠️ Table body #facultyLoadTable tbody not found!");
-            }
+            //             let selectedRoom = roomSelect.value;
+            //             let selectedTime = timeSelect.value;
+            //             let classId = timeSelect.dataset.classid;
+            //             let day = timeSelect.dataset.day;
+            //             console.log(day);
+            //             if (selectedRoom && selectedTime) {
+            //                 console.log(classId, selectedRoom, selectedTime, day, row);
+            //             }
+            //         }
+            //     });
+            // } else {
+            //     console.warn("⚠️ Table body #facultyLoadTable tbody not found!");
+            // }
             let initialStudCount;
             $('#updateFacultyForm').on('submit', function(e) {
                 e.preventDefault();
@@ -349,35 +366,70 @@
             $('.studentCount').on('focusin', function () {
                 initialStudCount = $(this).val();
             });
-            $('#day').on('change', function(e){
-                let day = $(this).val();
-                let facultyId = faculty.id;
-                let url = `{{route('get-available-time', ['day','faculty'])}}`.replace('day', day).replace('faculty', facultyId);
-                fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json(); // Parse the JSON response
-                })
-                .then(data => {
-                    let timeSelect = $(this).closest('tr').find('.time-select');
-                    timeSelect.empty();
-                    timeSelect.append(`<option value="">Select Time</option>`);
-                    // data.forEach(time => {
-                    //     timeSelect.append(`<option value="${time.id}">${time.time_start}-${time.time_end}</option>`);
-                    // });
-                })
-                .catch(error => {
-                    let message = "An error has occured";
-                    toastr.error(message);
-                });
+            $('#day, #time, #room').on('change', function(e){
+                let row = $(this).closest('tr');
+                let class_id = row.data('class-id');
+                // Get the values of each select in the row
+                let day_id = row.find('#day').val().trim();
+                let time_start = row.find('#time').val().trim();
+                let room_id = row.find('#room').val().trim();
+
+                // console.log(day, time, room);
+                if(day_id && time_start && room_id) {
+                    let facultyId = faculty.id;
+                    let url = `{{route('assign-day-time-room-for-lab', ['classSchedule'])}}`.replace('classSchedule', class_id);
+                    url += `?day_id=${encodeURIComponent(day_id)}&time_start=${encodeURIComponent(time_start)}&room_id=${encodeURIComponent(room_id)}`;
+                    console.log(url);
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Parse the JSON response
+                    })
+                    .then(data => {
+                        console.log(data);
+                        let message = data.message;
+                        toastr.success(message);
+                    })
+                    .catch(error => {
+                        let message = "An error has occured";
+                        toastr.error(message);
+                    });
+                    
+                }
+                // fetch(url, {
+                //     method: 'GET',
+                //     headers: {
+                //         'X-Requested-With': 'XMLHttpRequest',
+                //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                //     }
+                // })
+                // .then(response => {
+                //     if (!response.ok) {
+                //         throw new Error('Network response was not ok');
+                //     }
+                //     return response.json(); // Parse the JSON response
+                // })
+                // .then(data => {
+                //     let timeSelect = $(this).closest('tr').find('.time-select');
+                //     timeSelect.empty();
+                //     timeSelect.append(`<option value="">Select Time</option>`);
+                //     console.log(data);
+                //     data.forEach(time => {
+                //         timeSelect.append(`<option value="${time.id}">${time.time_start}-${time.time_end}</option>`);
+                //     });
+                // })
+                // .catch(error => {
+                //     let message = "An error has occured";
+                //     toastr.error(message);
+                // });
             });
         });
         function assignTimeRoom(classId, selectedRoom, selectedTime, day, row) {

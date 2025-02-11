@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::post('assign-day-time-room/{classSchedule}', [ClassScheduleController::class, 'assignDayTimeRoom'])->name('assign-day-time-room');
     Route::get('get-available-time/{day}/{faculty}', [ClassScheduleController::class, 'getAvailableTimeRoom'])->name('get-available-time');
     Route::post('add-edit-schedule-id/{subjectId}/{academicYearTerm}', [ClassScheduleController::class, 'addEditScheduleId'])->name('add-edit-schedule-id');
+    Route::post('assign-day-time-room-for-lab/{classSchedule}', [ClassScheduleController::class, 'assignDayTimeRoomForLab'])->name('assign-day-time-room-for-lab');
 
     Route::post('export-plotted-schedule/{academic_year_term}', [ExportController::class, 'exportPlottedSchedule'])->name('export-plotted-schedule');
     Route::post('view-pdf/{faculty}/{academicYearTerm}', [ExportController::class, 'viewPDF'])->name('view-pdf');

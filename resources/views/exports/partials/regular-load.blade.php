@@ -1,13 +1,13 @@
 <div style="text-align: center;">
     <img src="{{public_path('admin-assets/image/nemsu-logo.png')}}" alt="" style="width: 60px;">
 </div>
-<p style="text-align: center; font-size: 12px; margin:0;">Republic of the Philippines</p>
-<h5 style="text-align: center;margin:0; font-size:14px;">North Eastern Mindanao State University</h5>
-<p class="header" style="font-size: 12px; margin-top:10px">College of Information Technology Education</p>
-<p class="header" style="font-size: 12px">Department of Computer Studies</p>
-<h6 style="text-align: center;margin:10px 0 2px 0;">{{$academicYearTerm->term->term}}, A.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}</h6>
+<p style="text-align: center; font-size: 10px; margin:0;">Republic of the Philippines</p>
+<h5 style="text-align: center;margin:0; font-size:12px;">North Eastern Mindanao State University</h5>
+<p class="header" style="font-size: 10px; margin-top:px">College of Information Technology Education</p>
+<p class="header" style="font-size: 10px">Department of Computer Studies</p>
+<h6 style="text-align: center;margin:5px 0 2px 0;">{{$academicYearTerm->term->term}}, A.Y. {{$academicYearTerm->academic_year->year_start}}-{{$academicYearTerm->academic_year->year_start + 1}}</h6>
 <h5 style="text-align: center; background-color:rgb(172, 255, 172); color:rgb(0, 114, 0);margin:5px;">REGULAR LOAD</h5>
-<table style="width: 100%; border-collapse: collapse; font-size:12px">
+<table style="width: 100%; border-collapse: collapse; font-size:10px">
     <tbody>
         <tr>
             <td>Name:</td>
@@ -321,6 +321,24 @@
             @endphp
         @endfor
         <tr>
+            <td style="color:white;">0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="color:white;">0</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
             <td colspan="3"><span style="margin-left: 180px">No. of Units</span></td>
             <td></td>
             <td style="text-align: center">{{$regularLoad}}</td>
@@ -371,44 +389,44 @@
 <br>
 <table style="width: 100%">
     <tr>
-        <td style="width: 50%; text-align: left; font-size:12px;">
+        <td style="width: 50%; text-align: left; font-size:10px;">
             Prepared by:
         </td>
-        <td style="width: 50%; text-align: left; font-size:12px;">
+        <td style="width: 50%; text-align: left; font-size:10px;">
             Conformed:
         </td>
     </tr>
     <tr>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 5px;">
+        <td style="width: 50%; text-align: center; font-size:10px;padding-top: 5px;">
             <span"><u><b>ESMAEL V. MALIBERAN, DIT</b></u></span><br>
             <span><i>Department Chairperson</i></span>
         </td>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 5px;">
+        <td style="width: 50%; text-align: center; font-size:10px;padding-top: 5px;">
             <span><u><b>{{ strtoupper($faculty->first_name) }} {{ strtoupper($faculty->last_name) }}</b></u></span><br>
             <span><i>{{$faculty->rank}}</i></span>
         </td>
     </tr>
     <tr>
-        <td colspan="2" style="padding-top: 20px; font-size: 12px;">Recommending Approval:</td>
+        <td colspan="2" style="padding-top: 20px; font-size: 10px;">Recommending Approval:</td>
     </tr>
     <tr>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 10px;">
+        <td style="width: 50%; text-align: center; font-size:10px;padding-top: 10px;">
             <span"><u><b>BORN CHRISTIAN ISIP, DTE</b></u></span><br>
             <span><i>Dean, CITE</i></span>
         </td>
-        <td style="width: 50%; text-align: center; font-size:12px;padding-top: 10px;">
+        <td style="width: 50%; text-align: center; font-size:10px;padding-top: 10px;">
             <span"><u><b>{{strtoupper($campusDirector->first_name)}} {{strtoupper($campusDirector->middle_initial)}}. {{ strtoupper($campusDirector->last_name) }}, {{$campusDirector->educ_qualification}}</b></u></span><br>
             <span><i>Campus Director, Nemsu Main</i></span>
         </td>
     </tr>
     <tr>
-        <td colspan="2" style="padding: 20px 0 0 220px; font-size: 12px;">
+        <td colspan="2" style="padding: 20px 0 0 220px; font-size: 10px;">
             Approved:
         </td>
         
     </tr>
     <tr>
-        <td colspan="2" style="text-align: center; font-size:12px;padding-top: 10px;">
+        <td colspan="2" style="text-align: center; font-size:10px;padding-top: 10px;">
             <span"><u><b>{{strtoupper($VPForAcadAffairs->first_name)}} {{strtoupper($VPForAcadAffairs->middle_initial)}}. {{ strtoupper($VPForAcadAffairs->last_name) }}, {{$VPForAcadAffairs->educ_qualification}}</b></u></span><br>
             <span><i>Vice President for Academic Affairs</i></span>
         </td>

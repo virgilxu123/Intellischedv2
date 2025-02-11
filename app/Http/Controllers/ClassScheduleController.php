@@ -209,10 +209,10 @@ class ClassScheduleController extends Controller
             // Attach the day only if it does not exist
             $classSchedule->days()->syncWithoutDetaching([$validated['day_id']]);
             // Attach the second day only if it does not exist
-            $alternateDay = $validated['day_id'] + 3;
-            if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
-                $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
-            }
+            // $alternateDay = $validated['day_id'] + 3;
+            // if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
+            //     $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
+            // }
         
         return response()->json(['message' => 'Time and Room have been assigned to class schedule.', 'classSchedule' => $classSchedule]);
     }
@@ -311,24 +311,21 @@ class ClassScheduleController extends Controller
     }
     public function assignDayTimeRoomForLab(Request $request, ClassSchedule $classSchedule) 
     {
-        $validated = $request->validate([
-            'day_id' => 'required',
-            'time_start' => 'required',
-            'room_id' => 'required',
-        ]);
-        $time_end = date('h:i A', strtotime($validated['time_start'] . ' +90 minutes'));
-        $conflicts = $classSchedule->checkForSameFacultyTimeConflict($validated['time_start'], $time_end, $validated['day_id']);
+    
+        $time_end = date('h:i A', strtotime($request['time_start'] . ' +90 minutes'));
+        $conflicts = $classSchedule->checkForSameFacultyTimeConflict($request['time_start'], $time_end, $request['day_id']);
         if ($conflicts) {
             return response()->json(['error' => 'Time conflict with existing class schedules.'], 409);
         }
-        $classSchedule->time_start = $validated['time_start'];
+        $classSchedule->time_start = $request['time_start'];
         $classSchedule->time_end = $time_end;
+        $classSchedule->classroom_id = $request['room_id'];
         $classSchedule->save();
     
         // Attach day if not already assigned
-        $classSchedule->days()->syncWithoutDetaching([$validated['day_id']]);
-        $alternateDay = $validated['day_id'] + 3;
-        if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $validated['day_id'] !== 4) {
+        $classSchedule->days()->syncWithoutDetaching([$request['day_id']]);
+        $alternateDay = $request['day_id'] + 3;
+        if (!$classSchedule->days()->where('day_id', $alternateDay)->exists() && $request['day_id'] !== 4) {
             $classSchedule->days()->syncWithoutDetaching([$alternateDay]);
         }
     
